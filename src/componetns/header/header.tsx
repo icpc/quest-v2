@@ -17,6 +17,10 @@ import MenuIcon from "@material-ui/icons/Menu";
 import { AccountCircle } from "@material-ui/icons";
 import logo from "../../assets/logo.png";
 import { useNavigate } from "react-router-dom";
+import {
+  localStorageGetItemWithExpiry,
+  localStorageRemoveItem,
+} from "../../utils/helper";
 interface Props {
   /**
    * Injected by the documentation to work in an iframe.
@@ -26,29 +30,47 @@ interface Props {
 }
 
 const drawerWidth = 240;
-const navItems = ["Today", "Leaderboard", "Submits", "Lidia@icpc.com"];
 const title = "ICPC Quest";
 export default function DrawerAppBar(props: Props) {
-  const { window } = props;
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [userInfo, setUserInfo] = React.useState(
+    localStorageGetItemWithExpiry("userInfo")
+  );
+
+  const [navItems, setNavItems] = React.useState([
+    "HOME",
+    "LEADERBOARD",
+    userInfo?.user?.email,
+  ]);
   const navigate = useNavigate();
+
+  React.useEffect(() => {
+    // window.addEventListener("storage", () => {
+    //   setUserInfo(localStorageGetItemWithExpiry("userInfo"));
+    // });
+    // return () => {
+    //   window.onstorage = null;
+    // };
+  }, []);
 
   const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
 
-  const handleClose = () => {
-    // log out
-    localStorage.removeItem("isAuthenticated");
+  const handleClose = React.useCallback(() => {
+    localStorageRemoveItem("isAuthenticated");
+    localStorageRemoveItem("userInfo");
+    setUserInfo({});
     navigate("/login");
-  };
+  }, [navigate]);
 
   const handleDrawerToggle = () => {
     setMobileOpen((prevState) => !prevState);
   };
 
-  const profileIconMenue = () => {
+  const profileIconMenue = React.useCallback(() => {
+    if (!userInfo?.user?.email) return null;
     return (
       <div>
         <IconButton
@@ -82,46 +104,66 @@ export default function DrawerAppBar(props: Props) {
         </Menu>
       </div>
     );
-  };
+  }, [anchorEl, handleClose, userInfo]);
 
-  const drawer = (
-    <Box sx={{ textAlign: "center" }}>
-      <Typography
-        variant="h6"
-        sx={{ my: 2, textAlign: "center" }}
-        align="center"
-      >
-        {title}
-      </Typography>
+  const drawer = React.useMemo(() => {
+    return (
+      <Box sx={{ textAlign: "center" }}>
+        <Typography
+          variant="h6"
+          sx={{ my: 2, textAlign: "center" }}
+          align="center"
+        >
+          {title}
+        </Typography>
 
-      {/* <Divider /> */}
-      <List>
-        {navItems.map((item) => (
-          <ListItem key={item} disablePadding>
-            <ListItemButton sx={{ textAlign: "center" }}>
-              <ListItemText onClick={handleDrawerToggle} primary={item} />
-            </ListItemButton>
-          </ListItem>
-        ))}
-        {profileIconMenue()}
-      </List>
-    </Box>
-  );
+        {userInfo?.user?.email && (
+          <List>
+            {navItems.map((item) => (
+              <ListItem
+                key={item}
+                onClick={() => {
+                  if (item === "HOME") {
+                    navigate("/home");
+                  } else if (item === "LEADERBOARD") {
+                    navigate("/leaderboard");
+                  }
+                }}
+                disablePadding
+              >
+                <ListItemButton sx={{ textAlign: "center" }}>
+                  <ListItemText onClick={handleDrawerToggle} primary={item} />
+                </ListItemButton>
+              </ListItem>
+            ))}
+            {profileIconMenue()}
+          </List>
+        )}
+      </Box>
+    );
+  }, [navItems, navigate, profileIconMenue, userInfo]);
 
   const container =
-    window !== undefined ? () => window().document.body : undefined;
+    window !== undefined ? () => window.document.body : undefined;
 
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
       <AppBar component="nav">
-        <Toolbar>
+        <Toolbar
+          style={{
+            backgroundImage: "linear-gradient(to left, #164174 , #143356)",
+          }}
+        >
           <IconButton
             color="inherit"
             aria-label="open drawer"
             edge="start"
             onClick={handleDrawerToggle}
-            sx={{ mr: 2, display: { sm: "none" } }}
+            sx={{
+              mr: 2,
+              display: { sm: "none" },
+            }}
           >
             <MenuIcon />
           </IconButton>
@@ -137,31 +179,45 @@ export default function DrawerAppBar(props: Props) {
                 lg: "flex",
                 xl: "flex",
               },
+              cursor: "pointer",
             }}
             align="center"
+            onClick={() => navigate("/home")}
           >
             <img src={logo} alt="ICPC logo" />
           </Typography>
 
-          <Box
-            sx={{
-              //flexGrow: 1,
-              display: {
-                xs: "none",
-                sm: "flex",
-                md: "flex",
-                lg: "flex",
-                xl: "flex",
-              },
-            }}
-          >
-            {navItems.map((item) => (
-              <Button key={item} sx={{ color: "#fff" }}>
-                {item}
-              </Button>
-            ))}
-            {profileIconMenue()}
-          </Box>
+          {userInfo?.user?.email && (
+            <Box
+              sx={{
+                //flexGrow: 1,
+                display: {
+                  xs: "none",
+                  sm: "flex",
+                  md: "flex",
+                  lg: "flex",
+                  xl: "flex",
+                },
+              }}
+            >
+              {navItems.map((item) => (
+                <Button
+                  key={item}
+                  sx={{ color: "#fff" }}
+                  onClick={() => {
+                    if (item === "HOME") {
+                      navigate("/home");
+                    } else if (item === "LEADERBOARD") {
+                      navigate("/leaderboard");
+                    }
+                  }}
+                >
+                  {item}
+                </Button>
+              ))}
+              {profileIconMenue()}
+            </Box>
+          )}
         </Toolbar>
       </AppBar>
       <nav>

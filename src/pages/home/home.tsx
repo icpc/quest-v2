@@ -1,7 +1,6 @@
 import React from "react";
 import DrawerAppBar from "../../componetns/header/header";
 import { useNavigate } from "react-router-dom";
-import { checkUserAuthentication } from "../../utils/helper";
 import {
   Toolbar,
   Typography,
@@ -18,110 +17,26 @@ import CheckCircleOutlineIcon from "@material-ui/icons/CheckCircleOutline";
 import AccessTimeOutlinedIcon from "@material-ui/icons/AccessTimeOutlined";
 import HighlightOffOutlinedIcon from "@material-ui/icons/HighlightOffOutlined";
 import StarBorderOutlinedIcon from "@material-ui/icons/StarBorderOutlined";
-const Home = () => {
-  const isAuthenticated = checkUserAuthentication(); // Implement this function to check if the user is authenticated
+import { QuestsDays, QuestStatus } from "./home.types";
+import { aggregateQuestsByDate } from "./home.utils";
+const Home = (pros: any) => {
   const navigate = useNavigate();
-  const [daysTasks, setDaysTasks] = React.useState([
-    {
-      date: "2021-11-15",
-      detailsTasks: [
-        {
-          taskTitle: "Photo Hunt",
-          taskDescription: "hexagonal pattern from our photo",
-          status: "correct",
-        },
-        {
-          taskTitle: "Photo Hunt",
-          taskDescription: "WF 2011 Coffee Central",
-          status: "correct",
-        },
-        {
-          taskTitle: "Photo Hunt",
-          taskDescription: "Find the photo",
-          status: "correct",
-        },
-        {
-          taskTitle: "Photo Hunt",
-          taskDescription: "Find the photo",
-          status: "wrong",
-        },
-        {
-          taskTitle: "Photo Hunt",
-          taskDescription: "Find the photo",
-          status: "pending",
-        },
-        {
-          taskTitle: "Photo Hunt",
-          taskDescription: "Find the photo",
-          status: "",
-        },
-      ],
-    },
-    {
-      date: "2021-11-14",
-      detailsTasks: [
-        {
-          taskTitle: "Photo Hunt",
-          taskDescription: "Find the photo",
-          status: "",
-        },
-        {
-          taskTitle: "Photo Hunt",
-          taskDescription: "Find the photo",
-          status: "",
-        },
-      ],
-    },
-    {
-      date: "2021-11-13",
-      detailsTasks: [
-        {
-          taskTitle: "Photo Hunt",
-          taskDescription: "Find the photo",
-          status: "",
-        },
-        {
-          taskTitle: "Photo Hunt",
-          taskDescription: "Find the photo",
-          status: "",
-        },
-      ],
-    },
-    {
-      date: "2021-11-12",
-      detailsTasks: [
-        {
-          taskTitle: "Photo Hunt",
-          taskDescription: "Find the photo",
-          status: "",
-        },
-        {
-          taskTitle: "Photo Hunt",
-          taskDescription: "Find the photo",
-          status: "",
-        },
-      ],
-    },
-  ]);
-
-  React.useEffect(() => {
-    if (!isAuthenticated) {
-      navigate("/login");
-    }
-  }, [isAuthenticated, navigate]);
+  const quests = pros.quests;
+  const [questsDays, setQuestsDays] = React.useState<QuestsDays[]>(
+    aggregateQuestsByDate(quests)
+  );
 
   const daysTasksListJSX = React.useCallback(() => {
-    return daysTasks.map((dayTask, index) => {
+    return questsDays.map((questDay, index) => {
       const expanded = index === 0;
-      // format date
-      const date = new Date(dayTask.date);
+      const date = new Date(questDay.date);
       const dateFormated = date.toLocaleDateString("en-US", {
         weekday: "long",
         month: "long",
         day: "numeric",
       });
-      const numberOfCorrectTasks = dayTask.detailsTasks.filter(
-        (task) => task.status === "correct"
+      const numberOfCorrectTasks = questDay?.detailsQuests?.filter(
+        (task) => task.status.toLocaleUpperCase() === QuestStatus.CORRECT
       ).length;
 
       return (
@@ -138,7 +53,6 @@ const Home = () => {
           >
             <Typography variant="h3">
               {dateFormated}
-              {/* put number of stars according to number of correct tasks */}
               {[...Array(numberOfCorrectTasks)].map((e, i) => (
                 <StarBorderOutlinedIcon
                   fontSize="large"
@@ -152,20 +66,21 @@ const Home = () => {
           </AccordionSummary>
           <AccordionDetails>
             <Grid gap={3} container>
-              {dayTask.detailsTasks.map((task, index) => {
-                const status = task.status;
+              {questDay?.detailsQuests.map((quest, index) => {
+                const questStatus = quest.status.toLocaleUpperCase();
+                const questId = quest.id;
                 const bkColor =
-                  status === "correct"
+                  questStatus === QuestStatus.CORRECT
                     ? "rgba(0, 128, 0, 0.7)"
-                    : status === "pending"
+                    : questStatus === QuestStatus.PENDING
                     ? "rgb(147 143 74)"
-                    : status === "wrong"
+                    : questStatus === QuestStatus.WRONG
                     ? "#f44336ba"
                     : "grey";
                 const color =
-                  status === "correct"
+                  questStatus === QuestStatus.CORRECT
                     ? "white"
-                    : status === "pending"
+                    : questStatus === QuestStatus.PENDING
                     ? "white"
                     : "white";
                 return (
@@ -180,7 +95,7 @@ const Home = () => {
                         cursor: "pointer",
                       }}
                       onClick={() => {
-                        navigate(`/task/${index}`);
+                        navigate(`/task/${questId}`);
                       }}
                     >
                       <CardContent
@@ -199,16 +114,16 @@ const Home = () => {
                             alignItems: "center",
                           }}
                         >
-                          {task.status === "correct" && (
+                          {questStatus === QuestStatus.CORRECT && (
                             <CheckCircleOutlineIcon fontSize="large" />
                           )}
-                          {task.status === "pending" && (
+                          {questStatus === QuestStatus.PENDING && (
                             <AccessTimeOutlinedIcon fontSize="large" />
                           )}
-                          {task.status === "wrong" && (
+                          {questStatus === QuestStatus.WRONG && (
                             <HighlightOffOutlinedIcon fontSize="large" />
                           )}
-                          {task.taskTitle}
+                          {quest.name}
                         </div>
                         <div
                           style={{
@@ -225,7 +140,7 @@ const Home = () => {
                               alignItems: "center",
                             }}
                           >
-                            {task.taskDescription}
+                            {quest.description}
                           </Typography>
                         </div>
                       </CardContent>
@@ -238,17 +153,11 @@ const Home = () => {
         </Accordion>
       );
     });
-  }, [daysTasks]);
-
-  if (!isAuthenticated) {
-    return null; // This will prevent the rest of the render
-  }
+  }, [navigate, questsDays]);
 
   return (
     <div>
-      <DrawerAppBar />
       <Box component="main" sx={{ p: 3 }}>
-        <Toolbar />
         {daysTasksListJSX()}
       </Box>
     </div>

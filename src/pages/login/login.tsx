@@ -2,18 +2,18 @@ import * as React from "react";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
-import Link from "@mui/material/Link";
-import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { checkUserAuthentication, setItemWithExpiry } from "../../utils/helper";
+import {
+  checkUserAuthentication,
+  localStorageRemoveItem,
+  localStorageSetItemWithExpiry,
+} from "../../utils/helper";
 import { useNavigate } from "react-router-dom";
+import { login } from "../../utils/requests";
 
-// TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
 
 export default function SignIn() {
@@ -27,15 +27,20 @@ export default function SignIn() {
     }
   }, [isAuthenticated, navigate]);
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     const email = data.get("email");
     const password = data.get("password");
-    if (email === "test" && password === "test") {
-      setItemWithExpiry("isAuthenticated", "true", 1000000);
-      navigate("/home");
+    const newLogin = await login({ email, password });
+    console.log(newLogin);
+    if (newLogin !== null) {
+      localStorageSetItemWithExpiry("isAuthenticated", "true", 10000000);
+      localStorageSetItemWithExpiry("userInfo", newLogin, 10000000);
+      window.location.href = "/home";
     } else {
+      localStorageRemoveItem("isAuthenticated");
+      localStorageRemoveItem("userInfo");
       alert("Invalid credentials");
     }
   };

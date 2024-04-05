@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/https://github.com/icpc/quest-v2/static/css/main.e6c13ad2.css",
+    "main.js": "/https://github.com/icpc/quest-v2/static/js/main.d73f0f68.js",
+    "index.html": "/https://github.com/icpc/quest-v2/index.html",
+    "main.e6c13ad2.css.map": "/https://github.com/icpc/quest-v2/static/css/main.e6c13ad2.css.map",
+    "main.d73f0f68.js.map": "/https://github.com/icpc/quest-v2/static/js/main.d73f0f68.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.e6c13ad2.css",
+    "static/js/main.d73f0f68.js"
+  ]
+}

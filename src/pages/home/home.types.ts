@@ -11,6 +11,7 @@ interface Quest {
   type: string;
   description: string;
   status: string;
+  date: string;
 }
 
 export interface QuestsDays {

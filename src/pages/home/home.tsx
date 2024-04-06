@@ -36,7 +36,7 @@ const Home = (pros: any) => {
         day: "numeric",
       });
       const numberOfCorrectTasks = questDay?.detailsQuests?.filter(
-        (task) => task.status.toLocaleUpperCase() === QuestStatus.CORRECT
+        (task) => task?.status?.toLocaleUpperCase() === QuestStatus.CORRECT
       ).length;
 
       return (
@@ -67,7 +67,7 @@ const Home = (pros: any) => {
           <AccordionDetails>
             <Grid gap={3} container>
               {questDay?.detailsQuests.map((quest, index) => {
-                const questStatus = quest.status.toLocaleUpperCase();
+                const questStatus = quest?.status?.toLocaleUpperCase();
                 const questId = quest.id;
                 const bkColor =
                   questStatus === QuestStatus.CORRECT

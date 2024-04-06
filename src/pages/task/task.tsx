@@ -15,6 +15,7 @@ import Typography from "@mui/material/Typography";
 function ImgMediaCard(submission: any) {
   console.log(submission.id);
   const { id, name, description, status, submissionType, answer } = submission;
+  const submissionTypeUpper = submissionType?.toLocaleUpperCase();
   return (
     <Card
       sx={{
@@ -27,14 +28,14 @@ function ImgMediaCard(submission: any) {
         justifyContent: "space-between",
       }}
     >
-      {submissionType.toLocaleUpperCase() === QuestType.IMAGE ? (
+      {submissionTypeUpper === QuestType.IMAGE ? (
         <CardMedia
           component="img"
           height="195"
           image={answer}
           alt="green iguana"
         />
-      ) : submissionType.toLocaleUpperCase() === QuestType.TEXT ? (
+      ) : submissionTypeUpper === QuestType.TEXT ? (
         <CardContent>
           <Typography
             gutterBottom
@@ -93,38 +94,45 @@ const Task = (props: any) => {
     userId: 1,
     questId: questId,
     type:
-      questSubmissions.questType.toLocaleUpperCase() === QuestType.TEXT
+      questSubmissions?.questType?.toLocaleUpperCase() === QuestType.TEXT
         ? "text"
         : "file",
   });
   const [submitTaskStatus, setSubmitTaskStatus] = useState("");
 
-  const handleInputChange = (event: { target: { value: any } }) => {
-    console.log(event.target.value);
-    setSubmission({ ...submission, text: event.target.value });
-  };
+  const handleInputChange = React.useCallback(
+    (event: { target: { value: any } }) => {
+      console.log(event.target.value);
+      setSubmission({ ...submission, text: event.target.value });
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    },
+    []
+  );
 
-  const handleFileChange = (event: any) => {
-    // validate input type file to be image or video only
-    if (event.target.files[0]) {
-      const fileType = event.target.files[0].type;
-      if (
-        fileType !== "image/jpeg" &&
-        fileType !== "image/png" &&
-        fileType !== "video/mp4"
-      ) {
-        setSubmitTaskStatus("File type not supported");
-        // clear the input
-        event.target.value = null;
-        return;
+  const handleFileChange = React.useCallback(
+    (event: any) => {
+      // validate input type file to be image or video only
+      if (event.target.files[0]) {
+        const fileType = event.target.files[0].type;
+        if (
+          fileType !== "image/jpeg" &&
+          fileType !== "image/png" &&
+          fileType !== "video/mp4"
+        ) {
+          setSubmitTaskStatus("File type not supported");
+          // clear the input
+          event.target.value = null;
+          return;
+        }
       }
-    }
-    setSubmitTaskStatus("");
-    setSubmission({ ...submission, file: event.target.files[0] });
-  };
+      setSubmitTaskStatus("");
+      setSubmission({ ...submission, file: event.target.files[0] });
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  );
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const handleSubmit = async (event: any) => {
+  const handleSubmit = React.useCallback(async (event: any) => {
     console.log(submission);
     event.preventDefault();
     setSubmitTaskStatus("Submitting task");
@@ -134,15 +142,15 @@ const Task = (props: any) => {
       setSubmitTaskStatus("Task submitted successfully");
       const newQuestSubmissions = { ...questSubmissions };
       if (
-        questSubmissions.questType.toLocaleUpperCase() === QuestType.IMAGE ||
-        questSubmissions.questType.toLocaleUpperCase() === QuestType.VIDEO
+        questSubmissions?.questType?.toLocaleUpperCase() === QuestType.IMAGE ||
+        questSubmissions?.questType?.toLocaleUpperCase() === QuestType.VIDEO
       ) {
         newQuestSubmissions.submissions.unshift({
           id: questSubmissions.submissions.length + 1,
           answer: newSubmit,
           uploadTime: new Date().toISOString(),
           status: "PENDING",
-          submissionType: questSubmissions.questType.toLocaleUpperCase(),
+          submissionType: questSubmissions?.questType?.toLocaleUpperCase(),
         });
       } else {
         newQuestSubmissions.submissions.unshift({
@@ -157,7 +165,8 @@ const Task = (props: any) => {
     } else {
       setSubmitTaskStatus("Error submitting task");
     }
-  };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const submssionsJSX = React.useMemo(() => {
     if (!questSubmissions) return null;
@@ -186,6 +195,7 @@ const Task = (props: any) => {
   }, [questSubmissions]);
 
   const submitTaskJSX = React.useMemo(() => {
+    const questType = questSubmissions?.questType?.toLocaleUpperCase();
     return (
       <div>
         <Box
@@ -213,28 +223,16 @@ const Task = (props: any) => {
               margin="normal"
               required
               label={
-                questSubmissions.questType.toLocaleUpperCase() ===
-                QuestType.TEXT
-                  ? "Enter the answer here"
-                  : ""
+                questType === QuestType.TEXT ? "Enter the answer here" : ""
               }
-              type={
-                questSubmissions.questType.toLocaleUpperCase() ===
-                QuestType.TEXT
-                  ? "text"
-                  : "file"
-              }
+              type={questType === QuestType.TEXT ? "text" : "file"}
               onChange={
-                questSubmissions.questType.toLocaleUpperCase() ===
-                QuestType.TEXT
+                questType === QuestType.TEXT
                   ? handleInputChange
                   : handleFileChange
               }
               sx={{ width: isMobileView ? "90%" : "400px" }}
-              multiline={
-                questSubmissions.questType.toLocaleUpperCase() ===
-                QuestType.TEXT
-              }
+              multiline={questType === QuestType.TEXT}
               maxRows={5}
             />
 
@@ -243,8 +241,7 @@ const Task = (props: any) => {
               variant="contained"
               sx={{ mt: 3, mb: 2, width: isMobileView ? "90%" : "400px" }}
               disabled={
-                questSubmissions.questType.toLocaleUpperCase() ===
-                QuestType.TEXT
+                questType === QuestType.TEXT
                   ? submission.text === ""
                   : submission.file === null
               }

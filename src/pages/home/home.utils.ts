@@ -4,7 +4,7 @@ export const aggregateQuestsByDate = (quests: any): QuestsDays[] => {
   if (!quests) return [] as QuestsDays[];
   const questsDaysDic: any = {};
   quests.forEach((quest: any) => {
-    const date = quest.date.split("T")[0];
+    const date = quest?.date?.split("T")[0];
     if (!questsDaysDic[date]) {
       questsDaysDic[date] = [];
     }

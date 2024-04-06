@@ -1,6 +1,5 @@
 {
   "name": "icpc-quest-app",
-  "homepage": "https://hussienibrahiem95.github.io/https://github.com/icpc/quest-v2/",
   "version": "0.1.0",
   "private": true,
   "dependencies": {

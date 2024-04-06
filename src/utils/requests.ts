@@ -14,7 +14,7 @@ export const submitTask = async (submission: any, userInfo: any) => {
     }
     formData.append("questId", submission.questId ?? "1");
     const response = await fetch(
-      "https://icpcquest.azurewebsites.net/api/submit-quest",
+      "https://icpcquestapi.azurewebsites.net/api/submit-quest",
       {
         method: "POST",
         headers: {
@@ -35,7 +35,7 @@ export const submitTask = async (submission: any, userInfo: any) => {
 export const login = async (user: any) => {
   try {
     const response = await fetch(
-      "https://icpcquest.azurewebsites.net/api/login",
+      "https://icpcquestapi.azurewebsites.net/api/login",
       {
         method: "POST",
         body: JSON.stringify(user),
@@ -56,7 +56,7 @@ export const login = async (user: any) => {
 export const getQuests = async (userInfo: any) => {
   try {
     const response = await fetch(
-      "https://icpcquest.azurewebsites.net/api/get-quests",
+      "https://icpcquestapi.azurewebsites.net/api/get-quests",
       {
         method: "GET",
         headers: {
@@ -162,7 +162,7 @@ export const getQuestSubmissions = async (questId: any, userInfo: any) => {
 
   try {
     const response = await fetch(
-      `https://icpcquest.azurewebsites.net/api/get-quest-submissions`,
+      `https://icpcquestapi.azurewebsites.net/api/get-quest-submissions`,
       {
         method: "GET",
         headers: {

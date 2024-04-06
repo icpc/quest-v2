@@ -182,3 +182,29 @@ export const getQuestSubmissions = async (questId: any, userInfo: any) => {
     return null;
   }
 };
+
+export const getLeaderboard = async (pageNumber: any, userInfo: any) => {
+  try {
+    if (!userInfo?.token) return null;
+    if (!pageNumber) pageNumber = 1;
+    const response = await fetch(
+      `https://icpcquestapi.azurewebsites.net/api/get-rank?page=${pageNumber}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${userInfo?.token}`,
+          "page-size": "2",
+        },
+      }
+    ).then((response) => {
+      if (response.status === 200) {
+        return response.json();
+      }
+      return null;
+    });
+    return response;
+  } catch (error) {
+    console.error("Error:", error);
+    return null;
+  }
+};

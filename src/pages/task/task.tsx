@@ -13,7 +13,6 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 
 function ImgMediaCard(submission: any) {
-  console.log(submission.id);
   const { id, name, description, status, submissionType, answer } = submission;
   const submissionTypeUpper = submissionType?.toLocaleUpperCase();
   return (
@@ -109,30 +108,28 @@ const Task = (props: any) => {
     []
   );
 
-  const handleFileChange = React.useCallback(
-    (event: any) => {
-      // validate input type file to be image or video only
-      if (event.target.files[0]) {
-        const fileType = event.target.files[0].type;
-        if (
-          fileType !== "image/jpeg" &&
-          fileType !== "image/png" &&
-          fileType !== "video/mp4"
-        ) {
-          setSubmitTaskStatus("File type not supported");
-          // clear the input
-          event.target.value = null;
-          return;
-        }
+  const handleFileChange = (event: any) => {
+    if (event.target.files[0]) {
+      const fileType = event.target.files[0].type;
+      if (
+        fileType !== "image/jpeg" &&
+        fileType !== "image/png" &&
+        fileType !== "video/mp4"
+      ) {
+        setSubmitTaskStatus("File type not supported");
+        // clear the input
+        event.target.value = null;
+        return;
       }
       setSubmitTaskStatus("");
       setSubmission({ ...submission, file: event.target.files[0] });
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
-  );
-
-  const handleSubmit = React.useCallback(async (event: any) => {
+      console.log(submission);
+    } else {
+      //setSubmitTaskStatus("File type not supported");
+    }
+  };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const handleSubmit = async (event: any) => {
     console.log(submission);
     event.preventDefault();
     setSubmitTaskStatus("Submitting task");
@@ -165,8 +162,7 @@ const Task = (props: any) => {
     } else {
       setSubmitTaskStatus("Error submitting task");
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  };
 
   const submssionsJSX = React.useMemo(() => {
     if (!questSubmissions) return null;
@@ -195,6 +191,11 @@ const Task = (props: any) => {
   }, [questSubmissions]);
 
   const submitTaskJSX = React.useMemo(() => {
+    if (questSubmissions === null) return null;
+
+    // if (!questSubmissions?.questAcceptSubmission) {
+    //   return <h3>Submission is closed in this Task</h3>;
+    // }
     const questType = questSubmissions?.questType?.toLocaleUpperCase();
     return (
       <div>

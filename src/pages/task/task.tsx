@@ -1,30 +1,75 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { checkUserAuthentication } from "../../utils/helper";
-import { useNavigate, useParams } from "react-router-dom";
 import { submitTask } from "../../utils/requests";
-import DrawerAppBar from "../../componetns/header/header";
-import { Box, TextField, Toolbar } from "@mui/material";
-import { QuestSubmission, QuestSubmissions, QuestType } from "./task.types";
+import { Box, TextField } from "@mui/material";
+import {
+  QuestStatus,
+  QuestSubmission,
+  QuestSubmissions,
+  QuestType,
+} from "./task.types";
+import CheckCircleOutlineIcon from "@material-ui/icons/CheckCircleOutline";
 
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
+import AccessTimeOutlinedIcon from "@material-ui/icons/AccessTimeOutlined";
+import HighlightOffOutlinedIcon from "@material-ui/icons/HighlightOffOutlined";
 
-function ImgMediaCard(submission: any) {
-  const { id, name, description, status, submissionType, answer } = submission;
+function formatDateToCustomFormat(date: Date) {
+  const months = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+
+  const month = months[date.getMonth()];
+  const day = date.getDate();
+  const hour = date.getHours();
+  const amOrPm = hour >= 12 ? "pm" : "am";
+
+  // Convert hour to 12-hour format
+  const formattedHour = hour % 12 || 12;
+
+  // Construct the final formatted string
+  const formattedDate = `${month} ${day}, ${formattedHour}:00 ${amOrPm}`;
+
+  return formattedDate;
+}
+
+function ImgMediaCard(submission: any, index: number, userName: string) {
+  const { id, name, description, status, submissionType, answer, uploadTime } =
+    submission;
   const submissionTypeUpper = submissionType?.toLocaleUpperCase();
   return (
     <Card
       sx={{
         width: 345,
-        height: 250,
+        height: 260,
         maxWidth: 345,
         minWidth: 150,
         display: "flex",
         flexDirection: "column",
         justifyContent: "space-between",
+        boxShadow:
+          "rgba(0, 0, 0, 0.05) 0px 0px 0px 1px, rgba(0, 0, 0, 0.1) 0px 2px 3px",
+        cursor: "pointer",
+      }}
+      onClick={() => {
+        // open the submission answer in a new tab
+        if (submissionTypeUpper === QuestType.TEXT) return;
+        window.open(answer, "_blank");
       }}
     >
       {submissionTypeUpper === QuestType.IMAGE ? (
@@ -56,19 +101,37 @@ function ImgMediaCard(submission: any) {
           // className={classes.media}
           image={answer}
           controls
-          autoPlay
+          autoPlay={index === 0 ? true : false}
         />
       )}
-      <CardContent>
+      <CardContent
+        style={{
+          padding: "0px",
+          paddingLeft: "10px",
+        }}
+      >
+        {
+          <Typography
+            variant="h6"
+            component="span"
+            style={{
+              display: "block",
+              fontSize: "14px",
+              marginBottom: "5px",
+            }}
+          >
+            {userName} . {formatDateToCustomFormat(new Date(uploadTime))}
+          </Typography>
+        }
         <Typography
           gutterBottom
           variant="h5"
           component="span"
           style={{
             display: "block",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-            whiteSpace: "nowrap",
+            // overflow: "hidden",
+            // textOverflow: "ellipsis",
+            // whiteSpace: "nowrap",
           }}
         >
           {status}
@@ -79,8 +142,7 @@ function ImgMediaCard(submission: any) {
 }
 
 const Task = (props: any) => {
-  // is mobile view or not
-  const isMobileView = window.innerWidth < 600;
+  const isMobile = window?.innerWidth <= 500;
   const questId = props.questId;
   const userInfo = props.userInfo;
   const [questSubmissions, setQuestSubmissions] = useState<QuestSubmissions>(
@@ -108,26 +170,38 @@ const Task = (props: any) => {
     []
   );
 
-  const handleFileChange = (event: any) => {
-    if (event.target.files[0]) {
-      const fileType = event.target.files[0].type;
-      if (
-        fileType !== "image/jpeg" &&
-        fileType !== "image/png" &&
-        fileType !== "video/mp4"
-      ) {
-        setSubmitTaskStatus("File type not supported");
-        // clear the input
-        event.target.value = null;
-        return;
+  const handleFileChange = React.useCallback(
+    (event: any) => {
+      if (event.target.files[0]) {
+        const fileType = event.target.files[0].type;
+        if (
+          questSubmissions.questType.toLocaleUpperCase() === QuestType.VIDEO
+        ) {
+          if (fileType.split("/")[0] !== "video") {
+            setSubmitTaskStatus("File type not supported");
+            // clear the input
+            event.target.value = null;
+            return;
+          }
+        }
+        if (
+          questSubmissions.questType.toLocaleUpperCase() === QuestType.IMAGE
+        ) {
+          if (fileType.split("/")[0] !== "image") {
+            setSubmitTaskStatus("File type not supported");
+            // clear the input
+            event.target.value = null;
+            return;
+          }
+        }
+        setSubmitTaskStatus("");
+        setSubmission({ ...submission, file: event.target.files[0] });
+      } else {
+        //setSubmitTaskStatus("File type not supported");
       }
-      setSubmitTaskStatus("");
-      setSubmission({ ...submission, file: event.target.files[0] });
-      console.log(submission);
-    } else {
-      //setSubmitTaskStatus("File type not supported");
-    }
-  };
+    },
+    [questSubmissions.questType, submission]
+  );
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const handleSubmit = async (event: any) => {
     console.log(submission);
@@ -172,30 +246,50 @@ const Task = (props: any) => {
     )
       return <h3>No submissions yet</h3>;
     return (
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "left",
-          alignItems: "center",
-          gap: "15px",
-          flexWrap: "wrap",
-        }}
-      >
-        {questSubmissions.submissions.map(
-          (submission: QuestSubmission, index: number) => {
-            return ImgMediaCard(submission as any);
-          }
-        )}
-      </div>
+      <>
+        <h2>Submissions</h2>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "left",
+            alignItems: "center",
+            gap: "15px",
+            flexWrap: "wrap",
+          }}
+        >
+          {questSubmissions.submissions.map(
+            (submission: QuestSubmission, index: number) => {
+              return ImgMediaCard(
+                submission as any,
+                index,
+                userInfo.user.firstName + " " + userInfo.user.lastName
+              );
+            }
+          )}
+        </div>
+      </>
     );
-  }, [questSubmissions]);
+  }, [questSubmissions, userInfo.user.firstName, userInfo.user.lastName]);
 
   const submitTaskJSX = React.useMemo(() => {
     if (questSubmissions === null) return null;
 
-    // if (!questSubmissions?.questAcceptSubmission) {
-    //   return <h3>Submission is closed in this Task</h3>;
-    // }
+    if (!questSubmissions?.questAcceptSubmissions) {
+      return (
+        <h3
+          style={{
+            margin: "0",
+            fontFamily:
+              '"Segoe UI", "Segoe UI Web (West European)", "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif',
+            fontWeight: "600",
+            fontSize: "24px",
+            lineHeight: "22px",
+          }}
+        >
+          Submission is closed in this Task
+        </h3>
+      );
+    }
     const questType = questSubmissions?.questType?.toLocaleUpperCase();
     return (
       <div>
@@ -207,8 +301,20 @@ const Task = (props: any) => {
             alignItems: "left",
           }}
         >
-          <Typography component="h1" variant="h5">
-            Submit Task
+          <Typography
+            component="h1"
+            variant="h5"
+            sx={{
+              margin: "0",
+              fontFamily:
+                '"Segoe UI", "Segoe UI Web (West European)", "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif',
+              fontWeight: "600",
+              fontSize: "24px",
+              lineHeight: "22px",
+            }}
+          >
+            Submit Task {questType === QuestType.VIDEO ? "Video" : ""}{" "}
+            {questType === QuestType.IMAGE ? "Image" : ""}
           </Typography>
           <Box
             component="form"
@@ -232,7 +338,16 @@ const Task = (props: any) => {
                   ? handleInputChange
                   : handleFileChange
               }
-              sx={{ width: isMobileView ? "90%" : "400px" }}
+              sx={{
+                width: isMobile ? "90%" : "400px",
+                backgroundColor: "white",
+                boxShadow:
+                  "rgba(0, 0, 0, 0.05) 0px 0px 0px 1px, rgba(0, 0, 0, 0.1) 0px 2px 3px",
+                borderRadius: "5px",
+                ":hover": {
+                  boxShadow: "rgba(0, 0, 0, 0.15) 0px 1px 2px",
+                },
+              }}
               multiline={questType === QuestType.TEXT}
               maxRows={5}
             />
@@ -240,7 +355,13 @@ const Task = (props: any) => {
             <Button
               type="submit"
               variant="contained"
-              sx={{ mt: 3, mb: 2, width: isMobileView ? "90%" : "400px" }}
+              sx={{
+                mt: 3,
+                mb: 2,
+                width: isMobile ? "90%" : "400px",
+                boxShadow:
+                  "rgba(0, 0, 0, 0.05) 0px 0px 0px 1px, rgba(0, 0, 0, 0.1) 0px 2px 3px",
+              }}
               disabled={
                 questType === QuestType.TEXT
                   ? submission.text === ""
@@ -251,16 +372,21 @@ const Task = (props: any) => {
             </Button>
           </Box>
         </Box>
-        <br></br>
-        <div>{submitTaskStatus}</div>
+        <div
+          style={{
+            color: "red",
+          }}
+        >
+          {submitTaskStatus}
+        </div>
       </div>
     );
   }, [
     handleFileChange,
     handleInputChange,
     handleSubmit,
-    isMobileView,
-    questSubmissions.questType,
+    isMobile,
+    questSubmissions,
     submission.file,
     submission.text,
     submitTaskStatus,
@@ -274,40 +400,80 @@ const Task = (props: any) => {
       <Box component="main" sx={{ p: 3 }}>
         {questSubmissions && (
           <div>
-            <h2
+            <div
               style={{
-                marginBottom: "0px",
+                display: "flex",
+                //alignItems: "center",
+                maxWidth: "960px",
               }}
             >
-              Task {questSubmissions?.questName}
-            </h2>
-            <div>
-              <h4
+              {questSubmissions.questStatus.toLocaleUpperCase() ===
+                QuestStatus.CORRECT && (
+                <CheckCircleOutlineIcon
+                  fontSize={isMobile ? "small" : "large"}
+                  style={{
+                    marginTop: isMobile ? "6px" : "0px",
+                    color: "green",
+                  }}
+                />
+              )}
+              {questSubmissions.questStatus.toLocaleUpperCase() ===
+                QuestStatus.PENDING && (
+                <AccessTimeOutlinedIcon
+                  fontSize={isMobile ? "small" : "large"}
+                  style={{
+                    marginTop: isMobile ? "6px" : "0px",
+                  }}
+                />
+              )}
+              {questSubmissions.questStatus.toLocaleUpperCase() ===
+                QuestStatus.WRONG && (
+                <HighlightOffOutlinedIcon
+                  fontSize={isMobile ? "small" : "large"}
+                  style={{
+                    marginTop: isMobile ? "6px" : "0px",
+                  }}
+                />
+              )}
+              <h2
                 style={{
+                  marginLeft:
+                    questSubmissions.questStatus.toLocaleUpperCase() !==
+                    QuestStatus.NOTATTEMPTED
+                      ? "10px"
+                      : "0px",
                   marginTop: "0px",
-                  marginBottom: "0px",
-                  marginLeft: "5px",
                 }}
               >
-                {" " + questSubmissions.questDescription}
-              </h4>
-              {/* Status */}
-              <h4
-                style={{
-                  marginTop: "0px",
-                  marginLeft: "5px",
-                }}
-              >
-                Task Status : {questSubmissions.questStatus}
-              </h4>
+                <span
+                  style={{
+                    fontWeight: "600",
+                    whiteSpace: "nowrap",
+                    fontSize: "24px",
+                    color: "rgb(12, 26, 68)",
+                    lineHeight: "32px",
+                  }}
+                >
+                  {questSubmissions?.questName} :{" "}
+                </span>
+                <span
+                  style={{
+                    width: "300px",
+                    paddingTop: "3px",
+                    fontSize: "20px",
+                    fontWeight: "400",
+                    color: "rgb(68, 68, 68)",
+                    lineHeight: "32px",
+                  }}
+                >
+                  {questSubmissions.questDescription}
+                </span>
+              </h2>
             </div>
           </div>
         )}
         <div>{submitTaskJSX}</div>
-        <div>
-          <h2>Submissions</h2>
-          {submssionsJSX}
-        </div>
+        <div>{submssionsJSX}</div>
       </Box>
     </div>
   );

@@ -67,6 +67,7 @@ const LeaderboardProxy = () => {
       rows={rows}
       _columnsNames={columnsNames}
       pageNumber={pageNumber}
+      totalUsers={leaderboardData.totalUsers}
     />
   );
 };

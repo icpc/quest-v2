@@ -1,11 +1,5 @@
 import React from "react";
-import {
-  checkUserAuthentication,
-  localStorageGetItemWithExpiry,
-} from "../../utils/helper";
-import { useNavigate, useParams } from "react-router-dom";
-import { getLeaderboard } from "../../utils/requests";
-import { ILeaderboard } from "./leaderboard.types";
+import { useNavigate } from "react-router-dom";
 import { styled } from "@mui/material/styles";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -37,9 +31,9 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 }));
 
 const LeaderBoard = (props: any) => {
-  const { rows, _columnsNames, pageNumber } = props;
+  const { rows, _columnsNames, pageNumber, totalUsers } = props;
+  console.log(totalUsers);
   const navigate = useNavigate();
-  console.log("rows ", rows);
   const handleChange = React.useCallback(
     (event: React.ChangeEvent<unknown>, value: number) => {
       navigate(`/leaderboard/${value}`);
@@ -91,7 +85,7 @@ const LeaderBoard = (props: any) => {
           </div>
         </div>
         <Pagination
-          count={10}
+          count={Math.ceil(totalUsers / 2)}
           style={{
             display: "flex",
             alignItems: "center",
@@ -103,7 +97,7 @@ const LeaderBoard = (props: any) => {
         />
       </div>
     );
-  }, [_columnsNames, handleChange, pageNumber, rows]);
+  }, [_columnsNames, handleChange, pageNumber, rows, totalUsers]);
 
   return <>{leaderboardTableJSX}</>;
 };

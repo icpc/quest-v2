@@ -126,7 +126,7 @@ export default function DrawerAppBar(props: Props) {
                   if (item === "HOME") {
                     navigate("/home");
                   } else if (item === "LEADERBOARD") {
-                    navigate("/leaderboard");
+                    navigate("/leaderboard/1");
                   }
                 }}
                 disablePadding
@@ -208,7 +208,7 @@ export default function DrawerAppBar(props: Props) {
                     if (item === "HOME") {
                       navigate("/home");
                     } else if (item === "LEADERBOARD") {
-                      navigate("/leaderboard");
+                      navigate("/leaderboard/1");
                     }
                   }}
                 >

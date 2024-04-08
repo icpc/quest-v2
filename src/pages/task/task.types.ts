@@ -73,6 +73,6 @@ export interface QuestSubmissions {
   questType: string;
   questDescription: string;
   questStatus: string;
-  questAcceptSubmission: boolean;
+  questAcceptSubmissions: boolean;
   submissions: QuestSubmission[];
 }

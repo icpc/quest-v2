@@ -43,4 +43,5 @@ export interface LeaderboardPerson {
 
 export interface ILeaderboard {
   result: LeaderboardPerson[];
+  totalUsers: number;
 }

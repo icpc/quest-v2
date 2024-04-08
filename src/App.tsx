@@ -10,7 +10,12 @@ import { Toolbar } from "@mui/material";
 const App = () => {
   return (
     <BrowserRouter>
-      <div className="container">
+      <div
+        className="container"
+        style={{
+          backgroundColor: "#f8fbfd",
+        }}
+      >
         <DrawerAppBar />
         <Toolbar />
         <Routes>

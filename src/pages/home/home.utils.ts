@@ -14,11 +14,14 @@ export const aggregateQuestsByDate = (quests: any): QuestsDays[] => {
       type: quest.type,
       description: quest.description,
       status: quest.status,
+      totalAc: quest?.totalAc,
     });
   });
   const daysQuestsArray = Object.keys(questsDaysDic).map((key) => ({
     date: key,
     detailsQuests: questsDaysDic[key],
   }));
+  console.log(daysQuestsArray);
+
   return daysQuestsArray;
 };

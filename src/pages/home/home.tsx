@@ -1,14 +1,6 @@
 import React from "react";
-import DrawerAppBar from "../../componetns/header/header";
 import { useNavigate } from "react-router-dom";
-import {
-  Toolbar,
-  Typography,
-  Box,
-  Card,
-  CardContent,
-  Grid,
-} from "@mui/material";
+import { Typography, Box, Card, CardContent, Grid } from "@mui/material";
 import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
@@ -19,7 +11,10 @@ import HighlightOffOutlinedIcon from "@material-ui/icons/HighlightOffOutlined";
 import StarBorderOutlinedIcon from "@material-ui/icons/StarBorderOutlined";
 import { QuestsDays, QuestStatus } from "./home.types";
 import { aggregateQuestsByDate } from "./home.utils";
+
 const Home = (pros: any) => {
+  const isMobile = window?.innerWidth <= 500;
+
   const navigate = useNavigate();
   const quests = pros.quests;
   const [questsDays, setQuestsDays] = React.useState<QuestsDays[]>(
@@ -27,7 +22,8 @@ const Home = (pros: any) => {
   );
 
   const daysTasksListJSX = React.useCallback(() => {
-    return questsDays.map((questDay, index) => {
+    const questsDaysRev = [...questsDays].reverse();
+    return questsDaysRev.map((questDay, index) => {
       const expanded = index === 0;
       const date = new Date(questDay.date);
       const dateFormated = date.toLocaleDateString("en-US", {
@@ -42,20 +38,24 @@ const Home = (pros: any) => {
       return (
         <Accordion
           defaultExpanded={expanded}
+          key={index}
           style={{
-            marginBottom: "30px",
+            boxShadow: "rgba(0, 0, 0, 0.15) 0px 1px 2px",
           }}
         >
           <AccordionSummary
             expandIcon={<ExpandMoreIcon />}
             aria-controls="panel1a-content"
             id="panel1a-header"
+            style={{
+              paddingLeft: isMobile ? "4px" : "10px",
+            }}
           >
-            <Typography variant="h3">
+            <Typography variant={isMobile ? "h6" : "h3"}>
               {dateFormated}
               {[...Array(numberOfCorrectTasks)].map((e, i) => (
                 <StarBorderOutlinedIcon
-                  fontSize="large"
+                  fontSize={isMobile ? "small" : "large"}
                   key={i}
                   style={{
                     marginLeft: i === 0 ? "20px" : "0px",
@@ -64,7 +64,13 @@ const Home = (pros: any) => {
               ))}
             </Typography>
           </AccordionSummary>
-          <AccordionDetails>
+          <AccordionDetails
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              padding: isMobile ? "5px" : "10px",
+            }}
+          >
             <Grid gap={3} container>
               {questDay?.detailsQuests.map((quest, index) => {
                 const questStatus = quest?.status?.toLocaleUpperCase();
@@ -88,8 +94,8 @@ const Home = (pros: any) => {
                     <Card
                       sx={{
                         display: "flex",
-                        width: 300,
-                        height: 200,
+                        width: isMobile ? "150px" : "300px",
+                        height: isMobile ? "150px" : "200px",
                         backgroundColor: bkColor,
                         color: color,
                         cursor: "pointer",
@@ -108,36 +114,65 @@ const Home = (pros: any) => {
                         <div
                           style={{
                             display: "flex",
-                            gap: "15px",
-                            textAlign: "center",
-                            fontSize: "27px",
+                            justifyContent: "space-between",
                             alignItems: "center",
                           }}
                         >
-                          {questStatus === QuestStatus.CORRECT && (
-                            <CheckCircleOutlineIcon fontSize="large" />
-                          )}
-                          {questStatus === QuestStatus.PENDING && (
-                            <AccessTimeOutlinedIcon fontSize="large" />
-                          )}
-                          {questStatus === QuestStatus.WRONG && (
-                            <HighlightOffOutlinedIcon fontSize="large" />
-                          )}
-                          {quest.name}
+                          <div
+                            style={{
+                              display: "flex",
+                              gap: isMobile ? "5px" : "15px",
+                              textAlign: "center",
+                              fontSize: isMobile ? "12px" : "27px",
+                              alignItems: "center",
+                            }}
+                          >
+                            {questStatus === QuestStatus.CORRECT && (
+                              <CheckCircleOutlineIcon
+                                fontSize={isMobile ? "small" : "large"}
+                              />
+                            )}
+                            {questStatus === QuestStatus.PENDING && (
+                              <AccessTimeOutlinedIcon
+                                fontSize={isMobile ? "small" : "large"}
+                              />
+                            )}
+                            {questStatus === QuestStatus.WRONG && (
+                              <HighlightOffOutlinedIcon
+                                fontSize={isMobile ? "small" : "large"}
+                              />
+                            )}
+                            {quest.name}
+                          </div>
+                          <div
+                            style={{
+                              display: "flex",
+                              textAlign: "center",
+                              fontSize: isMobile ? "12px" : "27px",
+                              alignItems: "center",
+                            }}
+                          >
+                            {quest?.totalAc}{" "}
+                          </div>
                         </div>
                         <div
                           style={{
-                            height: "83%",
+                            // height: "83%",
+                            marginTop: "10px",
+                            height: isMobile ? "95px" : "100%",
+                            overflowY: "auto",
                           }}
                         >
                           <Typography
                             variant="body2"
                             sx={{
                               display: "flex",
-                              justifyContent: "center",
+                              justifyContent: isMobile ? "left" : "center",
                               width: "100%",
-                              height: "100%",
-                              alignItems: "center",
+                              alignItems: isMobile ? "left" : "center",
+                              marginBottom: "11px",
+                              overflowY: "auto",
+                              height: isMobile ? "auto" : "120px",
                             }}
                           >
                             {quest.description}
@@ -153,11 +188,11 @@ const Home = (pros: any) => {
         </Accordion>
       );
     });
-  }, [navigate, questsDays]);
+  }, [isMobile, navigate, questsDays]);
 
   return (
     <div>
-      <Box component="main" sx={{ p: 3 }}>
+      <Box component="main" sx={{ p: isMobile ? 1 : 3 }}>
         {daysTasksListJSX()}
       </Box>
     </div>

@@ -12,6 +12,7 @@ interface Quest {
   description: string;
   status: string;
   date: string;
+  totalAc: string;
 }
 
 export interface QuestsDays {

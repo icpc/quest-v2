@@ -18,8 +18,8 @@ const defaultTheme = createTheme();
 
 export default function SignIn() {
   const navigate = useNavigate();
-
   const isAuthenticated = checkUserAuthentication();
+  const [isLoginLoading, setIsLoginLoading] = React.useState(false);
 
   React.useEffect(() => {
     if (isAuthenticated) {
@@ -29,20 +29,21 @@ export default function SignIn() {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setIsLoginLoading(true);
     const data = new FormData(event.currentTarget);
     const email = data.get("email");
     const password = data.get("password");
     const newLogin = await login({ email, password });
-    console.log(newLogin);
     if (newLogin !== null) {
-      localStorageSetItemWithExpiry("isAuthenticated", "true", 10000000);
-      localStorageSetItemWithExpiry("userInfo", newLogin, 10000000);
+      localStorageSetItemWithExpiry("isAuthenticated", "true", 10000000000);
+      localStorageSetItemWithExpiry("userInfo", newLogin, 10000000000);
       window.location.href = "/home";
     } else {
       localStorageRemoveItem("isAuthenticated");
       localStorageRemoveItem("userInfo");
       alert("Invalid credentials");
     }
+    setIsLoginLoading(false);
   };
 
   return (
@@ -92,6 +93,7 @@ export default function SignIn() {
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
+              disabled={isLoginLoading}
             >
               Sign In
             </Button>

@@ -108,6 +108,9 @@ function ImgMediaCard(submission: any, index: number, userName: string) {
             if (submissionTypeUpper === QuestType.TEXT) return;
             window.open(answer, "_blank");
           }}
+          style={{
+            height: "195px",
+          }}
         />
       )}
       <CardContent
@@ -212,13 +215,10 @@ const Task = (props: any) => {
   );
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const handleSubmit = async (event: any) => {
-    console.log(submission);
     event.preventDefault();
     setSubmitTaskStatus("Submitting task");
     const newSubmit = await submitTask(submission, userInfo);
     if (newSubmit) {
-      console.log(newSubmit);
-      setSubmitTaskStatus("Task submitted successfully");
       const newQuestSubmissions = { ...questSubmissions };
       if (
         questSubmissions?.questType?.toLocaleUpperCase() === QuestType.IMAGE ||
@@ -241,6 +241,7 @@ const Task = (props: any) => {
         });
       }
       setQuestSubmissions(newQuestSubmissions);
+      setSubmitTaskStatus("Task submitted successfully");
     } else {
       setSubmitTaskStatus("Error submitting task");
     }
@@ -371,9 +372,10 @@ const Task = (props: any) => {
                   "rgba(0, 0, 0, 0.05) 0px 0px 0px 1px, rgba(0, 0, 0, 0.1) 0px 2px 3px",
               }}
               disabled={
-                questType === QuestType.TEXT
+                submitTaskStatus === "Submitting task" ||
+                (questType === QuestType.TEXT
                   ? submission.text === ""
-                  : submission.file === null
+                  : submission.file === null)
               }
             >
               Submit
@@ -395,8 +397,6 @@ const Task = (props: any) => {
     handleSubmit,
     isMobile,
     questSubmissions,
-    submission.file,
-    submission.text,
     submitTaskStatus,
   ]);
 

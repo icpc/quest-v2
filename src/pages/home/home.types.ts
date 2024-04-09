@@ -5,7 +5,7 @@ export enum QuestStatus {
   WRONG = "WRONG",
 }
 
-interface Quest {
+export interface Quest {
   id: number;
   name: string;
   type: string;
@@ -13,6 +13,7 @@ interface Quest {
   status: string;
   date: string;
   totalAc: string;
+  category: string;
 }
 
 export interface QuestsDays {

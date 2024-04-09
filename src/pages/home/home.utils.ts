@@ -1,9 +1,9 @@
-import { QuestsDays } from "./home.types";
+import { QuestsDays, Quest } from "./home.types";
 
-export const aggregateQuestsByDate = (quests: any): QuestsDays[] => {
+export const aggregateQuestsByDate = (quests: Quest[]): QuestsDays[] => {
   if (!quests) return [] as QuestsDays[];
   const questsDaysDic: any = {};
-  quests.forEach((quest: any) => {
+  quests.forEach((quest: Quest) => {
     const date = quest?.date?.split("T")[0];
     if (!questsDaysDic[date]) {
       questsDaysDic[date] = [];
@@ -15,13 +15,21 @@ export const aggregateQuestsByDate = (quests: any): QuestsDays[] => {
       description: quest.description,
       status: quest.status,
       totalAc: quest?.totalAc,
+      category: quest?.category,
     });
   });
   const daysQuestsArray = Object.keys(questsDaysDic).map((key) => ({
     date: key,
     detailsQuests: questsDaysDic[key],
   }));
-  console.log(daysQuestsArray);
+
+  daysQuestsArray.sort((a, b) => {
+    const dateA = new Date(a.date);
+    const dateB = new Date(b.date);
+    return dateA > dateB ? -1 : dateA < dateB ? 1 : 0;
+  });
+
+  daysQuestsArray.reverse();
 
   return daysQuestsArray;
 };

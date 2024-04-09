@@ -29,6 +29,19 @@
 
 */
 
+export enum QuestStatus {
+  PENDING = "PENDING",
+  NOTATTEMPTED = "NOT ATTEMPTED",
+  CORRECT = "ACCEPTED",
+  WRONG = "WRONG",
+}
+
+interface Quest {
+  id: string;
+  name: string;
+  status: string;
+}
+
 export interface LeaderboardPerson {
   rank: number;
   firstName: string;
@@ -38,10 +51,11 @@ export interface LeaderboardPerson {
   totalPerDay: {
     date: string;
     total: string;
+    quests: Quest[];
   }[];
 }
-
 export interface ILeaderboard {
   result: LeaderboardPerson[];
   totalUsers: number;
+  curUser: LeaderboardPerson;
 }

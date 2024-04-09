@@ -18,9 +18,8 @@ const TaskProxy = () => {
   const navigate = useNavigate();
   const [isQuestsSubmissionsLoading, setIsQuestsSubmissionsLoading] =
     React.useState(true);
-  const [questSubmissions, setQuestSubmissions] = React.useState<
-    QuestSubmissions[]
-  >([]);
+  const [questSubmissions, setQuestSubmissions] =
+    React.useState<QuestSubmissions | null>({} as QuestSubmissions);
   React.useEffect(() => {
     if (!isAuthenticated) {
       navigate("/login");
@@ -32,6 +31,9 @@ const TaskProxy = () => {
       getQuestSubmissions(questId, userInfo).then((response) => {
         if (response) {
           setQuestSubmissions(response);
+          setIsQuestsSubmissionsLoading(false);
+        } else {
+          setQuestSubmissions(null);
           setIsQuestsSubmissionsLoading(false);
         }
       });
@@ -45,6 +47,9 @@ const TaskProxy = () => {
 
   if (isQuestsSubmissionsLoading) {
     return <div>Loading...</div>;
+  }
+  if (!questSubmissions || !questSubmissions.id) {
+    return <div>This quest not found</div>;
   }
   return (
     <Task

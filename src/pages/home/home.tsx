@@ -17,10 +17,9 @@ const Home = (pros: any) => {
 
   const navigate = useNavigate();
   const quests = pros.quests;
-  const [questsDays, setQuestsDays] = React.useState<QuestsDays[]>(
+  const [questsDays] = React.useState<QuestsDays[]>(
     aggregateQuestsByDate(quests)
   );
-
   const daysTasksListJSX = React.useCallback(() => {
     const questsDaysRev = [...questsDays].reverse();
     return questsDaysRev.map((questDay, index) => {
@@ -142,7 +141,7 @@ const Home = (pros: any) => {
                                 fontSize={isMobile ? "small" : "large"}
                               />
                             )}
-                            {quest.name}
+                            {quest.category}
                           </div>
                           <div
                             style={{
@@ -175,7 +174,7 @@ const Home = (pros: any) => {
                               height: isMobile ? "auto" : "120px",
                             }}
                           >
-                            {quest.description}
+                            {quest.name}
                           </Typography>
                         </div>
                       </CardContent>

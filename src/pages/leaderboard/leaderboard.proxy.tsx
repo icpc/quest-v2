@@ -21,6 +21,7 @@ const LeaderboardProxy = () => {
     React.useState<ILeaderboard | null>(null);
   const [rows, setRows] = React.useState<any>([]);
   const [columnsNames, setColumnsNames] = React.useState<string[]>([]);
+  const [curUser, setCurUser] = React.useState<any>(null);
 
   React.useEffect(() => {
     if (!isAuthenticated) {
@@ -33,14 +34,34 @@ const LeaderboardProxy = () => {
       getLeaderboard(pageNumber, userInfo).then((response) => {
         if (response) {
           setLeaderboardData(response);
+          if (response?.result.length === 0 || response?.result === undefined) {
+            setIsLoadingLeaderboard(false);
+            return;
+          }
           const rowsData = response?.result.map((person: any) => {
             return {
               name: `${person.firstName} ${person.lastName}`,
               rank: person.rank,
               total: person.total,
               totalPerday: person.totalPerDay,
+              email: person?.email,
             };
           });
+
+          if (
+            response.curUser &&
+            rowsData.length > 0 &&
+            !rowsData.find((row: any) => row.email === response.curUser?.email)
+          ) {
+            rowsData.push({
+              name: `${response.curUser.firstName} ${response.curUser.lastName}`,
+              rank: response.curUser?.rank,
+              total: response.curUser?.total,
+              totalPerday: response?.curUser?.totalPerDay,
+              email: response?.curUser?.email,
+            });
+            rowsData.sort((a: any, b: any) => a.rank - b.rank);
+          }
           setRows(() => rowsData);
           const columnsNamesData = ["Rank", "Name", "Total"];
           const dates = response?.result[0].totalPerDay.map((date: any) =>
@@ -51,7 +72,9 @@ const LeaderboardProxy = () => {
               columnsNamesData.push(date);
             });
           }
+
           setColumnsNames(columnsNamesData);
+          setCurUser(response.curUser);
           setIsLoadingLeaderboard(false);
         }
       });
@@ -61,13 +84,16 @@ const LeaderboardProxy = () => {
   if (isLoadingLeaderboard || !leaderboardData) {
     return <div>Loading...</div>;
   }
-
+  if (!leaderboardData?.result || leaderboardData?.result.length === 0) {
+    return <div>No users found</div>;
+  }
   return (
     <LeaderBoard
       rows={rows}
       _columnsNames={columnsNames}
       pageNumber={pageNumber}
       totalUsers={leaderboardData.totalUsers}
+      curUser={curUser}
     />
   );
 };

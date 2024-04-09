@@ -67,7 +67,7 @@ export interface QuestSubmission {
   submissionType: string;
 }
 export interface QuestSubmissions {
-  questId: number;
+  id: number;
   questName: string;
   questDate: string;
   questType: string;

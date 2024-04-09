@@ -17,6 +17,8 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import AccessTimeOutlinedIcon from "@material-ui/icons/AccessTimeOutlined";
 import HighlightOffOutlinedIcon from "@material-ui/icons/HighlightOffOutlined";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { useNavigate } from "react-router-dom";
 
 function formatDateToCustomFormat(date: Date) {
   const months = [
@@ -49,14 +51,13 @@ function formatDateToCustomFormat(date: Date) {
 }
 
 function ImgMediaCard(submission: any, index: number, userName: string) {
-  const { id, name, description, status, submissionType, answer, uploadTime } =
-    submission;
+  const { status, submissionType, answer, uploadTime } = submission;
   const submissionTypeUpper = submissionType?.toLocaleUpperCase();
   return (
     <Card
       sx={{
         width: 345,
-        height: 260,
+        height: 300,
         maxWidth: 345,
         minWidth: 150,
         display: "flex",
@@ -66,11 +67,6 @@ function ImgMediaCard(submission: any, index: number, userName: string) {
           "rgba(0, 0, 0, 0.05) 0px 0px 0px 1px, rgba(0, 0, 0, 0.1) 0px 2px 3px",
         cursor: "pointer",
       }}
-      onClick={() => {
-        // open the submission answer in a new tab
-        if (submissionTypeUpper === QuestType.TEXT) return;
-        window.open(answer, "_blank");
-      }}
     >
       {submissionTypeUpper === QuestType.IMAGE ? (
         <CardMedia
@@ -78,6 +74,11 @@ function ImgMediaCard(submission: any, index: number, userName: string) {
           height="195"
           image={answer}
           alt="green iguana"
+          onClick={() => {
+            // open the submission answer in a new tab
+            if (submissionTypeUpper === QuestType.TEXT) return;
+            window.open(answer, "_blank");
+          }}
         />
       ) : submissionTypeUpper === QuestType.TEXT ? (
         <CardContent>
@@ -101,7 +102,12 @@ function ImgMediaCard(submission: any, index: number, userName: string) {
           // className={classes.media}
           image={answer}
           controls
-          autoPlay={index === 0 ? true : false}
+          //autoPlay={index === 0 ? true : false}
+          onClick={() => {
+            // open the submission answer in a new tab
+            if (submissionTypeUpper === QuestType.TEXT) return;
+            window.open(answer, "_blank");
+          }}
         />
       )}
       <CardContent
@@ -145,6 +151,7 @@ const Task = (props: any) => {
   const isMobile = window?.innerWidth <= 500;
   const questId = props.questId;
   const userInfo = props.userInfo;
+  const navigate = useNavigate();
   const [questSubmissions, setQuestSubmissions] = useState<QuestSubmissions>(
     props.questSubmissions
   );
@@ -167,6 +174,7 @@ const Task = (props: any) => {
       setSubmission({ ...submission, text: event.target.value });
       // eslint-disable-next-line react-hooks/exhaustive-deps
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   );
 
@@ -407,6 +415,19 @@ const Task = (props: any) => {
                 maxWidth: "960px",
               }}
             >
+              <div
+                style={{
+                  display: "flex",
+                  cursor: "pointer",
+                  marginTop: "5px",
+                }}
+                onClick={() => {
+                  // navigate back to the home page
+                  navigate("/home");
+                }}
+              >
+                <ArrowBackIcon />
+              </div>
               {questSubmissions.questStatus.toLocaleUpperCase() ===
                 QuestStatus.CORRECT && (
                 <CheckCircleOutlineIcon
@@ -448,25 +469,16 @@ const Task = (props: any) => {
                 <span
                   style={{
                     fontWeight: "600",
-                    whiteSpace: "nowrap",
                     fontSize: "24px",
                     color: "rgb(12, 26, 68)",
                     lineHeight: "32px",
                   }}
                 >
-                  {questSubmissions?.questName} :{" "}
-                </span>
-                <span
-                  style={{
-                    width: "300px",
-                    paddingTop: "3px",
-                    fontSize: "20px",
-                    fontWeight: "400",
-                    color: "rgb(68, 68, 68)",
-                    lineHeight: "32px",
-                  }}
-                >
-                  {questSubmissions.questDescription}
+                  <div
+                    dangerouslySetInnerHTML={{
+                      __html: questSubmissions.questDescription,
+                    }}
+                  ></div>
                 </span>
               </h2>
             </div>

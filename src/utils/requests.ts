@@ -77,89 +77,6 @@ export const getQuests = async (userInfo: any) => {
 };
 
 export const getQuestSubmissions = async (questId: any, userInfo: any) => {
-  /*
-     mock response to be 
-     {
-       questId : 1,
-       questName: "Quest 1"
-       questDate : "2021-10-10T10:00:00",
-       questType : "VIDEO",
-       questDescription : "Create a video",
-       questStatus : "PENDING",
-       "submissions": [
-        {
-          id : 1,
-          value : "35de78e9-357d-4b87-8f3a-d9dc0672825b.mp4",
-          uploadTime : "2021-10-10T10:00:00",
-          status : "PENDING",
-          submissionType : "VIDEO"
-        },
-        {
-          id : 2,
-          value : "35de78e9-357d-4b87-8f3a-d9dc0672825b.mp4",
-          uploadTime : "2021-10-10T10:00:00",
-          status : "PENDING",
-          submissionType : "VIDEO"
-        },
-        {
-          id : 3,
-          value : "35de78e9-357d-4b87-8f3a-d9dc0672825b.mp4",
-          uploadTime : "2021-10-10T10:00:00",
-          status : "PENDING",
-          submissionType : "VIDEO"
-        },
-        {
-          id : 4,
-          value : "35de78e9-357d-4b87-8f3a-d9dc0672825b.mp4",
-          uploadTime : "2021-10-10T10:00:00",
-          status : "PENDING",
-          submissionType : "VIDEO"
-        },
-        {
-          id : 5,
-          value : "35de78e9-357d-4b87-8f3a-d9dc0672825b.mp4",
-          uploadTime : "2021-10-10T10:00:00",
-          status : "PENDING",
-          submissionType : "VIDEO"
-        }
-       ]
-     }
-  */
-
-  // const mockResponseGetQuestSubmissions = {
-  //   questId: 1,
-  //   questName: "Quest 1",
-  //   questDate: "2021-10-10T10:00:00",
-  //   questType: "TEXT",
-  //   questDescription: "Find this unique arabic hexagonal pattern ",
-  //   questStatus: "PENDING",
-  //   submissions: [
-  //     {
-  //       id: 1,
-  //       value: "01591dbc-a659-4b16-8391-2ad5dcd42509.jpeg",
-  //       uploadTime: "2021-10-10T10:00:00",
-  //       status: "PENDING",
-  //       submissionType: "image",
-  //     },
-  //     {
-  //       id: 2,
-  //       value: "3-8d80f8ef-5773-4d44-9256-ddf4c8600c5e.mp4",
-  //       uploadTime: "2021-10-10T10:00:00",
-  //       status: "PENDING",
-  //       submissionType: "video",
-  //     },
-  //     {
-  //       id: 3,
-  //       value: "Tourist is the best competitive programmer",
-  //       uploadTime: "2021-10-10T10:00:00",
-  //       status: "PENDING",
-  //       submissionType: "text",
-  //     },
-  //   ],
-  // };
-
-  // return mockResponseGetQuestSubmissions;
-
   try {
     const response = await fetch(
       `https://icpcquestapi.azurewebsites.net/api/get-quest-submissions`,
@@ -193,7 +110,7 @@ export const getLeaderboard = async (pageNumber: any, userInfo: any) => {
         method: "GET",
         headers: {
           Authorization: `Bearer ${userInfo?.token}`,
-          "page-size": "2",
+          "page-size": "10",
         },
       }
     ).then((response) => {

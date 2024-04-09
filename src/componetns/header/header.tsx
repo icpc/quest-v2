@@ -38,7 +38,7 @@ export default function DrawerAppBar(props: Props) {
     localStorageGetItemWithExpiry("userInfo")
   );
 
-  const [navItems, setNavItems] = React.useState([
+  const [navItems] = React.useState([
     "HOME",
     "LEADERBOARD",
     userInfo?.user?.email,

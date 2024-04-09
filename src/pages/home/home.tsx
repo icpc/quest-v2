@@ -21,7 +21,7 @@ const Home = (pros: any) => {
     aggregateQuestsByDate(quests)
   );
   const daysTasksListJSX = React.useCallback(() => {
-    const questsDaysRev = [...questsDays].reverse();
+    const questsDaysRev = [...questsDays];
     return questsDaysRev.map((questDay, index) => {
       const expanded = index === 0;
       const date = new Date(questDay.date);

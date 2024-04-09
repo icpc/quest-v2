@@ -23,13 +23,5 @@ export const aggregateQuestsByDate = (quests: Quest[]): QuestsDays[] => {
     detailsQuests: questsDaysDic[key],
   }));
 
-  daysQuestsArray.sort((a, b) => {
-    const dateA = new Date(a.date);
-    const dateB = new Date(b.date);
-    return dateA > dateB ? -1 : dateA < dateB ? 1 : 0;
-  });
-
-  daysQuestsArray.reverse();
-
   return daysQuestsArray;
 };

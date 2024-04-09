@@ -125,3 +125,63 @@ export const getLeaderboard = async (pageNumber: any, userInfo: any) => {
     return null;
   }
 };
+
+export const getQuestsSubmissions = async (status: string, userInfo: any) => {
+  try {
+    const response = await fetch(
+      `https://icpcquestapi.azurewebsites.net/api/get-all-quests-submissions`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${userInfo?.token}`,
+          status: status,
+        },
+      }
+    ).then((response) => {
+      if (response.status === 200) {
+        return response.json();
+      }
+      return null;
+    });
+    return response;
+  } catch (error) {
+    console.error("Error:", error);
+    return null;
+  }
+};
+
+export const updateQuestSubmissionStatus = async (
+  submissionId: string,
+  status: string,
+  userInfo: any,
+  email: string,
+  questId: string
+) => {
+  try {
+    const response = await fetch(
+      `https://icpcquestapi.azurewebsites.net/api/update-submission-status`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${userInfo?.token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          id: submissionId,
+          status: status,
+          userId: email,
+          questId: questId,
+        }),
+      }
+    ).then((response) => {
+      if (response.status === 200) {
+        return true;
+      }
+      return null;
+    });
+    return response;
+  } catch (error) {
+    console.error("Error:", error);
+    return null;
+  }
+};

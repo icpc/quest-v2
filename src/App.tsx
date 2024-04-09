@@ -6,6 +6,7 @@ import HomeProxy from "./pages/home/home.proxy";
 import Leaderboard from "./pages/leaderboard/leaderboard.proxy";
 import DrawerAppBar from "./componetns/header/header";
 import { Toolbar } from "@mui/material";
+import Admin from "./pages/adminTable/admin";
 
 const App = () => {
   return (
@@ -29,6 +30,8 @@ const App = () => {
             element={<Leaderboard />}
           />
           <Route index path="/leaderboard" element={<Leaderboard />} />
+          <Route index path="/admin/submissionsTable" element={<Admin />} />
+          <Route path="*" element={<div>Not Found</div>} />
         </Routes>
       </div>
     </BrowserRouter>

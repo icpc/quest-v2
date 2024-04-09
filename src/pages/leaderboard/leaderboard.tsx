@@ -232,7 +232,7 @@ const LeaderBoard = (props: any) => {
           </div>
         </div>
         <Pagination
-          count={Math.ceil(totalUsers / 2)}
+          count={Math.ceil(totalUsers / 10)}
           style={{
             display: "flex",
             alignItems: "center",

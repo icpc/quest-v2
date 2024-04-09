@@ -397,6 +397,8 @@ const Task = (props: any) => {
     handleSubmit,
     isMobile,
     questSubmissions,
+    submission.file,
+    submission.text,
     submitTaskStatus,
   ]);
 

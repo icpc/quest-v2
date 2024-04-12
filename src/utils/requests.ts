@@ -26,6 +26,10 @@ export const submitTask = async (submission: any, userInfo: any) => {
     if (response.status === 200) {
       return response.json();
     }
+    if (response.status === 401) {
+      localStorage.removeItem("userInfo");
+      localStorage.removeItem("isAuthenticated");
+    }
     return null;
   } catch (error) {
     return null;
@@ -67,6 +71,10 @@ export const getQuests = async (userInfo: any) => {
       if (response.status === 200) {
         return response.json();
       }
+      if (response.status === 401) {
+        localStorage.removeItem("userInfo");
+        localStorage.removeItem("isAuthenticated");
+      }
       return null;
     });
     return response;
@@ -90,6 +98,10 @@ export const getQuestSubmissions = async (questId: any, userInfo: any) => {
     ).then((response) => {
       if (response.status === 200) {
         return response.json();
+      }
+      if (response.status === 401) {
+        localStorage.removeItem("userInfo");
+        localStorage.removeItem("isAuthenticated");
       }
       return null;
     });
@@ -117,6 +129,10 @@ export const getLeaderboard = async (pageNumber: any, userInfo: any) => {
       if (response.status === 200) {
         return response.json();
       }
+      if (response.status === 401) {
+        localStorage.removeItem("userInfo");
+        localStorage.removeItem("isAuthenticated");
+      }
       return null;
     });
     return response;
@@ -140,6 +156,10 @@ export const getQuestsSubmissions = async (status: string, userInfo: any) => {
     ).then((response) => {
       if (response.status === 200) {
         return response.json();
+      }
+      if (response.status === 401) {
+        localStorage.removeItem("userInfo");
+        localStorage.removeItem("isAuthenticated");
       }
       return null;
     });
@@ -176,6 +196,10 @@ export const updateQuestSubmissionStatus = async (
     ).then((response) => {
       if (response.status === 200) {
         return true;
+      }
+      if (response.status === 401) {
+        localStorage.removeItem("userInfo");
+        localStorage.removeItem("isAuthenticated");
       }
       return null;
     });

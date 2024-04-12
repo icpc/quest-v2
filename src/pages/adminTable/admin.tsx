@@ -16,6 +16,7 @@ import {
   getQuestsSubmissions,
   updateQuestSubmissionStatus,
 } from "../../utils/requests";
+import { ClipLoader } from "react-spinners";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -68,7 +69,21 @@ const Admin = () => {
   }, [userInfo]);
 
   if (isGetSubmissionsLoading) {
-    return <div>Loading...</div>;
+    return (
+      <div
+        style={{
+          position: "fixed",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+        }}
+      >
+        <ClipLoader color={"#123abc"} size={150} />
+      </div>
+    );
+  }
+  if (!questsSubmissions || questsSubmissions.length === 0) {
+    return <div>No submissions found</div>;
   }
   return (
     <TableContainer component={Paper}>
@@ -89,7 +104,7 @@ const Admin = () => {
                   <StyledTableRow key={submission.id}>
                     <StyledTableCell component="th" scope="row">
                       <a
-                        href={`/task/${questsSubmission.questId}`}
+                        href={`/quest/${questsSubmission.questId}`}
                         target="_blank"
                         rel="noreferrer"
                       >
@@ -98,7 +113,7 @@ const Admin = () => {
                     </StyledTableCell>
                     <StyledTableCell component="th" scope="row">
                       <a
-                        href={`/task/${questsSubmission.questId}`}
+                        href={`/quest/${questsSubmission.questId}`}
                         target="_blank"
                         rel="noreferrer"
                       >
@@ -139,7 +154,6 @@ const Admin = () => {
                             questsSubmission.email,
                             questsSubmission.questId
                           ).then((response) => {
-                            console.log(response);
                             if (response) {
                               alert("Accepted successfully");
                               setQuestsSubmissions(

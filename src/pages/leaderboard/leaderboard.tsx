@@ -92,11 +92,9 @@ function Row(props: any) {
                             height: "10px",
                           }}
                           onClick={() => {
-                            window.open("/task/" + quest.id, "_blank");
+                            window.open("/quest/" + quest.id, "_blank");
                           }}
-                          title={
-                            "Click to view the quest details " + quest.name
-                          }
+                          title={quest.name}
                         ></span>
                       );
                     })}
@@ -142,7 +140,7 @@ function Row(props: any) {
                             <TableRow
                               key={row.rank}
                               onClick={() => {
-                                window.open("/task/" + quest.id, "_blank");
+                                window.open("/quest/" + quest.id, "_blank");
                               }}
                               style={{ cursor: "pointer" }}
                             >

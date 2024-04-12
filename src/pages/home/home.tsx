@@ -50,7 +50,12 @@ const Home = (pros: any) => {
               paddingLeft: isMobile ? "4px" : "10px",
             }}
           >
-            <Typography variant={isMobile ? "h6" : "h3"}>
+            <Typography
+              variant={isMobile ? "h6" : "h3"}
+              style={{
+                fontSize: "2rem",
+              }}
+            >
               {dateFormated}
               {[...Array(numberOfCorrectTasks)].map((e, i) => (
                 <StarBorderOutlinedIcon
@@ -58,6 +63,7 @@ const Home = (pros: any) => {
                   key={i}
                   style={{
                     marginLeft: i === 0 ? "20px" : "0px",
+                    fontSize: "2rem",
                   }}
                 />
               ))}
@@ -93,14 +99,14 @@ const Home = (pros: any) => {
                     <Card
                       sx={{
                         display: "flex",
-                        width: isMobile ? "150px" : "300px",
-                        height: isMobile ? "150px" : "200px",
+                        width: isMobile ? "150px" : "250px",
+                        height: "150px",
                         backgroundColor: bkColor,
                         color: color,
                         cursor: "pointer",
                       }}
                       onClick={() => {
-                        navigate(`/task/${questId}`);
+                        navigate(`/quest/${questId}`);
                       }}
                     >
                       <CardContent
@@ -120,26 +126,24 @@ const Home = (pros: any) => {
                           <div
                             style={{
                               display: "flex",
-                              gap: isMobile ? "5px" : "15px",
+                              gap: "5px",
                               textAlign: "center",
-                              fontSize: isMobile ? "12px" : "27px",
+                              fontSize: isMobile ? "12px" : "1rem",
                               alignItems: "center",
+                              // marginLeft:
+                              //   questStatus === QuestStatus.NOTATTEMPTED
+                              //     ? "15px"
+                              //     : "0px",
                             }}
                           >
                             {questStatus === QuestStatus.CORRECT && (
-                              <CheckCircleOutlineIcon
-                                fontSize={isMobile ? "small" : "large"}
-                              />
+                              <CheckCircleOutlineIcon fontSize={"small"} />
                             )}
                             {questStatus === QuestStatus.PENDING && (
-                              <AccessTimeOutlinedIcon
-                                fontSize={isMobile ? "small" : "large"}
-                              />
+                              <AccessTimeOutlinedIcon fontSize={"small"} />
                             )}
                             {questStatus === QuestStatus.WRONG && (
-                              <HighlightOffOutlinedIcon
-                                fontSize={isMobile ? "small" : "large"}
-                              />
+                              <HighlightOffOutlinedIcon fontSize={"small"} />
                             )}
                             {quest.category}
                           </div>
@@ -147,36 +151,29 @@ const Home = (pros: any) => {
                             style={{
                               display: "flex",
                               textAlign: "center",
-                              fontSize: isMobile ? "12px" : "27px",
+                              fontSize: isMobile ? "12px" : "1rem",
                               alignItems: "center",
                             }}
                           >
                             {quest?.totalAc}{" "}
                           </div>
                         </div>
-                        <div
-                          style={{
-                            // height: "83%",
-                            marginTop: "10px",
-                            height: isMobile ? "95px" : "100%",
+
+                        <Typography
+                          variant="body2"
+                          sx={{
+                            display: "flex",
+                            justifyContent: "center",
+                            width: "100%",
+                            alignItems: "center",
                             overflowY: "auto",
+                            height: "120px",
+                            fontSize: isMobile ? "1rem" : "1.5rem",
+                            textAlign: "center",
                           }}
                         >
-                          <Typography
-                            variant="body2"
-                            sx={{
-                              display: "flex",
-                              justifyContent: isMobile ? "left" : "center",
-                              width: "100%",
-                              alignItems: isMobile ? "left" : "center",
-                              marginBottom: "11px",
-                              overflowY: "auto",
-                              height: isMobile ? "auto" : "120px",
-                            }}
-                          >
-                            {quest.name}
-                          </Typography>
-                        </div>
+                          {quest.name}
+                        </Typography>
                       </CardContent>
                     </Card>
                   </Grid>

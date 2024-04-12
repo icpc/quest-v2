@@ -7,7 +7,7 @@ import {
   QuestSubmission,
   QuestSubmissions,
   QuestType,
-} from "./task.types";
+} from "./quest.types";
 import CheckCircleOutlineIcon from "@material-ui/icons/CheckCircleOutline";
 
 import Card from "@mui/material/Card";
@@ -150,7 +150,7 @@ function ImgMediaCard(submission: any, index: number, userName: string) {
   );
 }
 
-const Task = (props: any) => {
+const Quest = (props: any) => {
   const isMobile = window?.innerWidth <= 500;
   const questId = props.questId;
   const userInfo = props.userInfo;
@@ -253,7 +253,16 @@ const Task = (props: any) => {
       !questSubmissions.submissions ||
       questSubmissions.submissions.length === 0
     )
-      return <h3>No submissions yet</h3>;
+      return (
+        <h3
+          style={{
+            fontSize: "1rem",
+            fontWeight: "400",
+          }}
+        >
+          No submissions yet
+        </h3>
+      );
     return (
       <>
         <h2>Submissions</h2>
@@ -280,7 +289,7 @@ const Task = (props: any) => {
     );
   }, [questSubmissions, userInfo.user.firstName, userInfo.user.lastName]);
 
-  const submitTaskJSX = React.useMemo(() => {
+  const submitQuestJSX = React.useMemo(() => {
     if (questSubmissions === null) return null;
 
     if (!questSubmissions?.questAcceptSubmissions) {
@@ -317,8 +326,7 @@ const Task = (props: any) => {
               margin: "0",
               fontFamily:
                 '"Segoe UI", "Segoe UI Web (West European)", "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif',
-              fontWeight: "600",
-              fontSize: "24px",
+              fontSize: "1rem",
               lineHeight: "22px",
             }}
           >
@@ -384,7 +392,11 @@ const Task = (props: any) => {
         </Box>
         <div
           style={{
-            color: "red",
+            color:
+              submitTaskStatus === "File type not supported" ||
+              submitTaskStatus === "Error submitting task"
+                ? "red"
+                : "black",
           }}
         >
           {submitTaskStatus}
@@ -424,7 +436,6 @@ const Task = (props: any) => {
                   marginTop: "5px",
                 }}
                 onClick={() => {
-                  // navigate back to the home page
                   navigate("/home");
                 }}
               >
@@ -470,15 +481,31 @@ const Task = (props: any) => {
               >
                 <span
                   style={{
-                    fontWeight: "600",
-                    fontSize: "24px",
+                    fontWeight: "400",
                     color: "rgb(12, 26, 68)",
                     lineHeight: "32px",
                   }}
                 >
+                  <span
+                    style={{
+                      fontSize: isMobile ? "1.5rem" : "2rem",
+                    }}
+                  >
+                    {questSubmissions.questCategory + ":"}
+                    <span
+                      style={{
+                        marginLeft: "12px",
+                      }}
+                    >
+                      {questSubmissions.questName}
+                    </span>
+                  </span>
                   <div
                     dangerouslySetInnerHTML={{
                       __html: questSubmissions.questDescription,
+                    }}
+                    style={{
+                      fontSize: "1rem",
                     }}
                   ></div>
                 </span>
@@ -486,11 +513,11 @@ const Task = (props: any) => {
             </div>
           </div>
         )}
-        <div>{submitTaskJSX}</div>
+        <div>{submitQuestJSX}</div>
         <div>{submssionsJSX}</div>
       </Box>
     </div>
   );
 };
 
-export default Task;
+export default Quest;

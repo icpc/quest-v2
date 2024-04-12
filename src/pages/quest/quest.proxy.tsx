@@ -3,12 +3,13 @@ import {
   checkUserAuthentication,
   localStorageGetItemWithExpiry,
 } from "../../utils/helper";
-import Task from "./task";
+import Quest from "./quest";
 import { useNavigate, useParams } from "react-router-dom";
 import { getQuestSubmissions } from "../../utils/requests";
-import { QuestSubmissions } from "./task.types";
+import { QuestSubmissions } from "./quest.types";
+import { ClipLoader } from "react-spinners";
 
-const TaskProxy = () => {
+const QuestProxy = () => {
   const { questId } = useParams();
   const isAuthenticated = checkUserAuthentication();
   const userInfo = React.useMemo(
@@ -46,17 +47,28 @@ const TaskProxy = () => {
   }
 
   if (isQuestsSubmissionsLoading) {
-    return <div>Loading...</div>;
+    return (
+      <div
+        style={{
+          position: "fixed",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+        }}
+      >
+        <ClipLoader color={"#123abc"} size={150} />
+      </div>
+    );
   }
   if (!questSubmissions || !questSubmissions.id) {
     return <div>This quest not found</div>;
   }
   return (
-    <Task
+    <Quest
       userInfo={userInfo}
       questSubmissions={questSubmissions}
       questId={questId}
     />
   );
 };
-export default TaskProxy;
+export default QuestProxy;

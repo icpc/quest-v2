@@ -1,7 +1,7 @@
 import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import SignIn from "./pages/login/login";
-import TaskProxy from "./pages/task/task.proxy";
+import QuestProxy from "./pages/quest/quest.proxy";
 import HomeProxy from "./pages/home/home.proxy";
 import Leaderboard from "./pages/leaderboard/leaderboard.proxy";
 import DrawerAppBar from "./componetns/header/header";
@@ -23,7 +23,7 @@ const App = () => {
           <Route index path="/" element={<SignIn />} />
           <Route index path="/login" element={<SignIn />} />
           <Route index path="/home" element={<HomeProxy />} />
-          <Route index path="/task/:questId" element={<TaskProxy />} />
+          <Route index path="/quest/:questId" element={<QuestProxy />} />
           <Route
             index
             path="/leaderboard/:pageNumber"

@@ -7,6 +7,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { getLeaderboard } from "../../utils/requests";
 import { ILeaderboard } from "./leaderboard.types";
 import LeaderBoard from "./leaderboard";
+import { ClipLoader } from "react-spinners";
 
 const LeaderboardProxy = () => {
   const { pageNumber } = useParams() ?? "1";
@@ -82,7 +83,18 @@ const LeaderboardProxy = () => {
   }, [isAuthenticated, pageNumber, userInfo]);
 
   if (isLoadingLeaderboard || !leaderboardData) {
-    return <div>Loading...</div>;
+    return (
+      <div
+        style={{
+          position: "fixed",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+        }}
+      >
+        <ClipLoader color={"#123abc"} size={150} />
+      </div>
+    );
   }
   if (!leaderboardData?.result || leaderboardData?.result.length === 0) {
     return <div>No users found</div>;

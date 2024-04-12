@@ -40,7 +40,8 @@ export function localStorageRemoveItem(key: string) {
 
 export function checkUserAuthentication() {
   const isAuthenticated = localStorageGetItemWithExpiry("isAuthenticated");
-  if (isAuthenticated) {
+  const user = localStorageGetItemWithExpiry("userInfo");
+  if (isAuthenticated && user && user.token) {
     return true;
   }
   return false;

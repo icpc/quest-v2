@@ -6,6 +6,7 @@ import {
 import Home from "./home";
 import { useNavigate } from "react-router-dom";
 import { getQuests } from "../../utils/requests";
+import { ClipLoader } from "react-spinners";
 
 const HomeProxy = () => {
   const isAuthenticated = checkUserAuthentication();
@@ -36,7 +37,18 @@ const HomeProxy = () => {
   }
 
   if (isQuestsLoading) {
-    return <div>Loading...</div>;
+    return (
+      <div
+        style={{
+          position: "fixed",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+        }}
+      >
+        <ClipLoader color={"#123abc"} size={150} />
+      </div>
+    );
   }
   if (!quests || quests.length === 0) {
     return <div>No quests found</div>;

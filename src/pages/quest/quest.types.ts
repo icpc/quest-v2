@@ -74,5 +74,6 @@ export interface QuestSubmissions {
   questDescription: string;
   questStatus: string;
   questAcceptSubmissions: boolean;
+  questCategory: string;
   submissions: QuestSubmission[];
 }

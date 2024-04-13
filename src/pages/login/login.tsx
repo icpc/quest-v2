@@ -97,6 +97,13 @@ export default function SignIn() {
             >
               Sign In
             </Button>
+            <a
+              href="https://docs.google.com/forms/d/e/1FAIpQLScWCrO2xwR0R3tXx1g4P9rgWNAAh1QGKLtP8Qq4oBmEJlkrVA/viewform"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Don't have an account? Fill this form
+            </a>
           </Box>
         </Box>
       </Container>

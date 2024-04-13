@@ -194,13 +194,18 @@ const Quest = (props: any) => {
             event.target.value = null;
             return;
           }
+
+          if (event.target.files[0].size > 100000000) {
+            setSubmitTaskStatus("File size should be less than 100MB");
+            event.target.value = null;
+            return;
+          }
         }
         if (
           questSubmissions.questType.toLocaleUpperCase() === QuestType.IMAGE
         ) {
           if (fileType.split("/")[0] !== "image") {
             setSubmitTaskStatus("File type not supported");
-            // clear the input
             event.target.value = null;
             return;
           }
@@ -394,7 +399,8 @@ const Quest = (props: any) => {
           style={{
             color:
               submitTaskStatus === "File type not supported" ||
-              submitTaskStatus === "Error submitting task"
+              submitTaskStatus === "Error submitting task" ||
+              submitTaskStatus === "File size should be less than 100MB"
                 ? "red"
                 : "black",
           }}

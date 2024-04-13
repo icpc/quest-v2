@@ -23,7 +23,7 @@ const QuestProxy = () => {
     React.useState<QuestSubmissions | null>({} as QuestSubmissions);
   React.useEffect(() => {
     if (!isAuthenticated) {
-      navigate("/login");
+      navigate("quest/login");
     }
   }, [isAuthenticated, navigate]);
 

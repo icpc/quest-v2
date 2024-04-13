@@ -20,17 +20,25 @@ const App = () => {
         <DrawerAppBar />
         <Toolbar />
         <Routes>
-          <Route index path="/" element={<SignIn />} />
-          <Route index path="/login" element={<SignIn />} />
-          <Route index path="/home" element={<HomeProxy />} />
-          <Route index path="/quest/:questId" element={<QuestProxy />} />
+          <Route index path="/quest/" element={<SignIn />} />
+          <Route index path="/quest/login" element={<SignIn />} />
+          <Route index path="/quest/home" element={<HomeProxy />} />
           <Route
             index
-            path="/leaderboard/:pageNumber"
+            path="/quest/quest-details/:questId"
+            element={<QuestProxy />}
+          />
+          <Route
+            index
+            path="/quest/leaderboard/:pageNumber"
             element={<Leaderboard />}
           />
-          <Route index path="/leaderboard" element={<Leaderboard />} />
-          <Route index path="/admin/submissionsTable" element={<Admin />} />
+          <Route index path="/quest/leaderboard" element={<Leaderboard />} />
+          <Route
+            index
+            path="/quest/admin/submissionsTable"
+            element={<Admin />}
+          />
           <Route path="*" element={<div>Not Found</div>} />
         </Routes>
       </div>

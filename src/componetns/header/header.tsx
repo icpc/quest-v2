@@ -62,7 +62,7 @@ export default function DrawerAppBar(props: Props) {
     localStorageRemoveItem("isAuthenticated");
     localStorageRemoveItem("userInfo");
     setUserInfo({});
-    navigate("/login");
+    navigate("/quest/login");
   }, [navigate]);
 
   const handleDrawerToggle = () => {
@@ -124,9 +124,9 @@ export default function DrawerAppBar(props: Props) {
                 key={item}
                 onClick={() => {
                   if (item === "HOME") {
-                    navigate("/home");
+                    navigate("/quest/home");
                   } else if (item === "LEADERBOARD") {
-                    navigate("/leaderboard/1");
+                    navigate("/quest/leaderboard/1");
                   }
                 }}
                 disablePadding
@@ -182,7 +182,7 @@ export default function DrawerAppBar(props: Props) {
               cursor: "pointer",
             }}
             align="center"
-            onClick={() => navigate("/home")}
+            onClick={() => navigate("/quest/home")}
           >
             <img src={logo} alt="ICPC logo" />
           </Typography>
@@ -206,9 +206,9 @@ export default function DrawerAppBar(props: Props) {
                   sx={{ color: "#fff" }}
                   onClick={() => {
                     if (item === "HOME") {
-                      navigate("/home");
+                      navigate("/quest/home");
                     } else if (item === "LEADERBOARD") {
-                      navigate("/leaderboard/1");
+                      navigate("/quest/leaderboard/1");
                     }
                   }}
                 >

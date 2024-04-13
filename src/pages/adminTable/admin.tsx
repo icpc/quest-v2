@@ -50,7 +50,7 @@ const Admin = () => {
   const navigate = useNavigate();
   React.useEffect(() => {
     if (!isAuthenticated) {
-      navigate("/login");
+      navigate("quest/login");
     }
   }, [isAuthenticated, navigate]);
 
@@ -104,7 +104,7 @@ const Admin = () => {
                   <StyledTableRow key={submission.id}>
                     <StyledTableCell component="th" scope="row">
                       <a
-                        href={`/quest/${questsSubmission.questId}`}
+                        href={`/quest/quest-details/${questsSubmission.questId}`}
                         target="_blank"
                         rel="noreferrer"
                       >
@@ -113,7 +113,7 @@ const Admin = () => {
                     </StyledTableCell>
                     <StyledTableCell component="th" scope="row">
                       <a
-                        href={`/quest/${questsSubmission.questId}`}
+                        href={`/quest/quest-details/${questsSubmission.questId}`}
                         target="_blank"
                         rel="noreferrer"
                       >

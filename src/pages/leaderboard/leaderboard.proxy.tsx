@@ -26,7 +26,7 @@ const LeaderboardProxy = () => {
 
   React.useEffect(() => {
     if (!isAuthenticated) {
-      navigate("/login");
+      navigate("quest/login");
     }
   }, [isAuthenticated, navigate]);
 

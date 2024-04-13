@@ -106,7 +106,7 @@ const Home = (pros: any) => {
                         cursor: "pointer",
                       }}
                       onClick={() => {
-                        navigate(`/quest/${questId}`);
+                        navigate(`/quest/quest-details/${questId}`);
                       }}
                     >
                       <CardContent

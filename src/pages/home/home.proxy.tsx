@@ -53,7 +53,6 @@ const HomeProxy = () => {
   if (!quests || quests.length === 0) {
     return <div>No quests found</div>;
   }
-  console.log(quests);
   return <Home userInfo={userInfo} quests={quests} />;
 };
 export default HomeProxy;

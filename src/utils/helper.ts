@@ -29,7 +29,6 @@ export function localStorageGetItemWithExpiry(key: string) {
     }
     return item.value;
   } catch (e) {
-    console.log(e);
     return null;
   }
 }

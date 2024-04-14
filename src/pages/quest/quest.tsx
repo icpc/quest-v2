@@ -39,13 +39,14 @@ function formatDateToCustomFormat(date: Date) {
   const month = months[date.getMonth()];
   const day = date.getDate();
   const hour = date.getHours();
+  const minutes = date.getMinutes();
   const amOrPm = hour >= 12 ? "pm" : "am";
 
   // Convert hour to 12-hour format
   const formattedHour = hour % 12 || 12;
 
   // Construct the final formatted string
-  const formattedDate = `${month} ${day}, ${formattedHour}:00 ${amOrPm}`;
+  const formattedDate = `${month} ${day}, ${formattedHour}:${minutes} ${amOrPm}`;
 
   return formattedDate;
 }
@@ -173,7 +174,6 @@ const Quest = (props: any) => {
 
   const handleInputChange = React.useCallback(
     (event: { target: { value: any } }) => {
-      console.log(event.target.value);
       setSubmission({ ...submission, text: event.target.value });
       // eslint-disable-next-line react-hooks/exhaustive-deps
     },
@@ -247,8 +247,10 @@ const Quest = (props: any) => {
       }
       setQuestSubmissions(newQuestSubmissions);
       setSubmitTaskStatus("Task submitted successfully");
+      alert("Task submitted successfully");
     } else {
       setSubmitTaskStatus("Error submitting task");
+      alert("Error submitting task");
     }
   };
 

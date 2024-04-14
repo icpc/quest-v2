@@ -1,7 +1,6 @@
 {
-  "name": "icpc-quest-app",
+  "name": "icpc-quest",
   "version": "0.1.0",
-  "homepage": "/quest",
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.11.1",

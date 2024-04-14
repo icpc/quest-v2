@@ -90,9 +90,10 @@ const Admin = () => {
       <Table sx={{ minWidth: 700 }} aria-label="customized table">
         <TableHead>
           <TableRow>
-            <StyledTableCell>Quest Id</StyledTableCell>
-            <StyledTableCell>Quest Name</StyledTableCell>
+            <StyledTableCell>User Name</StyledTableCell>
+            <StyledTableCell>Quest</StyledTableCell>
             <StyledTableCell>Answer</StyledTableCell>
+            <StyledTableCell>Correct Answer</StyledTableCell>
             <StyledTableCell>Action</StyledTableCell>
           </TableRow>
         </TableHead>
@@ -103,13 +104,8 @@ const Admin = () => {
                 <>
                   <StyledTableRow key={submission.id}>
                     <StyledTableCell component="th" scope="row">
-                      <a
-                        href={`/quest/quest-details/${questsSubmission.questId}`}
-                        target="_blank"
-                        rel="noreferrer"
-                      >
-                        {questsSubmission.questId}{" "}
-                      </a>
+                      {questsSubmission.firstName}{" "}
+                      {" " + questsSubmission.lastName}
                     </StyledTableCell>
                     <StyledTableCell component="th" scope="row">
                       <a
@@ -117,7 +113,9 @@ const Admin = () => {
                         target="_blank"
                         rel="noreferrer"
                       >
-                        {questsSubmission.name}{" "}
+                        {questsSubmission.questId}
+                        {"-"}
+                        {questsSubmission.name}
                       </a>
                     </StyledTableCell>
                     <StyledTableCell
@@ -142,6 +140,9 @@ const Admin = () => {
                       {submission.submissionType === "text"
                         ? submission.answer
                         : "View Link"}
+                    </StyledTableCell>
+                    <StyledTableCell component="th" scope="row">
+                      {questsSubmission.correctAnswer}
                     </StyledTableCell>
                     <StyledTableCell component="th" scope="row">
                       <button
@@ -187,7 +188,6 @@ const Admin = () => {
                       </button>
                       <button
                         onClick={() => {
-                          // update submission
                           updateQuestSubmissionStatus(
                             submission.id,
                             "WRONG",
@@ -195,10 +195,8 @@ const Admin = () => {
                             questsSubmission.email,
                             questsSubmission.questId
                           ).then((response) => {
-                            console.log(response);
                             if (response) {
-                              alert("Accepted successfully");
-
+                              alert("Rejected successfully");
                               setQuestsSubmissions(
                                 questsSubmissions.map(
                                   (questSubmission: any) => {
@@ -224,6 +222,10 @@ const Admin = () => {
                               alert("Error in accepting submission");
                             }
                           });
+                        }}
+                        style={{
+                          marginLeft: "10px",
+                          backgroundColor: "red",
                         }}
                       >
                         Reject

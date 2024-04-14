@@ -1,4 +1,4 @@
 {
-    "appService.defaultWebAppToDeploy": "/subscriptions/0d17d681-1d70-4e60-8b00-f9d25284abea/resourceGroups/appsvc_windows_centralus/providers/Microsoft.Web/sites/icpc-quest-app-static",
+    "appService.defaultWebAppToDeploy": "/subscriptions/0d17d681-1d70-4e60-8b00-f9d25284abea/resourceGroups/Community/providers/Microsoft.Web/sites/icpc-quest",
     "appService.deploySubpath": "build"
 }

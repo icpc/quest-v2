@@ -39,7 +39,7 @@ const App = () => {
             path="/quest/admin/submissionsTable"
             element={<Admin />}
           />
-          <Route path="*" element={<div>Not Found</div>} />
+          <Route index path="*" element={<SignIn />} />
         </Routes>
       </div>
     </BrowserRouter>

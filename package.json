@@ -29,10 +29,10 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "predeploy": "set HTTPS=true && npm run build",
+    "predeploy": "npm run build",
     "deploy": "gh-pages -d build",
-    "start": "set HTTPS=true && react-scripts start",
-    "build": "set HTTPS=true && react-scripts build",
+    "start": "react-scripts start",
+    "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

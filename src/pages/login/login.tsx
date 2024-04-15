@@ -41,7 +41,7 @@ export default function SignIn() {
     } else {
       localStorageRemoveItem("isAuthenticated");
       localStorageRemoveItem("userInfo");
-      alert("Invalid credentials");
+      alert("Invalid credentials please fill the form to get your password");
     }
     setIsLoginLoading(false);
   };

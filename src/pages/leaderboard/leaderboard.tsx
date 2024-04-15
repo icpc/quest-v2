@@ -189,7 +189,7 @@ const LeaderBoard = (props: any) => {
   const navigate = useNavigate();
   const handleChange = React.useCallback(
     (event: React.ChangeEvent<unknown>, value: number) => {
-      navigate(`/leaderboard/${value}`);
+      navigate(`/quest/leaderboard/${value}`);
     },
     [navigate]
   );

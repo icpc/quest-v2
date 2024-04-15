@@ -28,12 +28,12 @@ const App = () => {
             path="/quest/quest-details/:questId"
             element={<QuestProxy />}
           />
+          <Route index path="/quest/leaderboard" element={<Leaderboard />} />
           <Route
             index
             path="/quest/leaderboard/:pageNumber"
             element={<Leaderboard />}
           />
-          <Route index path="/quest/leaderboard" element={<Leaderboard />} />
           <Route
             index
             path="/quest/admin/submissionsTable"

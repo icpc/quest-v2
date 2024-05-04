@@ -102,7 +102,8 @@ export default function SignIn() {
               target="_blank"
               rel="noreferrer"
             >
-              Don't have an account? Fill this form
+              Don't use your ICPC account password,Fill this form with your icpc
+              email to get your password
             </a>
           </Box>
         </Box>

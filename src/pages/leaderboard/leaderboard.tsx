@@ -1,5 +1,5 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { styled } from "@mui/material/styles";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -43,6 +43,7 @@ function Row(props: any) {
   const { row, index, isCurUser } = props;
   const [open, setOpen] = React.useState(false);
   const isMobile = window?.innerWidth <= 500;
+  const navigate = useNavigate();
   return (
     <React.Fragment>
       {
@@ -79,7 +80,7 @@ function Row(props: any) {
                         [QuestStatus.NOTATTEMPTED]: "grey",
                       };
                       return (
-                        <span
+                        <Link
                           style={{
                             borderRadius: "50%",
                             padding: "2px",
@@ -91,14 +92,11 @@ function Row(props: any) {
                             width: "10px",
                             height: "10px",
                           }}
-                          onClick={() => {
-                            window.open(
-                              "quest/quest-details/" + quest.id,
-                              "_blank"
-                            );
-                          }}
+                          target="_blank"
+                          to={"/quest-details/" + quest.id}
                           title={quest.name}
-                        ></span>
+                        >
+                        </Link>
                       );
                     })}
                   </>
@@ -143,10 +141,12 @@ function Row(props: any) {
                             <TableRow
                               key={row.rank}
                               onClick={() => {
-                                window.open(
-                                  "/quest/quest-details/" + quest.id,
-                                  "_blank"
-                                );
+                                navigate("/quest-details/" + quest.id);
+                                // TODO: open in new tab
+                                // window.open(
+                                //   "/quest/quest-details/" + quest.id,
+                                //   "_blank"
+                                // );
                               }}
                               style={{ cursor: "pointer" }}
                             >
@@ -188,8 +188,8 @@ const LeaderBoard = (props: any) => {
 
   const navigate = useNavigate();
   const handleChange = React.useCallback(
-    (event: React.ChangeEvent<unknown>, value: number) => {
-      navigate(`/quest/leaderboard/${value}`);
+    (_: React.ChangeEvent<unknown>, value: number) => {
+      navigate(`/leaderboard/${value}`);
     },
     [navigate]
   );

@@ -444,7 +444,7 @@ const Quest = (props: any) => {
                   marginTop: "5px",
                 }}
                 onClick={() => {
-                  navigate("/quest/home");
+                  navigate("/home");
                 }}
               >
                 <ArrowBackIcon />

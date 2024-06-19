@@ -19,7 +19,7 @@ const HomeProxy = () => {
   const [isQuestsLoading, setIsQuestsLoading] = React.useState(true);
   React.useEffect(() => {
     if (!isAuthenticated) {
-      navigate("quest/login");
+      navigate("/quest/login");
     }
   }, [isAuthenticated, navigate]);
 

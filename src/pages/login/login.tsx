@@ -23,7 +23,7 @@ export default function SignIn() {
 
   React.useEffect(() => {
     if (isAuthenticated) {
-      navigate("/quest/home");
+      navigate("/home");
     }
   }, [isAuthenticated, navigate]);
 
@@ -37,7 +37,8 @@ export default function SignIn() {
     if (newLogin !== null) {
       localStorageSetItemWithExpiry("isAuthenticated", "true", 10000000000);
       localStorageSetItemWithExpiry("userInfo", newLogin, 10000000000);
-      window.location.href = "/quest/home";
+      navigate("/home");
+      // window.location.href = "/quest/home";
     } else {
       localStorageRemoveItem("isAuthenticated");
       localStorageRemoveItem("userInfo");

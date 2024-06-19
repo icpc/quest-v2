@@ -8,9 +8,11 @@ import DrawerAppBar from "./componetns/header/header";
 import { Toolbar } from "@mui/material";
 import Admin from "./pages/adminTable/admin";
 
+const baseurl = new URL(process.env.NODE_ENV === 'production' && process.env.PUBLIC_URL ? process.env.PUBLIC_URL : "http://localhost:3000");
+
 const App = () => {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={baseurl.pathname}>
       <div
         className="container"
         style={{
@@ -20,26 +22,23 @@ const App = () => {
         <DrawerAppBar />
         <Toolbar />
         <Routes>
-          <Route index path="/quest/" element={<SignIn />} />
-          <Route index path="/quest/login" element={<SignIn />} />
-          <Route index path="/quest/home" element={<HomeProxy />} />
+          <Route index path="/" element={<SignIn />} />
+          <Route path="/login" element={<SignIn />} />
+          <Route path="/home" element={<HomeProxy />} />
           <Route
-            index
-            path="/quest/quest-details/:questId"
-            element={<QuestProxy />}
+            path="/quest-details/:questId"
+              element={<QuestProxy />}
           />
-          <Route index path="/quest/leaderboard" element={<Leaderboard />} />
+          <Route path="/leaderboard" element={<Leaderboard />} />
           <Route
-            index
-            path="/quest/leaderboard/:pageNumber"
+            path="/leaderboard/:pageNumber"
             element={<Leaderboard />}
           />
           <Route
-            index
-            path="/quest/admin/submissionsTable"
+            path="/admin/submissionsTable"
             element={<Admin />}
           />
-          <Route index path="*" element={<SignIn />} />
+          <Route path="*" element={<SignIn />} />
         </Routes>
       </div>
     </BrowserRouter>

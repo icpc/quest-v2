@@ -24,3 +24,10 @@ jobs:
         run: pnpm run build
         env:
           PUBLIC_URL: https://news.icpc.global/qquest
+
+      - uses: actions/upload-artifact@v3
+        if: success()
+        with:
+            name: quest-v2-build
+            path: build
+            retention-days: 1

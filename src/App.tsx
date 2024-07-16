@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { HashRouter, Routes, Route } from "react-router-dom";
 import SignIn from "./pages/login/login";
 import QuestProxy from "./pages/quest/quest.proxy";
 import HomeProxy from "./pages/home/home.proxy";
@@ -12,7 +12,7 @@ const baseurl = new URL(process.env.NODE_ENV === 'production' && process.env.PUB
 
 const App = () => {
   return (
-    <BrowserRouter basename={baseurl.pathname}>
+    <HashRouter basename={baseurl.pathname}>
       <div
         className="container"
         style={{
@@ -41,7 +41,7 @@ const App = () => {
           <Route path="*" element={<SignIn />} />
         </Routes>
       </div>
-    </BrowserRouter>
+    </HashRouter>
   );
 };
 

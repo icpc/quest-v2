@@ -25,7 +25,7 @@ jobs:
         env:
           PUBLIC_URL: https://news.icpc.global/qquest
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         if: success()
         with:
             name: quest-v2-build

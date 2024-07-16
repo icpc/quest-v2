@@ -1,0 +1,31 @@
+name: Build and upload to news.icpc.global
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build from master and upload
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 8
+
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build
+        run: pnpm run build
+        env:
+          PUBLIC_URL: https://news.icpc.global/qquest
+
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+            name: quest-v2-build
+            path: build
+            retention-days: 1

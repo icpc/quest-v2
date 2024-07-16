@@ -8,11 +8,9 @@ import DrawerAppBar from "./componetns/header/header";
 import { Toolbar } from "@mui/material";
 import Admin from "./pages/adminTable/admin";
 
-const baseurl = new URL(process.env.NODE_ENV === 'production' && process.env.PUBLIC_URL ? process.env.PUBLIC_URL : "http://localhost:3000");
-
 const App = () => {
   return (
-    <HashRouter basename={baseurl.pathname}>
+    <HashRouter>
       <div
         className="container"
         style={{

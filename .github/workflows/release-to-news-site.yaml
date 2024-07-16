@@ -2,7 +2,9 @@ name: Build and upload to news.icpc.global
 
 on:
   workflow_dispatch:
-
+  push:
+    branches:
+      - action
 jobs:
   build:
     name: Build from master and upload

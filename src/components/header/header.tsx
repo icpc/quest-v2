@@ -15,7 +15,8 @@ import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
 import MenuIcon from "@material-ui/icons/Menu";
 import { AccountCircle } from "@material-ui/icons";
-import logo from "../../assets/logo.png";
+import logo from "../../assets/logo.svg";
+//const logo = require("../../assets/logo.svg") as string;
 import { useNavigate } from "react-router-dom";
 import {
   localStorageGetItemWithExpiry,
@@ -184,7 +185,7 @@ export default function DrawerAppBar(props: Props) {
             align="center"
             onClick={() => navigate("/home")}
           >
-            <img src={logo} alt="ICPC logo" />
+            <img src={logo} alt="ICPC logo" height="38" />
           </Typography>
 
           {userInfo?.user?.email && (

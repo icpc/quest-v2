@@ -427,14 +427,14 @@ const Quest = (props: any) => {
   }
   return (
     <div>
-      <Box component="main" sx={{ p: 3 }}>
+      <Box component="main" sx={{ p: 3, maxWidth: "960px"}}>
         {questSubmissions && (
           <div>
             <div
               style={{
                 display: "flex",
                 //alignItems: "center",
-                maxWidth: "960px",
+                //maxWidth: "960px",
               }}
             >
               <div
@@ -508,19 +508,19 @@ const Quest = (props: any) => {
                       {questSubmissions.questName}
                     </span>
                   </span>
-                  <div
-                    dangerouslySetInnerHTML={{
-                      __html: questSubmissions.questDescription,
-                    }}
-                    style={{
-                      fontSize: "1rem",
-                    }}
-                  ></div>
                 </span>
               </h2>
             </div>
           </div>
         )}
+        <div
+          dangerouslySetInnerHTML={{
+            __html: questSubmissions.questDescription,
+          }}
+          style={{
+            fontSize: "1rem",
+          }}
+        ></div>
         <div>{submitQuestJSX}</div>
         <div>{submssionsJSX}</div>
       </Box>

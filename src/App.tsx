@@ -4,7 +4,7 @@ import SignIn from "./pages/login/login";
 import QuestProxy from "./pages/quest/quest.proxy";
 import HomeProxy from "./pages/home/home.proxy";
 import Leaderboard from "./pages/leaderboard/leaderboard.proxy";
-import DrawerAppBar from "./componetns/header/header";
+import DrawerAppBar from "./components/header/header";
 import { Toolbar } from "@mui/material";
 import Admin from "./pages/adminTable/admin";
 

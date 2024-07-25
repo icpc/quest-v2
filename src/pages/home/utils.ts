@@ -1,4 +1,4 @@
-import { QuestsDays, Quest } from "./home.types";
+import { Quest, QuestsDays } from "../../types/types";
 
 export const aggregateQuestsByDate = (quests: Quest[]): QuestsDays[] => {
   if (!quests) return [] as QuestsDays[];
@@ -18,10 +18,8 @@ export const aggregateQuestsByDate = (quests: Quest[]): QuestsDays[] => {
       category: quest?.category,
     });
   });
-  const daysQuestsArray = Object.keys(questsDaysDic).map((key) => ({
+  return Object.keys(questsDaysDic).map((key) => ({
     date: key,
     detailsQuests: questsDaysDic[key],
   }));
-
-  return daysQuestsArray;
 };

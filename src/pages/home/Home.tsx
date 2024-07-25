@@ -9,8 +9,8 @@ import CheckCircleOutlineIcon from "@material-ui/icons/CheckCircleOutline";
 import AccessTimeOutlinedIcon from "@material-ui/icons/AccessTimeOutlined";
 import HighlightOffOutlinedIcon from "@material-ui/icons/HighlightOffOutlined";
 import StarBorderOutlinedIcon from "@material-ui/icons/StarBorderOutlined";
-import { QuestsDays, QuestStatus } from "./home.types";
-import { aggregateQuestsByDate } from "./home.utils";
+import { QuestsDays, QuestStatus } from "../../types/types";
+import { aggregateQuestsByDate } from "./utils";
 
 const Home = (pros: any) => {
   const isMobile = window?.innerWidth <= 500;

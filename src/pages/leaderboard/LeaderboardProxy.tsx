@@ -1,10 +1,9 @@
 import React from "react";
 import { useParams } from "react-router-dom";
 import { getLeaderboard } from "../../utils/requests";
-import { ILeaderboard } from "./leaderboard.types";
-import LeaderBoard from "./leaderboard";
+import { ILeaderboard, UserInfoProps } from "../../types/types";
+import LeaderBoard from "./Leaderboard";
 import { ClipLoader } from "react-spinners";
-import { UserInfoProps } from "../home/home.types";
 import Loader from "../login/Loader";
 import styled from "styled-components";
 
@@ -16,7 +15,7 @@ const LeaderBoardProxyWrapper = styled.div`
 `;
 
 
-const LeaderBoardProxyHelper: React.FC<UserInfoProps> = ({ userInfo }) => {
+const LeaderboardProxyHelper: React.FC<UserInfoProps> = ({ userInfo }) => {
   const { pageNumber } = useParams() ?? "1";
   const [isLoadingLeaderboard, setIsLoadingLeaderboard] = React.useState(true);
   const [leaderboardData, setLeaderboardData] = React.useState<ILeaderboard | null>(null);
@@ -28,7 +27,7 @@ const LeaderBoardProxyHelper: React.FC<UserInfoProps> = ({ userInfo }) => {
       getLeaderboard(pageNumber, userInfo).then((response) => {
         if (response) {
           setLeaderboardData(response);
-          if (response?.result.length === 0 || response?.result === undefined) {
+          if (response?.result.length === 0) {
             setIsLoadingLeaderboard(false);
             return;
           }
@@ -93,10 +92,10 @@ const LeaderBoardProxyHelper: React.FC<UserInfoProps> = ({ userInfo }) => {
       curUser={curUser}
     />
   );
-}
+};
 
 const LeaderboardProxy = () => {
-  return <Loader component={LeaderBoardProxyHelper} />;
+  return <Loader component={LeaderboardProxyHelper} />;
 };
 
 export default LeaderboardProxy;

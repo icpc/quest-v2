@@ -7,7 +7,7 @@ import {
   QuestSubmission,
   QuestSubmissions,
   QuestType,
-} from "./quest.types";
+} from "../../types/types";
 import CheckCircleOutlineIcon from "@material-ui/icons/CheckCircleOutline";
 
 import Card from "@mui/material/Card";

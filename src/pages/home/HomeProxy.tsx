@@ -1,10 +1,10 @@
 import React from "react";
-import Home from "./home";
+import Home from "./Home";
 import { getQuests } from "../../utils/requests";
 import { ClipLoader } from "react-spinners";
 import styled from "styled-components";
 import Loader from "../login/Loader";
-import { UserInfoProps } from "./home.types";
+import { UserInfoProps } from "../../types/types";
 
 const HomeProxyWrapper = styled.div`
   position: fixed;

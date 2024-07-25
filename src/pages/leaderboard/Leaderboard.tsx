@@ -15,7 +15,7 @@ import {
   Pagination,
   Typography,
 } from "@mui/material";
-import { QuestStatus } from "./leaderboard.types";
+import { QuestStatus } from "../../types/types";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 
@@ -183,7 +183,7 @@ function Row(props: any) {
   );
 }
 
-const LeaderBoard = (props: any) => {
+const Leaderboard = (props: any) => {
   const { rows, _columnsNames, pageNumber, totalUsers } = props;
 
   const navigate = useNavigate();
@@ -260,4 +260,4 @@ const LeaderBoard = (props: any) => {
   return <>{leaderboardTableJSX}</>;
 };
 
-export default LeaderBoard;
+export default Leaderboard;

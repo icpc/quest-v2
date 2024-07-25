@@ -1,12 +1,12 @@
 import React from "react";
 import { HashRouter, Routes, Route } from "react-router-dom";
-import SignIn from "./pages/login/login";
-import QuestProxy from "./pages/quest/quest.proxy";
-import HomeProxy from "./pages/home/home.proxy";
-import Leaderboard from "./pages/leaderboard/leaderboard.proxy";
-import DrawerAppBar from "./components/header/header";
+import SignIn from "./pages/login/Login";
+import QuestProxy from "./pages/quest/QuestProxy";
+import HomeProxy from "./pages/home/HomeProxy";
+import Leaderboard from "./pages/leaderboard/LeaderboardProxy";
+import DrawerAppBar from "./components/Header";
 import { Toolbar } from "@mui/material";
-import Admin from "./pages/adminTable/admin";
+import Admin from "./pages/adminTable/Admin";
 import styled from "styled-components";
 import config from "./config";
 

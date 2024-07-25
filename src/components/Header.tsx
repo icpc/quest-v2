@@ -15,13 +15,13 @@ import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
 import MenuIcon from "@material-ui/icons/Menu";
 import { AccountCircle } from "@material-ui/icons";
-import logo from "../../assets/logo.svg";
+import logo from "../assets/logo.svg";
 import { useNavigate } from "react-router-dom";
 import {
   localStorageGetItemWithExpiry,
   localStorageRemoveItem,
-} from "../../utils/helper";
-import config from "../../config";
+} from "../utils/helper";
+import config from "../config";
 
 interface Props {
   /**

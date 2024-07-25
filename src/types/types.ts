@@ -51,6 +51,7 @@ export interface LeaderboardPerson {
         }[];
     }[];
 }
+
 export interface ILeaderboard {
     result: LeaderboardPerson[];
     totalUsers: number;
@@ -70,6 +71,7 @@ export interface QuestSubmission {
     status: string;
     submissionType: string;
 }
+
 export interface QuestSubmissions {
     id: number;
     questName: string;

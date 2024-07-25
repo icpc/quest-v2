@@ -7,16 +7,17 @@ import Leaderboard from "./pages/leaderboard/leaderboard.proxy";
 import DrawerAppBar from "./components/header/header";
 import { Toolbar } from "@mui/material";
 import Admin from "./pages/adminTable/admin";
+import styled from "styled-components";
+import config from "./config";
+
+const AppContainer = styled.div`
+  background-color: ${config.BACKGROUND_COLOR};
+`;
 
 const App = () => {
   return (
     <HashRouter>
-      <div
-        className="container"
-        style={{
-          backgroundColor: "#f8fbfd",
-        }}
-      >
+      <AppContainer className="container">
         <DrawerAppBar />
         <Toolbar />
         <Routes>
@@ -38,7 +39,7 @@ const App = () => {
           />
           <Route path="*" element={<SignIn />} />
         </Routes>
-      </div>
+      </AppContainer>
     </HashRouter>
   );
 };

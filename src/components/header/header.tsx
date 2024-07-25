@@ -16,12 +16,12 @@ import Menu from "@mui/material/Menu";
 import MenuIcon from "@material-ui/icons/Menu";
 import { AccountCircle } from "@material-ui/icons";
 import logo from "../../assets/logo.svg";
-//const logo = require("../../assets/logo.svg") as string;
 import { useNavigate } from "react-router-dom";
 import {
   localStorageGetItemWithExpiry,
   localStorageRemoveItem,
 } from "../../utils/helper";
+import config from "../../config";
 interface Props {
   /**
    * Injected by the documentation to work in an iframe.
@@ -30,30 +30,17 @@ interface Props {
   window?: () => Window;
 }
 
-const drawerWidth = 240;
-const title = "ICPC Quest";
+const pages = {
+  "HOME": "/home",
+  "LEADERBOARD": "/leaderboard/1"
+};
+
 export default function DrawerAppBar(props: Props) {
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const [userInfo, setUserInfo] = React.useState(
-    localStorageGetItemWithExpiry("userInfo")
-  );
+  const [userInfo, setUserInfo] = React.useState(localStorageGetItemWithExpiry("userInfo"));
 
-  const [navItems] = React.useState([
-    "HOME",
-    "LEADERBOARD",
-    userInfo?.user?.email,
-  ]);
   const navigate = useNavigate();
-
-  React.useEffect(() => {
-    // window.addEventListener("storage", () => {
-    //   setUserInfo(localStorageGetItemWithExpiry("userInfo"));
-    // });
-    // return () => {
-    //   window.onstorage = null;
-    // };
-  }, []);
 
   const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -101,6 +88,7 @@ export default function DrawerAppBar(props: Props) {
             setAnchorEl(null);
           }}
         >
+          <MenuItem disabled>{userInfo?.user?.email}</MenuItem>
           <MenuItem onClick={handleClose}>LogOut</MenuItem>
         </Menu>
       </div>
@@ -115,25 +103,19 @@ export default function DrawerAppBar(props: Props) {
           sx={{ my: 2, textAlign: "center" }}
           align="center"
         >
-          {title}
+          {config.DRAWER_TITLE}
         </Typography>
 
         {userInfo?.user?.email && (
           <List>
-            {navItems.map((item) => (
+            {Object.entries(pages).map(([name, url]) => (
               <ListItem
-                key={item}
-                onClick={() => {
-                  if (item === "HOME") {
-                    navigate("/home");
-                  } else if (item === "LEADERBOARD") {
-                    navigate("/leaderboard/1");
-                  }
-                }}
+                key={name}
+                onClick={() => navigate(url)}
                 disablePadding
               >
                 <ListItemButton sx={{ textAlign: "center" }}>
-                  <ListItemText onClick={handleDrawerToggle} primary={item} />
+                  <ListItemText onClick={handleDrawerToggle} primary={name} />
                 </ListItemButton>
               </ListItem>
             ))}
@@ -142,7 +124,7 @@ export default function DrawerAppBar(props: Props) {
         )}
       </Box>
     );
-  }, [navItems, navigate, profileIconMenue, userInfo]);
+  }, [pages, navigate, profileIconMenue, userInfo]);
 
   const container =
     window !== undefined ? () => window.document.body : undefined;
@@ -173,13 +155,7 @@ export default function DrawerAppBar(props: Props) {
             component="div"
             sx={{
               flexGrow: 1,
-              display: {
-                xs: "flex",
-                sm: "flex",
-                md: "flex",
-                lg: "flex",
-                xl: "flex",
-              },
+              display: "flex",
               cursor: "pointer",
             }}
             align="center"
@@ -191,29 +167,19 @@ export default function DrawerAppBar(props: Props) {
           {userInfo?.user?.email && (
             <Box
               sx={{
-                //flexGrow: 1,
                 display: {
                   xs: "none",
-                  sm: "flex",
-                  md: "flex",
-                  lg: "flex",
-                  xl: "flex",
+                  sm: "flex"
                 },
               }}
             >
-              {navItems.map((item) => (
+              {Object.entries(pages).map(([name, url]) => (
                 <Button
-                  key={item}
+                  key={name}
                   sx={{ color: "#fff" }}
-                  onClick={() => {
-                    if (item === "HOME") {
-                      navigate("/home");
-                    } else if (item === "LEADERBOARD") {
-                      navigate("/leaderboard/1");
-                    }
-                  }}
+                  onClick={() => navigate(url)}
                 >
-                  {item}
+                  {name}
                 </Button>
               ))}
               {profileIconMenue()}
@@ -234,7 +200,7 @@ export default function DrawerAppBar(props: Props) {
             display: { xs: "block", sm: "none" },
             "& .MuiDrawer-paper": {
               boxSizing: "border-box",
-              width: drawerWidth,
+              width: config.DRAWER_WIDTH_MOBILE,
             },
           }}
         >

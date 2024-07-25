@@ -38,7 +38,6 @@ export default function SignIn() {
       localStorageSetItemWithExpiry("isAuthenticated", "true", 10000000000);
       localStorageSetItemWithExpiry("userInfo", newLogin, 10000000000);
       navigate("/home");
-      // window.location.href = "/quest/home";
     } else {
       localStorageRemoveItem("isAuthenticated");
       localStorageRemoveItem("userInfo");

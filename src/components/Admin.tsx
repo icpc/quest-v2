@@ -17,6 +17,8 @@ import {
     updateQuestSubmissionStatus,
 } from "../utils/requests";
 import {ClipLoader} from "react-spinners";
+import {Loader, LoaderComponent} from "./proxy/Loader";
+import {UserInfoProps} from "../types/types";
 
 const StyledTableCell = styled(TableCell)(({theme}) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -38,25 +40,12 @@ const StyledTableRow = styled(TableRow)(({theme}) => ({
     },
 }));
 
-const Admin = () => {
-    const isAuthenticated = checkUserAuthentication();
-    const userInfo = React.useMemo(
-        () => localStorageGetItemWithExpiry("userInfo") || "{}",
-        []
-    );
+const AdminHelper: React.FC<UserInfoProps> = ({userInfo}) => {
     const [isGetSubmissionsLoading, setIsGetSubmissionsLoading] =
         React.useState(true);
     const [questsSubmissions, setQuestsSubmissions] = React.useState<any[]>([]);
-    const navigate = useNavigate();
-    React.useEffect(() => {
-        if (!isAuthenticated) {
-            navigate("/login");
-        }
-    }, [isAuthenticated, navigate]);
 
     React.useEffect(() => {
-        // get submissions
-
         getQuestsSubmissions("PENDING", userInfo).then((response) => {
             if (response) {
                 setQuestsSubmissions(response);
@@ -69,18 +58,7 @@ const Admin = () => {
     }, [userInfo]);
 
     if (isGetSubmissionsLoading) {
-        return (
-            <div
-                style={{
-                    position: "fixed",
-                    top: "50%",
-                    left: "50%",
-                    transform: "translate(-50%, -50%)",
-                }}
-            >
-                <ClipLoader color={"#123abc"} size={150}/>
-            </div>
-        );
+        return <LoaderComponent />
     }
     if (!questsSubmissions || questsSubmissions.length === 0) {
         return <div>No submissions found</div>;
@@ -241,5 +219,9 @@ const Admin = () => {
         </TableContainer>
     );
 };
+
+const Admin = () => {
+    return <Loader component={AdminHelper}/>
+}
 
 export default Admin;

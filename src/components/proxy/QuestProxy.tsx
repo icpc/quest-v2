@@ -2,9 +2,8 @@ import React from "react";
 import Quest from "../Quest";
 import {useParams} from "react-router-dom";
 import {getQuestSubmissions} from "../../utils/requests";
-import {ClipLoader} from "react-spinners";
 import {UserInfoProps, QuestSubmissions} from "../../types/types";
-import Loader from "./Loader";
+import Loader, {LoaderComponent} from "./Loader";
 
 const QuestProxyHelper: React.FC<UserInfoProps> = ({userInfo}) => {
     const {questId} = useParams();
@@ -28,18 +27,7 @@ const QuestProxyHelper: React.FC<UserInfoProps> = ({userInfo}) => {
     }, [questId, userInfo]);
 
     if (isQuestsSubmissionsLoading) {
-        return (
-            <div
-                style={{
-                    position: "fixed",
-                    top: "50%",
-                    left: "50%",
-                    transform: "translate(-50%, -50%)",
-                }}
-            >
-                <ClipLoader color={"#123abc"} size={150}/>
-            </div>
-        );
+        return <LoaderComponent />
     }
     if (!questSubmissions || !questSubmissions.id) {
         return <div>This quest not found</div>;

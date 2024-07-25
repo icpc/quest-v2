@@ -3,17 +3,7 @@ import {useParams} from "react-router-dom";
 import {getLeaderboard} from "../../utils/requests";
 import {ILeaderboard, UserInfoProps} from "../../types/types";
 import LeaderBoard from "../Leaderboard";
-import {ClipLoader} from "react-spinners";
-import Loader from "./Loader";
-import styled from "styled-components";
-
-const LeaderBoardProxyWrapper = styled.div`
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-`;
-
+import Loader, {LoaderComponent} from "./Loader";
 
 const LeaderboardProxyHelper: React.FC<UserInfoProps> = ({userInfo}) => {
     const {pageNumber} = useParams() ?? "1";
@@ -74,11 +64,7 @@ const LeaderboardProxyHelper: React.FC<UserInfoProps> = ({userInfo}) => {
     }, [pageNumber, userInfo]);
 
     if (isLoadingLeaderboard || !leaderboardData) {
-        return (
-            <LeaderBoardProxyWrapper>
-                <ClipLoader color={"#123abc"} size={150}/>
-            </LeaderBoardProxyWrapper>
-        );
+        return <LoaderComponent/>
     }
     if (!leaderboardData?.result || leaderboardData?.result.length === 0) {
         return <div>No users found</div>;

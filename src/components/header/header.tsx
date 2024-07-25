@@ -22,6 +22,7 @@ import {
   localStorageRemoveItem,
 } from "../../utils/helper";
 import config from "../../config";
+
 interface Props {
   /**
    * Injected by the documentation to work in an iframe.
@@ -57,7 +58,7 @@ export default function DrawerAppBar(props: Props) {
     setMobileOpen((prevState) => !prevState);
   };
 
-  const profileIconMenue = React.useCallback(() => {
+  const IconProfile = React.useCallback(() => {
     if (!userInfo?.user?.email) return null;
     return (
       <div>
@@ -84,9 +85,7 @@ export default function DrawerAppBar(props: Props) {
             horizontal: "right",
           }}
           open={Boolean(anchorEl)}
-          onClose={() => {
-            setAnchorEl(null);
-          }}
+          onClose={() => setAnchorEl(null)}
         >
           <MenuItem disabled>{userInfo?.user?.email}</MenuItem>
           <MenuItem onClick={handleClose}>LogOut</MenuItem>
@@ -98,33 +97,27 @@ export default function DrawerAppBar(props: Props) {
   const drawer = React.useMemo(() => {
     return (
       <Box sx={{ textAlign: "center" }}>
-        <Typography
-          variant="h6"
-          sx={{ my: 2, textAlign: "center" }}
-          align="center"
-        >
+        <Typography variant="h6" sx={{ my: 2 }}>
           {config.DRAWER_TITLE}
         </Typography>
 
         {userInfo?.user?.email && (
           <List>
             {Object.entries(pages).map(([name, url]) => (
-              <ListItem
-                key={name}
-                onClick={() => navigate(url)}
-                disablePadding
-              >
-                <ListItemButton sx={{ textAlign: "center" }}>
-                  <ListItemText onClick={handleDrawerToggle} primary={name} />
+              <ListItem key={name} disablePadding>
+                <ListItemButton sx={{ textAlign: "center" }} onClick={() => {
+                  navigate(url);
+                  handleDrawerToggle();
+                }}>
+                  <ListItemText primary={name} />
                 </ListItemButton>
               </ListItem>
             ))}
-            {profileIconMenue()}
           </List>
         )}
       </Box>
     );
-  }, [pages, navigate, profileIconMenue, userInfo]);
+  }, [pages, navigate, userInfo]);
 
   const container =
     window !== undefined ? () => window.document.body : undefined;
@@ -143,21 +136,13 @@ export default function DrawerAppBar(props: Props) {
             aria-label="open drawer"
             edge="start"
             onClick={handleDrawerToggle}
-            sx={{
-              mr: 2,
-              display: { sm: "none" },
-            }}
+            sx={{ mr: 2, display: { sm: "none" } }}
           >
             <MenuIcon />
           </IconButton>
           <Typography
             variant="h6"
-            component="div"
-            sx={{
-              flexGrow: 1,
-              display: "flex",
-              cursor: "pointer",
-            }}
+            sx={{ flexGrow: 1, display: "flex", cursor: "pointer" }}
             align="center"
             onClick={() => navigate("/home")}
           >
@@ -165,14 +150,7 @@ export default function DrawerAppBar(props: Props) {
           </Typography>
 
           {userInfo?.user?.email && (
-            <Box
-              sx={{
-                display: {
-                  xs: "none",
-                  sm: "flex"
-                },
-              }}
-            >
+            <Box sx={{ display: { xs: "none", sm: "flex" } }}>
               {Object.entries(pages).map(([name, url]) => (
                 <Button
                   key={name}
@@ -182,9 +160,9 @@ export default function DrawerAppBar(props: Props) {
                   {name}
                 </Button>
               ))}
-              {profileIconMenue()}
             </Box>
           )}
+          {IconProfile()}
         </Toolbar>
       </AppBar>
       <nav>

@@ -5,7 +5,8 @@ import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { Link } from "@mui/material";
+import { createTheme, styled, ThemeProvider } from "@mui/material/styles";
 import {
   checkUserAuthentication,
   localStorageRemoveItem,
@@ -13,8 +14,16 @@ import {
 } from "../../utils/helper";
 import { useNavigate } from "react-router-dom";
 import { login } from "../../utils/requests";
+import config from "../../config";
 
 const defaultTheme = createTheme();
+
+const LoginFormWrapper = styled(Box)(({ theme }) => ({
+  marginTop: theme.spacing(8),
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+}));
 
 export default function SignIn() {
   const navigate = useNavigate();
@@ -35,10 +44,11 @@ export default function SignIn() {
     const password = data.get("password");
     const newLogin = await login({ email, password });
     if (newLogin !== null) {
-      localStorageSetItemWithExpiry("isAuthenticated", "true", 10000000000);
-      localStorageSetItemWithExpiry("userInfo", newLogin, 10000000000);
+      localStorageSetItemWithExpiry("isAuthenticated", "true", config.LOGIN_EXPIRED_TIME);
+      localStorageSetItemWithExpiry("userInfo", newLogin, config.LOGIN_EXPIRED_TIME);
       navigate("/home");
     } else {
+      // why remove? idk
       localStorageRemoveItem("isAuthenticated");
       localStorageRemoveItem("userInfo");
       alert("Invalid credentials please fill the form to get your password");
@@ -50,23 +60,11 @@ export default function SignIn() {
     <ThemeProvider theme={defaultTheme}>
       <Container component="main" maxWidth="xs">
         <CssBaseline />
-        <Box
-          sx={{
-            marginTop: 8,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-          }}
-        >
+        <LoginFormWrapper>
           <Typography component="h1" variant="h5">
             Sign in
           </Typography>
-          <Box
-            component="form"
-            onSubmit={handleSubmit}
-            noValidate
-            sx={{ mt: 1 }}
-          >
+          <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
             <TextField
               margin="normal"
               required
@@ -97,16 +95,16 @@ export default function SignIn() {
             >
               Sign In
             </Button>
-            <a
+            <Link
               href="https://docs.google.com/forms/d/e/1FAIpQLScWCrO2xwR0R3tXx1g4P9rgWNAAh1QGKLtP8Qq4oBmEJlkrVA/viewform"
               target="_blank"
               rel="noreferrer"
             >
               Don't use your ICPC account password,Fill this form with your icpc
               email to get your password
-            </a>
+            </Link>
           </Box>
-        </Box>
+        </LoginFormWrapper>
       </Container>
     </ThemeProvider>
   );

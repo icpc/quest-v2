@@ -1,27 +1,21 @@
 import React from "react";
-import {
-  checkUserAuthentication,
-  localStorageGetItemWithExpiry,
-} from "../../utils/helper";
 import Home from "./home";
-import { useNavigate } from "react-router-dom";
 import { getQuests } from "../../utils/requests";
 import { ClipLoader } from "react-spinners";
+import styled from "styled-components";
+import Loader from "../login/Loader";
+import { UserInfoProps } from "./home.types";
 
-const HomeProxy = () => {
-  const isAuthenticated = checkUserAuthentication();
-  const userInfo = React.useMemo(
-    () => localStorageGetItemWithExpiry("userInfo") || "{}",
-    []
-  );
-  const navigate = useNavigate();
+const HomeProxyWrapper = styled.div`
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+`;
+
+const HomeProxyHelper: React.FC<UserInfoProps> = ({ userInfo }) => {
   const [quests, setQuests] = React.useState([]);
   const [isQuestsLoading, setIsQuestsLoading] = React.useState(true);
-  React.useEffect(() => {
-    if (!isAuthenticated) {
-      navigate("/quest/login");
-    }
-  }, [isAuthenticated, navigate]);
 
   React.useEffect(() => {
     if (userInfo) {
@@ -32,22 +26,11 @@ const HomeProxy = () => {
     }
   }, [userInfo]);
 
-  if (!userInfo) {
-    return null;
-  }
-
   if (isQuestsLoading) {
     return (
-      <div
-        style={{
-          position: "fixed",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-        }}
-      >
+      <HomeProxyWrapper>
         <ClipLoader color={"#123abc"} size={150} />
-      </div>
+      </HomeProxyWrapper>
     );
   }
   if (!quests || quests.length === 0) {
@@ -55,4 +38,9 @@ const HomeProxy = () => {
   }
   return <Home userInfo={userInfo} quests={quests} />;
 };
+
+const HomeProxy = () => {
+  return <Loader component={HomeProxyHelper}/>
+};
+
 export default HomeProxy;

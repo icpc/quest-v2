@@ -20,3 +20,17 @@ export interface QuestsDays {
   date: string;
   detailsQuests: Quest[];
 }
+
+
+export interface UserInfo {
+  user?: {
+    email: string;
+    firstName: string;
+    lastName: string;
+  };
+  token: string;
+}
+
+export interface UserInfoProps {
+  userInfo: UserInfo;
+}

@@ -1,37 +1,30 @@
 import React from "react";
-import {
-  checkUserAuthentication,
-  localStorageGetItemWithExpiry,
-} from "../../utils/helper";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { getLeaderboard } from "../../utils/requests";
 import { ILeaderboard } from "./leaderboard.types";
 import LeaderBoard from "./leaderboard";
 import { ClipLoader } from "react-spinners";
+import { UserInfoProps } from "../home/home.types";
+import Loader from "../login/Loader";
+import styled from "styled-components";
 
-const LeaderboardProxy = () => {
+const LeaderBoardProxyWrapper = styled.div`
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+`;
+
+
+const LeaderBoardProxyHelper: React.FC<UserInfoProps> = ({ userInfo }) => {
   const { pageNumber } = useParams() ?? "1";
-  const isAuthenticated = checkUserAuthentication();
-  const userInfo = React.useMemo(
-    () => localStorageGetItemWithExpiry("userInfo") || "{}",
-    []
-  );
-  const navigate = useNavigate();
   const [isLoadingLeaderboard, setIsLoadingLeaderboard] = React.useState(true);
-  const [leaderboardData, setLeaderboardData] =
-    React.useState<ILeaderboard | null>(null);
+  const [leaderboardData, setLeaderboardData] = React.useState<ILeaderboard | null>(null);
   const [rows, setRows] = React.useState<any>([]);
   const [columnsNames, setColumnsNames] = React.useState<string[]>([]);
   const [curUser, setCurUser] = React.useState<any>(null);
 
   React.useEffect(() => {
-    if (!isAuthenticated) {
-      navigate("/quest/login");
-    }
-  }, [isAuthenticated, navigate]);
-
-  React.useEffect(() => {
-    if (isAuthenticated) {
       getLeaderboard(pageNumber, userInfo).then((response) => {
         if (response) {
           setLeaderboardData(response);
@@ -79,21 +72,13 @@ const LeaderboardProxy = () => {
           setIsLoadingLeaderboard(false);
         }
       });
-    }
-  }, [isAuthenticated, pageNumber, userInfo]);
+  }, [pageNumber, userInfo]);
 
   if (isLoadingLeaderboard || !leaderboardData) {
     return (
-      <div
-        style={{
-          position: "fixed",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-        }}
-      >
+      <LeaderBoardProxyWrapper>
         <ClipLoader color={"#123abc"} size={150} />
-      </div>
+      </LeaderBoardProxyWrapper>
     );
   }
   if (!leaderboardData?.result || leaderboardData?.result.length === 0) {
@@ -108,5 +93,10 @@ const LeaderboardProxy = () => {
       curUser={curUser}
     />
   );
+}
+
+const LeaderboardProxy = () => {
+  return <Loader component={LeaderBoardProxyHelper} />;
 };
+
 export default LeaderboardProxy;

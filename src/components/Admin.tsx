@@ -1,8 +1,4 @@
 import * as React from "react";
-import {
-    checkUserAuthentication,
-    localStorageGetItemWithExpiry,
-} from "../utils/helper";
 import {styled} from "@mui/material/styles";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -11,12 +7,10 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import {useNavigate} from "react-router-dom";
 import {
     getQuestsSubmissions,
     updateQuestSubmissionStatus,
 } from "../utils/requests";
-import {ClipLoader} from "react-spinners";
 import {Loader, LoaderComponent} from "./proxy/Loader";
 import {UserInfoProps} from "../types/types";
 

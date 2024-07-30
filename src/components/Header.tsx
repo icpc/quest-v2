@@ -33,7 +33,8 @@ interface Props {
 
 const pages = {
     "HOME": "/home",
-    "LEADERBOARD": "/leaderboard/1"
+    "LEADERBOARD": "/leaderboard/1",
+    "RULES": "/rules"
 };
 
 export default function DrawerAppBar(props: Props) {
@@ -101,7 +102,7 @@ export default function DrawerAppBar(props: Props) {
                     {config.DRAWER_TITLE}
                 </Typography>
 
-                {userInfo?.user?.email && (
+                {userInfo?.user?.email ? (
                     <List>
                         {Object.entries(pages).map(([name, url]) => (
                             <ListItem key={name} disablePadding>
@@ -113,6 +114,17 @@ export default function DrawerAppBar(props: Props) {
                                 </ListItemButton>
                             </ListItem>
                         ))}
+                    </List>
+                ) : (
+                    <List>
+                        <ListItem disablePadding>
+                            <ListItemButton sx={{textAlign: "center"}} onClick={() => {
+                                navigate("/rules");
+                                handleDrawerToggle();
+                            }}>
+                                <ListItemText primary={"RULES"}/>
+                            </ListItemButton>
+                        </ListItem>
                     </List>
                 )}
             </Box>
@@ -149,7 +161,7 @@ export default function DrawerAppBar(props: Props) {
                         <img src={logo} alt="ICPC logo" height="38"/>
                     </Typography>
 
-                    {userInfo?.user?.email && (
+                    {userInfo?.user?.email ? (
                         <Box sx={{display: {xs: "none", sm: "flex"}}}>
                             {Object.entries(pages).map(([name, url]) => (
                                 <Button
@@ -160,6 +172,15 @@ export default function DrawerAppBar(props: Props) {
                                     {name}
                                 </Button>
                             ))}
+                        </Box>
+                    ) : (
+                        <Box sx={{display: {xs: "none", sm: "flex"}}}>
+                                <Button
+                                    sx={{color: "#fff"}}
+                                    onClick={() => navigate("/rules")}
+                                >
+                                    RULES
+                                </Button>
                         </Box>
                     )}
                     {IconProfile()}

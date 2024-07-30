@@ -9,6 +9,7 @@ import { Toolbar } from "@mui/material";
 import Admin from "./components/Admin";
 import styled from "styled-components";
 import config from "./config";
+import Rules from "./components/Rules";
 
 const AppContainer = styled.div`
   background-color: ${config.BACKGROUND_COLOR};
@@ -24,6 +25,7 @@ const App = () => {
           <Route index path="/" element={<SignIn />} />
           <Route path="/login" element={<SignIn />} />
           <Route path="/home" element={<HomeProxy />} />
+          <Route path="/rules" element={<Rules />} />
           <Route
             path="/quest-details/:questId"
               element={<QuestProxy />}

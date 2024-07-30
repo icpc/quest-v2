@@ -1,28 +1,31 @@
 import React from "react";
 import { HashRouter, Routes, Route } from "react-router-dom";
-import SignIn from "./pages/login/login";
-import QuestProxy from "./pages/quest/quest.proxy";
-import HomeProxy from "./pages/home/home.proxy";
-import Leaderboard from "./pages/leaderboard/leaderboard.proxy";
-import DrawerAppBar from "./components/header/header";
+import SignIn from "./components/Login";
+import QuestProxy from "./components/proxy/QuestProxy";
+import HomeProxy from "./components/proxy/HomeProxy";
+import Leaderboard from "./components/proxy/LeaderboardProxy";
+import DrawerAppBar from "./components/Header";
 import { Toolbar } from "@mui/material";
-import Admin from "./pages/adminTable/admin";
+import Admin from "./components/Admin";
+import styled from "styled-components";
+import config from "./config";
+import Rules from "./components/Rules";
+
+const AppContainer = styled.div`
+  background-color: ${config.BACKGROUND_COLOR};
+`;
 
 const App = () => {
   return (
     <HashRouter>
-      <div
-        className="container"
-        style={{
-          backgroundColor: "#f8fbfd",
-        }}
-      >
+      <AppContainer className="container">
         <DrawerAppBar />
         <Toolbar />
         <Routes>
           <Route index path="/" element={<SignIn />} />
           <Route path="/login" element={<SignIn />} />
           <Route path="/home" element={<HomeProxy />} />
+          <Route path="/rules" element={<Rules />} />
           <Route
             path="/quest-details/:questId"
               element={<QuestProxy />}
@@ -38,7 +41,7 @@ const App = () => {
           />
           <Route path="*" element={<SignIn />} />
         </Routes>
-      </div>
+      </AppContainer>
     </HashRouter>
   );
 };

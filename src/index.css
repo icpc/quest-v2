@@ -1,9 +1,8 @@
 body {
-  margin: 0;
-  background-color: #f8fbfd;
-
+    margin: 0;
 }
+
 p {
-  margin: 0px;
-  padding:0px;
+    margin: 0;
+    padding: 0;
 }

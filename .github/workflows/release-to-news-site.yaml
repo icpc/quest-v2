@@ -29,3 +29,16 @@ jobs:
             name: quest-v2-build
             path: build
             retention-days: 1
+
+      - name: Upload to new site
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        if: success()
+        with:
+          server: ftp.u.icpc.global
+          port: 21
+          protocol: ftps
+          username: live@u.icpc.global
+          password: ${{ secrets.ftp_password }}
+          local-dir: build/
+          server-dir: qquest2
+          dangerous-clean-slate: true

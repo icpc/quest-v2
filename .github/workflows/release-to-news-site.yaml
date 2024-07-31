@@ -37,8 +37,8 @@ jobs:
           server: ftp.u.icpc.global
           port: 21
           protocol: ftps
-          username: live@u.icpc.global
-          password: ${{ secrets.ftp_password }}
+          username: ${{ secrets.FTP_LOGIN }}
+          password: ${{ secrets.FTP_PASSWORD }}
           local-dir: build/
           server-dir: qquest2
           dangerous-clean-slate: true

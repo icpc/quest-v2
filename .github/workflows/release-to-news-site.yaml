@@ -21,7 +21,7 @@ jobs:
       - name: Build
         run: pnpm run build
         env:
-          PUBLIC_URL: https://news.icpc.global/qquest
+          PUBLIC_URL: https://news.icpc.global/quest
 
       - uses: actions/upload-artifact@v4
         if: success()

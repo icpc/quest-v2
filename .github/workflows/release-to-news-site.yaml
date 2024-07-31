@@ -40,5 +40,5 @@ jobs:
           username: ${{ secrets.FTP_LOGIN }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: build/
-          server-dir: qquest2/
+          server-dir: quest/
           dangerous-clean-slate: true

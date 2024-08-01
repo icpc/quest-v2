@@ -102,31 +102,19 @@ export default function DrawerAppBar(props: Props) {
                     {config.DRAWER_TITLE}
                 </Typography>
 
-                {userInfo?.user?.email ? (
-                    <List>
-                        {Object.entries(pages).map(([name, url]) => (
-                            <ListItem key={name} disablePadding>
-                                <ListItemButton sx={{textAlign: "center"}} onClick={() => {
-                                    navigate(url);
-                                    handleDrawerToggle();
-                                }}>
-                                    <ListItemText primary={name}/>
-                                </ListItemButton>
-                            </ListItem>
-                        ))}
-                    </List>
-                ) : (
-                    <List>
-                        <ListItem disablePadding>
+                <List>
+                    {Object.entries(pages).map(([name, url]) => (
+                        <ListItem key={name} disablePadding>
                             <ListItemButton sx={{textAlign: "center"}} onClick={() => {
-                                navigate("/rules");
+                                navigate(url);
                                 handleDrawerToggle();
                             }}>
-                                <ListItemText primary={"RULES"}/>
+                                <ListItemText primary={name}/>
                             </ListItemButton>
                         </ListItem>
-                    </List>
-                )}
+                    ))}
+                </List>
+
             </Box>
         );
     }, [pages, navigate, userInfo]);
@@ -161,28 +149,18 @@ export default function DrawerAppBar(props: Props) {
                         <img src={logo} alt="ICPC logo" height="38"/>
                     </Typography>
 
-                    {userInfo?.user?.email ? (
-                        <Box sx={{display: {xs: "none", sm: "flex"}}}>
-                            {Object.entries(pages).map(([name, url]) => (
-                                <Button
-                                    key={name}
-                                    sx={{color: "#fff"}}
-                                    onClick={() => navigate(url)}
-                                >
-                                    {name}
-                                </Button>
-                            ))}
-                        </Box>
-                    ) : (
-                        <Box sx={{display: {xs: "none", sm: "flex"}}}>
-                                <Button
-                                    sx={{color: "#fff"}}
-                                    onClick={() => navigate("/rules")}
-                                >
-                                    RULES
-                                </Button>
-                        </Box>
-                    )}
+                    <Box sx={{display: {xs: "none", sm: "flex"}}}>
+                        {Object.entries(pages).map(([name, url]) => (
+                            <Button
+                                key={name}
+                                sx={{color: "#fff"}}
+                                onClick={() => navigate(url)}
+                            >
+                                {name}
+                            </Button>
+                        ))}
+                    </Box>
+
                     {IconProfile()}
                 </Toolbar>
             </AppBar>

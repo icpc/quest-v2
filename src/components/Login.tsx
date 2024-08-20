@@ -96,12 +96,12 @@ export default function SignIn() {
                             Sign In
                         </Button>
                         <Link
-                            href="https://docs.google.com/forms/d/e/1FAIpQLScWCrO2xwR0R3tXx1g4P9rgWNAAh1QGKLtP8Qq4oBmEJlkrVA/viewform"
+                            href="https://forms.gle/mVS3wHXHmUnuwEXv6"
                             target="_blank"
                             rel="noreferrer"
                         >
-                            Don't use your ICPC account password,Fill this form with your icpc
-                            email to get your password
+		            Don't use your ICPC password! Fill this form with your icpc
+              	  	    email to receive password.
                         </Link>
                     </Box>
                 </LoginFormWrapper>

@@ -95,17 +95,19 @@ export default function SignIn() {
                         >
                             Sign In
                         </Button>
-                        <Link
-                            href="https://forms.gle/mVS3wHXHmUnuwEXv6"
-                            target="_blank"
-                            rel="noreferrer"
-                        >
-		            Don't use your ICPC password! Fill this form with your icpc
-              	  	    email to receive password.
-                        </Link>
+			Registration for Astana Quest will open on Sept 10. Check back later!
                     </Box>
                 </LoginFormWrapper>
             </Container>
         </ThemeProvider>
     );
 }
+
+//                        <Link
+//                            href="https://forms.gle/mVS3wHXHmUnuwEXv6"
+//                            target="_blank"
+//                            rel="noreferrer"
+//                        >
+//		            Don't use your ICPC password! Fill this form with your icpc
+//              	  	    email to receive password.
+//                        </Link>

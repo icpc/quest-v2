@@ -6,14 +6,7 @@ const Rules = () => {
             margin: '10%'
           }}>
           <h1>Rules</h1>
-          <p>
-            Every day between September 15 and September 19 visit 
-            <a 
-              href="https://news.icpc.global/quest">
-               https://news.icpc.global/quest 
-            </a> 
-            for a set of new daily quests! 
-          </p>
+          <p>Every day between September 15 and September 19 visit <a href="https://news.icpc.global/quest">https://news.icpc.global/quest</a> for a set of new daily quests! </p>
           <p>
             Each quest belongs to one of the 7 categories: 
             <ul>

@@ -101,7 +101,7 @@ export default function SignIn() {
                             rel="noreferrer"
                         >
 		            Don't use your ICPC.global password! Fill this form with your icpc
-              	  	    email to receive password.
+              	  	    email to receive dedicated Quest password.
                         </Link>
                     </Box>
                 </LoginFormWrapper>

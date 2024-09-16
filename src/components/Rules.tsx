@@ -30,6 +30,10 @@ const Rules = () => {
           <p>During the World Finals contest the Quest Grand Prize raffle will take place among Quest participants with total highest score. </p>
           <br/>
           <p>Sept. 15 winners: Amirreza Mazinani, Behrad Hemati Aghabagheri, Georgiy Korneev, Jherson Medina Correa, Kostia Savchuk, Maxim Korneev, Md Mehrab Hossain Opi, Minh-Hoang Le, Nick Wu, Pablo Sáez Reyes, Petr Mitrichev, Samanway Sadhu, Seyed Parsa Pordastan, Václav Herman. Come to Alumni Area to pick up your daily prize!</p>
+
+          <br/>
+          <p>Sept. 16 winners: Amirreza Mazinani, Behrad Hemati Aghabagheri, Georgiy Korneev, Kostia Savchuk, Maxim Korneev, Md Mehrab Hossain Opi, Pablo Sáez Reyes, Petr Mitrichev, Seyed Parsa Pordastan, Václav Herman, Victoria Korneeva, Rauf Suleymanli. Come to Alumni Area to pick up your daily prize!</p>
+        
         </div>
     );
 }

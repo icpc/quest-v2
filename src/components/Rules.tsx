@@ -28,6 +28,8 @@ const Rules = () => {
           <p>At the end of each day, 30 daily prized will be awarded Quest participant with highest score of that day. They will be able to pick up their prizes at EXPO Alumni Lounge. In case of a tiebreak, Daily Prizes will be distributed among highest scoring participants on first-come first-served basis.</p>
           <br/>
           <p>During the World Finals contest the Quest Grand Prize raffle will take place among Quest participants with total highest score. </p>
+          <br/>
+          <p>Sept. 15 winners: Amirreza Mazinani, Behrad Hemati Aghabagheri, Georgiy Korneev, Jherson Medina Correa, Kostia Savchuk, Maxim Korneev, Md Mehrab Hossain Opi, Minh-Hoang Le, Nick Wu, Pablo Sáez Reyes, Petr Mitrichev, Samanway Sadhu, Seyed Parsa Pordastan, Václav Herman. Come to Alumni Area to pick up your daily prize!</p>
         </div>
     );
 }

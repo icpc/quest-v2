@@ -35,6 +35,8 @@ const Rules = () => {
           <p>Sept. 16 winners: Amirreza Mazinani, Behrad Hemati Aghabagheri, Georgiy Korneev, Kostia Savchuk, Maxim Korneev, Md Mehrab Hossain Opi, Pablo Sáez Reyes, Petr Mitrichev, Seyed Parsa Pordastan, Václav Herman, Victoria Korneeva, Rauf Suleymanli. Come to Alumni Area to pick up your daily prize!</p>
           <br/>
           <p>Sept. 17 winners: Amirreza Mazinani, Behrad Hemati Aghabagheri, Georgiy Korneev, Kostia Savchuk, Maxim Korneev, Petr Mitrichev, Seyed Parsa Pordastan, Václav Herman, Victoria Korneeva, Rauf Suleymanli. Come to Alumni Area to pick up your daily prize!</p>
+          <br/>
+          <p>Sept. 18 winners: Amirreza Mazinani, Behrad Hemati Aghabagheri, Georgiy Korneev, Joowon Oh, Mati Ramos, Petr Mitrichev, Rauf Suleymanli, Seyed Parsa Pordastan, Václav Herman, Victoria Korneeva. Come to Alumni Area after the end of the contest to pick up your daily prize!</p>
 
         </div>
     );

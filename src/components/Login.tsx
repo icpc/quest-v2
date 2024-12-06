@@ -109,7 +109,7 @@ export default function SignIn() {
               Sign In
             </Button>
             <Link
-              href="https://docs.google.com/forms/d/e/1FAIpQLSdOhVb05b5OPwqmMA2bHGypensGCDQARylpUWDrywuJcfTsKQ/viewform"
+              href="https://forms.gle/GFVDxQRJXiAqYXVaA"
               target="_blank"
               rel="noreferrer"
             >

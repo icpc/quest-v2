@@ -25,7 +25,7 @@ const Rules = () => {
               <li>video (please, try keeping it short ;) ).</li>
             </ul>
           </p>
-          <p>At the end of each day, 2 daily high tier souvenir will be awarded to Quest participants with highest score of that day. Random choice is our tiebreaker.</p>
+          <p>At the end of each day, 2 daily high tier souvenir will be awarded to Quest participants with highest score of that day. Random choice is our tiebreaker. The same person can't win the daily prize twice, but they can be qualified for the grand and special prizes below.</p>
           <br/>
           <p>During the Championship, the Quest Grand Prize will take place among Quest participants with total highest score for quests submitted before 20:00 December 8. </p>
           <br/>

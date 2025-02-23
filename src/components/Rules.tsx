@@ -5,8 +5,9 @@ const Rules = () => {
         <div style={{
             margin: '10%'
           }}>
+
           <h1>Rules</h1>
-          <p>Every day between December 6 and December 9 visit <a href="https://news.icpc.global/quest">https://news.icpc.global/quest</a> for a set of new daily quests! </p>
+          <p>Every day between February 28 and March 2 visit <a href="https://news.icpc.global/quest">https://news.icpc.global/quest</a> for a set of new daily quests! </p>
           <p>
             Each quest belongs to one of the 7 categories: 
             <ul>
@@ -25,11 +26,13 @@ const Rules = () => {
               <li>video (please, try keeping it short ;) ).</li>
             </ul>
           </p>
-          <p>At the end of each day, 2 daily high tier souvenir will be awarded to Quest participants with highest score of that day. Random choice is our tiebreaker. The same person can't win the daily prize twice, but they can be qualified for the grand and special prizes below.</p>
+          <p>Top 10 Quest participants will receive prizes / gifts from JetBrains and Pinely.</p>
           <br/>
-          <p>During the Championship, the Quest Grand Prize will take place among Quest participants with total highest score for quests submitted before 20:00 December 8. </p>
+          <p>Closest guess for a guessing quest will give you 100 EUR Amazon voucher from Jane Street.</p>
           <br/>
-          <p>A very special quest will appear on December 9. The special quest winner(s) will be awarded a very special high tier souvenir.</p>
+          <p>The winners will be notified via email address.</p>
+          <br/>
+          <p>Contact email address: <a href="mailto:euchelp@icpc.global">euchelp@icpc.global</a> </p>
           
         </div>
     );

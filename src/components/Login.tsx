@@ -109,7 +109,7 @@ export default function SignIn() {
               Sign In
             </Button>
             <Link
-              href="https://forms.gle/GFVDxQRJXiAqYXVaA"
+              href="https://forms.gle/JNpJNyKYP7o14AR66"
               target="_blank"
               rel="noreferrer"
             >

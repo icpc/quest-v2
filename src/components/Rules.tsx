@@ -28,8 +28,6 @@ const Rules = () => {
           </p>
           <p>Top 10 Quest participants will receive prizes / gifts from JetBrains and Pinely.</p>
           <br/>
-          <p>Closest guess for a guessing quest will give you 100 EUR Amazon voucher from Jane Street.</p>
-          <br/>
           <p>The winners will be notified via email address.</p>
           <br/>
           <p>Contact email address: <a href="mailto:euchelp@icpc.global">euchelp@icpc.global</a> </p>

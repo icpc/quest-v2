@@ -26,19 +26,10 @@ const App = () => {
           <Route path="/login" element={<SignIn />} />
           <Route path="/home" element={<HomeProxy />} />
           <Route path="/rules" element={<Rules />} />
-          <Route
-            path="/quest-details/:questId"
-              element={<QuestProxy />}
-          />
+          <Route path="/quest-details/:questId" element={<QuestProxy />} />
           <Route path="/leaderboard" element={<Leaderboard />} />
-          <Route
-            path="/leaderboard/:pageNumber"
-            element={<Leaderboard />}
-          />
-          <Route
-            path="/admin/submissionsTable"
-            element={<Admin />}
-          />
+          <Route path="/leaderboard/:pageNumber" element={<Leaderboard />} />
+          <Route path="/admin/submissionsTable" element={<Admin />} />
           <Route path="*" element={<SignIn />} />
         </Routes>
       </AppContainer>

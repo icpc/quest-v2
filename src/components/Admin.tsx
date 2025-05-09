@@ -1,221 +1,221 @@
 import * as React from "react";
-import {styled} from "@mui/material/styles";
+import { styled } from "@mui/material/styles";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
-import TableCell, {tableCellClasses} from "@mui/material/TableCell";
+import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import {
-    getQuestsSubmissions,
-    updateQuestSubmissionStatus,
+  getQuestsSubmissions,
+  updateQuestSubmissionStatus,
 } from "../utils/requests";
-import {Loader, LoaderComponent} from "./proxy/Loader";
-import {UserInfoProps} from "../types/types";
+import { Loader, LoaderComponent } from "./proxy/Loader";
+import { UserInfoProps } from "../types/types";
 
-const StyledTableCell = styled(TableCell)(({theme}) => ({
-    [`&.${tableCellClasses.head}`]: {
-        backgroundColor: "rgb(22, 65, 116)",
-        color: theme.palette.common.white,
-    },
-    [`&.${tableCellClasses.body}`]: {
-        fontSize: 14,
-    },
+const StyledTableCell = styled(TableCell)(({ theme }) => ({
+  [`&.${tableCellClasses.head}`]: {
+    backgroundColor: "rgb(22, 65, 116)",
+    color: theme.palette.common.white,
+  },
+  [`&.${tableCellClasses.body}`]: {
+    fontSize: 14,
+  },
 }));
 
-const StyledTableRow = styled(TableRow)(({theme}) => ({
-    "&:nth-of-type(odd)": {
-        backgroundColor: theme.palette.action.hover,
-    },
-    // hide last border
-    "&:last-child td, &:last-child th": {
-        border: 0,
-    },
+const StyledTableRow = styled(TableRow)(({ theme }) => ({
+  "&:nth-of-type(odd)": {
+    backgroundColor: theme.palette.action.hover,
+  },
+  // hide last border
+  "&:last-child td, &:last-child th": {
+    border: 0,
+  },
 }));
 
-const AdminHelper: React.FC<UserInfoProps> = ({userInfo}) => {
-    const [isGetSubmissionsLoading, setIsGetSubmissionsLoading] =
-        React.useState(true);
-    const [questsSubmissions, setQuestsSubmissions] = React.useState<any[]>([]);
+const AdminHelper: React.FC<UserInfoProps> = ({ userInfo }) => {
+  const [isGetSubmissionsLoading, setIsGetSubmissionsLoading] =
+    React.useState(true);
+  const [questsSubmissions, setQuestsSubmissions] = React.useState<any[]>([]);
 
-    React.useEffect(() => {
-        getQuestsSubmissions("PENDING", userInfo).then((response) => {
-            if (response) {
-                setQuestsSubmissions(response);
-                setIsGetSubmissionsLoading(false);
-            } else {
-                setQuestsSubmissions([]);
-                setIsGetSubmissionsLoading(false);
-            }
-        });
-    }, [userInfo]);
+  React.useEffect(() => {
+    getQuestsSubmissions("PENDING", userInfo).then((response) => {
+      if (response) {
+        setQuestsSubmissions(response);
+        setIsGetSubmissionsLoading(false);
+      } else {
+        setQuestsSubmissions([]);
+        setIsGetSubmissionsLoading(false);
+      }
+    });
+  }, [userInfo]);
 
-    if (isGetSubmissionsLoading) {
-        return <LoaderComponent />
-    }
-    if (!questsSubmissions || questsSubmissions.length === 0) {
-        return <div>No submissions found</div>;
-    }
-    return (
-        <TableContainer component={Paper}>
-            <Table sx={{minWidth: 700}} aria-label="customized table">
-                <TableHead>
-                    <TableRow>
-                        <StyledTableCell>User Name</StyledTableCell>
-                        <StyledTableCell>Quest</StyledTableCell>
-                        <StyledTableCell>Answer</StyledTableCell>
-                        <StyledTableCell>Correct Answer</StyledTableCell>
-                        <StyledTableCell>Action</StyledTableCell>
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    {questsSubmissions.map((questsSubmission: any) => {
-                        return questsSubmission.submissions.map((submission: any) => {
-                            return (
-                                <>
-                                    <StyledTableRow key={submission.id}>
-                                        <StyledTableCell component="th" scope="row">
-                                            {questsSubmission.firstName}{" "}
-                                            {" " + questsSubmission.lastName}
-                                        </StyledTableCell>
-                                        <StyledTableCell component="th" scope="row">
-                                            <a
-                                                href={`/quest-details/${questsSubmission.questId}`}
-                                                target="_blank"
-                                                rel="noreferrer"
-                                            >
-                                                {questsSubmission.questId}
-                                                {"-"}
-                                                {questsSubmission.name}
-                                            </a>
-                                        </StyledTableCell>
-                                        <StyledTableCell
-                                            onClick={() => {
-                                                if (submission.submissionType !== "text")
-                                                    window.open(submission.answer, "_blank");
-                                            }}
-                                            style={{
-                                                cursor:
-                                                    submission.submissionType !== "text"
-                                                        ? "pointer"
-                                                        : "default",
+  if (isGetSubmissionsLoading) {
+    return <LoaderComponent />;
+  }
+  if (!questsSubmissions || questsSubmissions.length === 0) {
+    return <div>No submissions found</div>;
+  }
+  return (
+    <TableContainer component={Paper}>
+      <Table sx={{ minWidth: 700 }} aria-label="customized table">
+        <TableHead>
+          <TableRow>
+            <StyledTableCell>User Name</StyledTableCell>
+            <StyledTableCell>Quest</StyledTableCell>
+            <StyledTableCell>Answer</StyledTableCell>
+            <StyledTableCell>Correct Answer</StyledTableCell>
+            <StyledTableCell>Action</StyledTableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {questsSubmissions.map((questsSubmission: any) => {
+            return questsSubmission.submissions.map((submission: any) => {
+              return (
+                <>
+                  <StyledTableRow key={submission.id}>
+                    <StyledTableCell component="th" scope="row">
+                      {questsSubmission.firstName}{" "}
+                      {" " + questsSubmission.lastName}
+                    </StyledTableCell>
+                    <StyledTableCell component="th" scope="row">
+                      <a
+                        href={`/quest-details/${questsSubmission.questId}`}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        {questsSubmission.questId}
+                        {"-"}
+                        {questsSubmission.name}
+                      </a>
+                    </StyledTableCell>
+                    <StyledTableCell
+                      onClick={() => {
+                        if (submission.submissionType !== "text")
+                          window.open(submission.answer, "_blank");
+                      }}
+                      style={{
+                        cursor:
+                          submission.submissionType !== "text"
+                            ? "pointer"
+                            : "default",
 
-                                                color:
-                                                    submission.submissionType !== "text"
-                                                        ? "blue"
-                                                        : "black",
-                                            }}
-                                            component="th"
-                                            scope="row"
-                                        >
-                                            {submission.submissionType === "text"
-                                                ? submission.answer
-                                                : "View Link"}
-                                        </StyledTableCell>
-                                        <StyledTableCell component="th" scope="row">
-                                            {questsSubmission.correctAnswer}
-                                        </StyledTableCell>
-                                        <StyledTableCell component="th" scope="row">
-                                            <button
-                                                onClick={() => {
-                                                    // update submission
-                                                    updateQuestSubmissionStatus(
-                                                        submission.id,
-                                                        "ACCEPTED",
-                                                        userInfo,
-                                                        questsSubmission.email,
-                                                        questsSubmission.questId
-                                                    ).then((response) => {
-                                                        if (response) {
-                                                            alert("Accepted successfully");
-                                                            setQuestsSubmissions(
-                                                                questsSubmissions.map(
-                                                                    (questSubmission: any) => {
-                                                                        if (
-                                                                            questSubmission.questId ===
-                                                                            questsSubmission.questId
-                                                                        ) {
-                                                                            return {
-                                                                                ...questSubmission,
-                                                                                submissions:
-                                                                                    questSubmission.submissions.filter(
-                                                                                        (sub: any) =>
-                                                                                            sub.id !== submission.id
-                                                                                    ),
-                                                                            };
-                                                                        } else {
-                                                                            return questSubmission;
-                                                                        }
-                                                                    }
-                                                                )
-                                                            );
-                                                        } else {
-                                                            alert("Error in accepting submission");
-                                                        }
-                                                    });
-                                                }}
-                                            >
-                                                Accept
-                                            </button>
-                                            <button
-                                                onClick={() => {
-                                                    updateQuestSubmissionStatus(
-                                                        submission.id,
-                                                        "WRONG",
-                                                        userInfo,
-                                                        questsSubmission.email,
-                                                        questsSubmission.questId
-                                                    ).then((response) => {
-                                                        if (response) {
-                                                            alert("Rejected successfully");
-                                                            setQuestsSubmissions(
-                                                                questsSubmissions.map(
-                                                                    (questSubmission: any) => {
-                                                                        if (
-                                                                            questSubmission.questId ===
-                                                                            questsSubmission.questId
-                                                                        ) {
-                                                                            return {
-                                                                                ...questSubmission,
-                                                                                submissions:
-                                                                                    questSubmission.submissions.filter(
-                                                                                        (sub: any) =>
-                                                                                            sub.id !== submission.id
-                                                                                    ),
-                                                                            };
-                                                                        } else {
-                                                                            return questSubmission;
-                                                                        }
-                                                                    }
-                                                                )
-                                                            );
-                                                        } else {
-                                                            alert("Error in accepting submission");
-                                                        }
-                                                    });
-                                                }}
-                                                style={{
-                                                    marginLeft: "10px",
-                                                    backgroundColor: "red",
-                                                }}
-                                            >
-                                                Reject
-                                            </button>
-                                        </StyledTableCell>
-                                    </StyledTableRow>
-                                </>
-                            );
-                        });
-                    })}
-                </TableBody>
-            </Table>
-        </TableContainer>
-    );
+                        color:
+                          submission.submissionType !== "text"
+                            ? "blue"
+                            : "black",
+                      }}
+                      component="th"
+                      scope="row"
+                    >
+                      {submission.submissionType === "text"
+                        ? submission.answer
+                        : "View Link"}
+                    </StyledTableCell>
+                    <StyledTableCell component="th" scope="row">
+                      {questsSubmission.correctAnswer}
+                    </StyledTableCell>
+                    <StyledTableCell component="th" scope="row">
+                      <button
+                        onClick={() => {
+                          // update submission
+                          updateQuestSubmissionStatus(
+                            submission.id,
+                            "ACCEPTED",
+                            userInfo,
+                            questsSubmission.email,
+                            questsSubmission.questId
+                          ).then((response) => {
+                            if (response) {
+                              alert("Accepted successfully");
+                              setQuestsSubmissions(
+                                questsSubmissions.map(
+                                  (questSubmission: any) => {
+                                    if (
+                                      questSubmission.questId ===
+                                      questsSubmission.questId
+                                    ) {
+                                      return {
+                                        ...questSubmission,
+                                        submissions:
+                                          questSubmission.submissions.filter(
+                                            (sub: any) =>
+                                              sub.id !== submission.id
+                                          ),
+                                      };
+                                    } else {
+                                      return questSubmission;
+                                    }
+                                  }
+                                )
+                              );
+                            } else {
+                              alert("Error in accepting submission");
+                            }
+                          });
+                        }}
+                      >
+                        Accept
+                      </button>
+                      <button
+                        onClick={() => {
+                          updateQuestSubmissionStatus(
+                            submission.id,
+                            "WRONG",
+                            userInfo,
+                            questsSubmission.email,
+                            questsSubmission.questId
+                          ).then((response) => {
+                            if (response) {
+                              alert("Rejected successfully");
+                              setQuestsSubmissions(
+                                questsSubmissions.map(
+                                  (questSubmission: any) => {
+                                    if (
+                                      questSubmission.questId ===
+                                      questsSubmission.questId
+                                    ) {
+                                      return {
+                                        ...questSubmission,
+                                        submissions:
+                                          questSubmission.submissions.filter(
+                                            (sub: any) =>
+                                              sub.id !== submission.id
+                                          ),
+                                      };
+                                    } else {
+                                      return questSubmission;
+                                    }
+                                  }
+                                )
+                              );
+                            } else {
+                              alert("Error in accepting submission");
+                            }
+                          });
+                        }}
+                        style={{
+                          marginLeft: "10px",
+                          backgroundColor: "red",
+                        }}
+                      >
+                        Reject
+                      </button>
+                    </StyledTableCell>
+                  </StyledTableRow>
+                </>
+              );
+            });
+          })}
+        </TableBody>
+      </Table>
+    </TableContainer>
+  );
 };
 
 const Admin = () => {
-    return <Loader component={AdminHelper}/>
-}
+  return <Loader component={AdminHelper} />;
+};
 
 export default Admin;

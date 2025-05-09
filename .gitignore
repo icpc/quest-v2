@@ -28,4 +28,3 @@ yarn-error.log*
 pb_data
 pb_public
 pb_hooks
-pb_migrations

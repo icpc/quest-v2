@@ -1,211 +1,438 @@
-export const submitTask = async (submission: any, userInfo: any) => {
+import PocketBase from 'pocketbase';
+
+// Create a singleton instance
+const pb = new PocketBase('/');
+
+// Authentication functions
+
+/**
+ * Check if the user is authenticated with PocketBase
+ * @returns boolean indicating authentication status
+ */
+export function checkAuth() {
+  return pb.authStore.isValid;
+}
+
+/**
+ * Get the current authenticated user from PocketBase
+ * @returns User record or null if not authenticated
+ */
+export function getCurrentUser() {
+  if (!checkAuth()) {
+    return null;
+  }
+
+  return pb.authStore.model;
+}
+
+/**
+ * Get formatted user info in a consistent format
+ * @returns User info object with standard fields
+ */
+export function getUserInfo() {
+  const pbUser = getCurrentUser();
+
+  if (pbUser) {
+    // Format user from PocketBase
+    return {
+      id: pbUser.id,
+      email: pbUser.email,
+      name: pbUser.name || '',
+      role: pbUser.role || [],
+      token: pb.authStore.token,
+      user: {
+        firstName: pbUser.name?.split(' ')[0] || '',
+        lastName: pbUser.name?.split(' ')[1] || '',
+        email: pbUser.email
+      }
+    };
+  }
+
+  return null;
+}
+
+/**
+ * Log out the current user
+ */
+export const logout = () => {
+  pb.authStore.clear();
+  localStorage.removeItem("userInfo");
+  localStorage.removeItem("isAuthenticated");
+};
+
+// API Functions
+
+// Note: userInfo parameter is kept for compatibility but ignored
+export const submitTask = async (submission: any, userInfo?: any) => {
   try {
-    if (!submission.questId || !userInfo?.token) {
+    if (!submission.questId || !checkAuth()) {
       return null;
     }
-    const formData = new FormData();
+
+    const data: any = {
+      quest: submission.questId,
+      // Use the current user's ID from authStore
+      submitter: pb.authStore.model?.id
+    };
+
     if (submission.type === "text") {
       if (!submission.text || submission.text === "") {
         return null;
       }
-      formData.append("answer", submission.text);
-    } else {
-      formData.append("answer", submission.file);
+      data.text = submission.text;
     }
-    formData.append("questId", submission.questId ?? "1");
-    const response = await fetch(
-      "https://icpcquestapi.azurewebsites.net/api/submit-quest",
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${userInfo?.token}`,
-        },
-        body: formData,
-      }
-    );
-    if (response.status === 200) {
-      return response.json();
+
+    // For file uploads
+    const formData = new FormData();
+    Object.keys(data).forEach(key => {
+      formData.append(key, data[key]);
+    });
+
+    if (submission.type !== "text" && submission.file) {
+      formData.append("attachments", submission.file);
     }
-    if (response.status === 401) {
-      localStorage.removeItem("userInfo");
-      localStorage.removeItem("isAuthenticated");
+
+    // Create the submission
+    const record = await pb.collection('submissions').create(formData);
+
+    // For file submissions, return the file URL to be shown in the UI
+    if (submission.type !== "text" && record.attachments && record.attachments.length > 0) {
+      return pb.files.getUrl(record, record.attachments[0]);
     }
-    return null;
+
+    // For text submissions, return the text
+    return record.text || '';
   } catch (error) {
+    console.error("Error:", error);
+    if (error instanceof Error && error.message.includes('401')) {
+      logout();
+    }
     return null;
   }
 };
 
 export const login = async (user: any) => {
   try {
-    const response = await fetch(
-      "https://icpcquestapi.azurewebsites.net/api/login",
-      {
-        method: "POST",
-        body: JSON.stringify(user),
-      }
-    ).then((response) => {
-      if (response.status === 200) {
-        return response.json();
-      }
-      return null;
-    });
-    return response;
+    const authData = await pb.collection('users').authWithPassword(
+      user.email,
+      user.password
+    );
+
+    // Store auth in localStorage for persistence across page reloads
+    localStorage.setItem("isAuthenticated", "true");
+
+    // Get user info
+    const userInfo = getUserInfo();
+
+    return userInfo;
   } catch (error) {
     console.error("Error:", error);
     return null;
   }
 };
 
-export const getQuests = async (userInfo: any) => {
+// Note: userInfo parameter is kept for compatibility but ignored
+export const getQuests = async (userInfo?: any) => {
   try {
-    const response = await fetch(
-      "https://icpcquestapi.azurewebsites.net/api/get-quests",
-      {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${userInfo?.token}`,
-        },
-      }
-    ).then((response) => {
-      if (response.status === 200) {
-        return response.json();
-      }
-      if (response.status === 401) {
-        localStorage.removeItem("userInfo");
-        localStorage.removeItem("isAuthenticated");
-      }
-      return null;
+    if (!checkAuth()) return { quests: [] };
+
+    const records = await pb.collection('quests').getFullList({
+      sort: '-created'
     });
-    return response;
+
+    // Format response to match expected interface in components
+    return {
+      quests: records.map(record => ({
+        id: parseInt(record.id) || 0, // Convert string ID to number
+        name: record.name,
+        type: record.questType || '',
+        description: record.text || '',
+        status: 'NOT ATTEMPTED',
+        date: record.created,
+        totalAc: '0',
+        category: record.category || '',
+      }))
+    };
   } catch (error) {
     console.error("Error:", error);
+    if (error instanceof Error && error.message.includes('401')) {
+      logout();
+    }
+    return { quests: [] };
+  }
+};
+
+// Note: userInfo parameter is kept for compatibility but ignored
+export const getQuestSubmissions = async (questId: any, userInfo?: any) => {
+  try {
+    if (!checkAuth() || !questId) return null;
+
+    try {
+      // Get quest details
+      const quest = await pb.collection('quests').getOne(questId);
+
+      // Get submissions for this quest
+      const submissions = await pb.collection('submissions').getFullList({
+        filter: `quest = "${questId}"`,
+        expand: 'submitter,quest,validations'
+      });
+
+      // Get current user submissions statuses
+      const currentUserId = pb.authStore.model?.id;
+      let questStatus = 'NOT ATTEMPTED';
+
+      // Check if there are any submissions and update status accordingly
+      const userSubmissions = submissions.filter(sub => sub.submitter === currentUserId);
+      if (userSubmissions.length > 0) {
+        const lastSubmission = userSubmissions[0];
+        if (lastSubmission.expand?.validations) {
+          questStatus = lastSubmission.expand.validations.success ? 'ACCEPTED' : 'WRONG';
+        } else {
+          questStatus = 'PENDING';
+        }
+      }
+
+      // Format response to match QuestSubmissions interface
+      const formattedResponse = {
+        id: parseInt(quest.id) || 0, // Convert string ID to number
+        questName: quest.name || '',
+        questDate: quest.created,
+        questType: quest.questType || 'TEXT',
+        questDescription: quest.text || '',
+        questStatus: questStatus,
+        questAcceptSubmissions: true,
+        questCategory: quest.category || '',
+        submissions: userSubmissions
+          .map(sub => {
+            // Determine status from validations
+            let status = 'PENDING';
+            if (sub.expand?.validations) {
+              status = sub.expand.validations.success ? 'ACCEPTED' : 'WRONG';
+            }
+
+            return {
+              id: parseInt(sub.id) || 0, // Convert string ID to number
+              answer: sub.text || (sub.attachments && sub.attachments.length > 0 ?
+                pb.files.getUrl(sub, sub.attachments[0]) : ''),
+              uploadTime: sub.created,
+              status: status,
+              submissionType: quest.questType || 'TEXT'
+            };
+          })
+          .sort((a, b) => new Date(b.uploadTime).getTime() - new Date(a.uploadTime).getTime()) // Sort newest first
+      };
+
+      return formattedResponse;
+    } catch (e) {
+      console.error("Error in quest processing:", e);
+      return null;
+    }
+  } catch (error) {
+    console.error("Error:", error);
+    if (error instanceof Error && error.message.includes('401')) {
+      logout();
+    }
     return null;
   }
 };
 
-export const getQuestSubmissions = async (questId: any, userInfo: any) => {
+// Note: userInfo parameter is kept for compatibility but ignored
+export const getLeaderboard = async (pageNumber: any, userInfo?: any) => {
   try {
-    const response = await fetch(
-      `https://icpcquestapi.azurewebsites.net/api/get-quest-submissions`,
-      {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${userInfo?.token}`,
-          questId: questId,
-        },
-      }
-    ).then((response) => {
-      if (response.status === 200) {
-        return response.json();
-      }
-      if (response.status === 401) {
-        localStorage.removeItem("userInfo");
-        localStorage.removeItem("isAuthenticated");
-      }
-      return null;
-    });
-    return response;
-  } catch (error) {
-    console.error("Error:", error);
-    return null;
-  }
-};
+    if (!checkAuth()) return null;
 
-export const getLeaderboard = async (pageNumber: any, userInfo: any) => {
-  try {
-    if (!userInfo?.token) return null;
     if (!pageNumber) pageNumber = 1;
-    const response = await fetch(
-      `https://icpcquestapi.azurewebsites.net/api/get-rank?page=${pageNumber}`,
-      {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${userInfo?.token}`,
-          "page-size": "10",
-        },
-      }
-    ).then((response) => {
-      if (response.status === 200) {
-        return response.json();
-      }
-      if (response.status === 401) {
-        localStorage.removeItem("userInfo");
-        localStorage.removeItem("isAuthenticated");
-      }
-      return null;
+    const pageSize = 10;
+
+    // Using the total_scores_example view
+    const records = await pb.collection('total_scores_example').getList(pageNumber, pageSize, {
+      sort: '-total_score,-successful_submissions'
     });
-    return response;
+
+    // Get current user info
+    const currentUser = getCurrentUser();
+
+    // Find current user's rank and score if available
+    let currentUserRank = 0;
+    let currentUserTotal = '0';
+
+    // Try to find current user in leaderboard
+    if (currentUser) {
+      // Get all records to find user's position
+      const allRecords = await pb.collection('total_scores_example').getFullList({
+        sort: '-total_score,-successful_submissions'
+      });
+
+      const userIndex = allRecords.findIndex(item =>
+        item.user_name?.split(' ')[0] === currentUser.name?.split(' ')[0] &&
+        item.user_name?.split(' ')[1] === currentUser.name?.split(' ')[1]
+      );
+
+      if (userIndex !== -1) {
+        currentUserRank = userIndex + 1;
+        currentUserTotal = allRecords[userIndex].total_score?.toString() || '0';
+      }
+    }
+
+    // Create a sample totalPerDay with proper structure for frontend
+    // Since PocketBase doesn't have this data, we'll create a placeholder
+    const today = new Date();
+    const sampleTotalPerDay = [
+      {
+        date: today.toISOString().split('T')[0],
+        total: "0",
+        quests: [] // Empty quests array
+      }
+    ];
+
+    // Format response to match ILeaderboard interface
+    return {
+      result: records.items.map((item, index) => {
+        const firstName = item.user_name?.split(' ')[0] || '';
+        const lastName = item.user_name?.split(' ')[1] || '';
+
+        return {
+          rank: index + 1 + (pageNumber - 1) * pageSize,
+          firstName,
+          lastName,
+          email: '', // Not available in the view
+          total: item.total_score?.toString() || '0',
+          totalPerDay: sampleTotalPerDay // Provide the required structure
+        };
+      }),
+      totalUsers: records.totalItems,
+      curUser: {
+        rank: currentUserRank,
+        firstName: currentUser?.name?.split(' ')[0] || '',
+        lastName: currentUser?.name?.split(' ')[1] || '',
+        email: currentUser?.email || '',
+        total: currentUserTotal,
+        totalPerDay: sampleTotalPerDay // Provide the required structure
+      }
+    };
   } catch (error) {
     console.error("Error:", error);
+    if (error instanceof Error && error.message.includes('401')) {
+      logout();
+    }
     return null;
   }
 };
 
-export const getQuestsSubmissions = async (status: string, userInfo: any) => {
+// Note: userInfo parameter is kept for compatibility but ignored
+export const getQuestsSubmissions = async (status: string, userInfo?: any) => {
   try {
-    const response = await fetch(
-      `https://icpcquestapi.azurewebsites.net/api/get-all-quests-submissions`,
-      {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${userInfo?.token}`,
-          status: status,
-        },
-      }
-    ).then((response) => {
-      if (response.status === 200) {
-        return response.json();
-      }
-      if (response.status === 401) {
-        localStorage.removeItem("userInfo");
-        localStorage.removeItem("isAuthenticated");
-      }
-      return null;
+    if (!checkAuth()) return null;
+
+    let filter = '';
+
+    if (status === 'accepted') {
+      filter = 'validations.success=true';
+    } else if (status === 'pending') {
+      filter = 'validations.id=null';
+    } else if (status === 'rejected') {
+      filter = 'validations.success=false';
+    }
+
+    const records = await pb.collection('submissions').getFullList({
+      filter: filter,
+      expand: 'submitter,quest,validations'
     });
-    return response;
+
+    // Format the submissions for the admin interface
+    return records.map(record => {
+      const submitter = record.expand?.submitter || {};
+      const quest = record.expand?.quest || {};
+
+      // Determine status from validations
+      let submissionStatus = 'PENDING';
+      if (record.expand?.validations) {
+        submissionStatus = record.expand.validations.success ? 'ACCEPTED' : 'WRONG';
+      }
+
+      return {
+        id: record.id,
+        questId: quest.id,
+        name: quest.name,
+        firstName: submitter.name?.split(' ')[0] || '',
+        lastName: submitter.name?.split(' ')[1] || '',
+        email: submitter.email || '',
+        correctAnswer: quest.correctAnswer || '',
+        submissions: [{
+          id: record.id,
+          answer: record.text || (record.attachments && record.attachments.length > 0 ?
+            pb.files.getUrl(record, record.attachments[0]) : ''),
+          submissionType: quest.questType || 'TEXT',
+          status: submissionStatus
+        }]
+      };
+    });
   } catch (error) {
     console.error("Error:", error);
+    if (error instanceof Error && error.message.includes('401')) {
+      logout();
+    }
     return null;
   }
 };
 
+// Note: userInfo parameter is kept for compatibility but ignored
 export const updateQuestSubmissionStatus = async (
   submissionId: string,
   status: string,
-  userInfo: any,
-  email: string,
-  questId: string
+  email?: any, // Changed to any to address type error with UserInfo
+  questId?: string,
+  userInfo?: any
 ) => {
   try {
-    const response = await fetch(
-      `https://icpcquestapi.azurewebsites.net/api/update-submission-status`,
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${userInfo?.token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          id: submissionId,
-          status: status,
-          userId: email,
-          questId: questId,
-        }),
-      }
-    ).then((response) => {
-      if (response.status === 200) {
-        return true;
-      }
-      if (response.status === 401) {
-        localStorage.removeItem("userInfo");
-        localStorage.removeItem("isAuthenticated");
-      }
-      return null;
-    });
-    return response;
+    if (!checkAuth() || !submissionId) return null;
+
+    // Check if validation record exists
+    let validationRecord;
+    try {
+      validationRecord = await pb.collection('validations').getFirstListItem(`submission="${submissionId}"`);
+    } catch (e) {
+      // If no validation record exists, create one
+      validationRecord = null;
+    }
+
+    const success = status === 'ACCEPTED';
+
+    if (validationRecord) {
+      // Update existing validation
+      await pb.collection('validations').update(validationRecord.id, {
+        success: success,
+      });
+    } else {
+      // Create new validation
+      await pb.collection('validations').create({
+        submission: submissionId,
+        success: success,
+      });
+    }
+
+    return true;
   } catch (error) {
     console.error("Error:", error);
+    if (error instanceof Error && error.message.includes('401')) {
+      logout();
+    }
     return null;
   }
 };
+
+// Add back the localStorage helper functions as no-op versions
+export function getLocalStorageWithExpiry(key: string) {
+  // We don't need the localStorage functionality for backward compatibility
+  // Simply trying to access the value from PocketBase
+  return getUserInfo();
+}
+
+export function setLocalStorageWithExpiry(key: string, value: any, ttl: number) {
+  // We don't need this functionality
+  return;
+}
+
+export function removeLocalStorage(key: string) {
+  localStorage.removeItem(key);
+}

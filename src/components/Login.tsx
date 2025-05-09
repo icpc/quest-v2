@@ -7,13 +7,8 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { Link } from "@mui/material";
 import { createTheme, styled, ThemeProvider } from "@mui/material/styles";
-import {
-  checkUserAuthentication,
-  localStorageRemoveItem,
-  localStorageSetItemWithExpiry,
-} from "../utils/helper";
 import { useNavigate } from "react-router-dom";
-import { login } from "../utils/requests";
+import { login, checkAuth } from "../utils/requests";
 import config from "../config";
 
 const defaultTheme = createTheme();
@@ -27,7 +22,7 @@ const LoginFormWrapper = styled(Box)(({ theme }) => ({
 
 export default function SignIn() {
   const navigate = useNavigate();
-  const isAuthenticated = checkUserAuthentication();
+  const isAuthenticated = checkAuth();
   const [isLoginLoading, setIsLoginLoading] = React.useState(false);
 
   React.useEffect(() => {
@@ -44,21 +39,8 @@ export default function SignIn() {
     const password = data.get("password");
     const newLogin = await login({ email, password });
     if (newLogin !== null) {
-      localStorageSetItemWithExpiry(
-        "isAuthenticated",
-        "true",
-        config.LOGIN_EXPIRED_TIME
-      );
-      localStorageSetItemWithExpiry(
-        "userInfo",
-        newLogin,
-        config.LOGIN_EXPIRED_TIME
-      );
       navigate("/home");
     } else {
-      // why remove? idk
-      localStorageRemoveItem("isAuthenticated");
-      localStorageRemoveItem("userInfo");
       alert("Invalid credentials please fill the form to get your password");
     }
     setIsLoginLoading(false);

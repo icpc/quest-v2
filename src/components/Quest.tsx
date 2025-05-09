@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import { checkUserAuthentication } from "../utils/helper";
-import { submitTask } from "../utils/requests";
+import { submitTask, checkAuth } from "../utils/requests";
 import { Box, TextField } from "@mui/material";
 import {
   QuestStatus,
@@ -9,7 +8,6 @@ import {
   QuestType,
 } from "../types/types";
 import CheckCircleOutlineIcon from "@material-ui/icons/CheckCircleOutline";
-
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
@@ -159,7 +157,7 @@ const Quest = (props: any) => {
   const [questSubmissions, setQuestSubmissions] = useState<QuestSubmissions>(
     props.questSubmissions
   );
-  const isAuthenticated = checkUserAuthentication(); // Implement this function to check if the user is authenticated
+  const isAuthenticated = checkAuth();
   const [submission, setSubmission] = useState({
     text: "",
     file: null,

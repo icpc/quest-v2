@@ -17,10 +17,7 @@ import MenuIcon from "@material-ui/icons/Menu";
 import { AccountCircle } from "@material-ui/icons";
 import logo from "../assets/logo.svg";
 import { useNavigate } from "react-router-dom";
-import {
-  localStorageGetItemWithExpiry,
-  localStorageRemoveItem,
-} from "../utils/helper";
+import { logout, getUserInfo } from "../utils/requests";
 import config from "../config";
 
 interface Props {
@@ -40,9 +37,7 @@ const pages = {
 export default function DrawerAppBar(props: Props) {
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const [userInfo, setUserInfo] = React.useState(
-    localStorageGetItemWithExpiry("userInfo")
-  );
+  const userInfo = getUserInfo();
 
   const navigate = useNavigate();
 
@@ -51,9 +46,7 @@ export default function DrawerAppBar(props: Props) {
   };
 
   const handleClose = React.useCallback(() => {
-    localStorageRemoveItem("isAuthenticated");
-    localStorageRemoveItem("userInfo");
-    setUserInfo({});
+    logout();
     navigate("/login");
   }, [navigate]);
 
@@ -62,14 +55,6 @@ export default function DrawerAppBar(props: Props) {
   };
 
   const IconProfile = React.useCallback(() => {
-    if (!userInfo?.user?.email) {
-      // get user info from local storage
-      const user = localStorageGetItemWithExpiry("userInfo");
-      if (!user || !user?.user?.email) {
-        return null;
-      }
-      setUserInfo(user);
-    }
     return (
       <div>
         <IconButton

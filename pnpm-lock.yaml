@@ -47,6 +47,9 @@ importers:
       env-cmd:
         specifier: ^10.1.0
         version: 10.1.0
+      pocketbase:
+        specifier: ^0.26.0
+        version: 0.26.0
       react:
         specifier: ^18.2.0
         version: 18.3.1
@@ -3108,6 +3111,7 @@ packages:
   eslint@8.57.0:
     resolution: {integrity: sha512-dZ6+mexnaTIbSBZWgou51U6OmzIhYM2VcNdtiTtI7qPNZm35Akpr0f6vtw3w1Kmn5PYo+tZVfh13WrhpS6oLqQ==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
+    deprecated: This version is no longer supported. Please see https://eslint.org/version-support for other options.
     hasBin: true
 
   espree@9.6.1:
@@ -4561,6 +4565,9 @@ packages:
   pkg-up@3.1.0:
     resolution: {integrity: sha512-nDywThFk1i4BQK4twPQ6TA4RT8bDY96yeuCVBWL3ePARCiEKDRSrNGbFIgUJpLp+XeIR65v8ra7WuJOFUBtkMA==}
     engines: {node: '>=8'}
+
+  pocketbase@0.26.0:
+    resolution: {integrity: sha512-WBBeOgz4Jnrd7a1KEzSBUJqpTortKKCcp16j5KoF+4tNIyQHsmynj+qRSvS56/RVacVMbAqO8Qkfj3N84fpzEw==}
 
   popper.js@1.16.1-lts:
     resolution: {integrity: sha512-Kjw8nKRl1m+VrSFCoVGPph93W/qrSO7ZkqPpTf7F4bk/sqcfWK019dWBUpE/fBOsOQY1dks/Bmcbfn1heM/IsA==}
@@ -11601,6 +11608,8 @@ snapshots:
   pkg-up@3.1.0:
     dependencies:
       find-up: 3.0.0
+
+  pocketbase@0.26.0: {}
 
   popper.js@1.16.1-lts: {}
 

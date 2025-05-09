@@ -2,16 +2,16 @@ import React from "react";
 import Home from "../Home";
 import { getQuests } from "../../utils/requests";
 import Loader, { LoaderComponent } from "./Loader";
-import { UserInfoProps } from "../../types/types";
+import { UserInfoProps, Quest } from "../../types/types";
 
 const HomeProxyHelper: React.FC<UserInfoProps> = ({ userInfo }) => {
-  const [quests, setQuests] = React.useState([]);
+  const [quests, setQuests] = React.useState<Quest[]>([]);
   const [isQuestsLoading, setIsQuestsLoading] = React.useState(true);
 
   React.useEffect(() => {
     if (userInfo) {
       getQuests(userInfo).then((response) => {
-        setQuests(response?.quests);
+        setQuests(response?.quests || []);
         setIsQuestsLoading(false);
       });
     }

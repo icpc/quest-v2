@@ -1,11 +1,8 @@
 import React, { ComponentType } from "react";
-import {
-  checkUserAuthentication,
-  localStorageGetItemWithExpiry,
-} from "../../utils/helper";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { ClipLoader } from "react-spinners";
+import { getUserInfo, checkAuth } from "../../utils/requests";
 
 interface LoaderProps {
   component: ComponentType<any>;
@@ -27,11 +24,8 @@ export const LoaderComponent = () => {
 };
 
 export const Loader: React.FC<LoaderProps> = ({ component: Component }) => {
-  const isAuthenticated = checkUserAuthentication();
-  const userInfo = React.useMemo(
-    () => localStorageGetItemWithExpiry("userInfo") || "{}",
-    []
-  );
+  const isAuthenticated = checkAuth();
+  const userInfo = getUserInfo();
   const navigate = useNavigate();
 
   React.useEffect(() => {

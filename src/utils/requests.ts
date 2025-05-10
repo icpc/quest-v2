@@ -1,7 +1,8 @@
 import PocketBase from 'pocketbase';
+import { POCKETBASE_URL } from './env';
 
-// Create a singleton instance
-const pb = new PocketBase('/');
+// Create a singleton instance with the environment variable
+const pb = new PocketBase(POCKETBASE_URL);
 
 // Authentication functions
 

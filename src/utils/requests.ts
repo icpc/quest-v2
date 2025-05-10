@@ -422,18 +422,3 @@ export const updateQuestSubmissionStatus = async (
   }
 };
 
-// Add back the localStorage helper functions as no-op versions
-export function getLocalStorageWithExpiry(key: string) {
-  // We don't need the localStorage functionality for backward compatibility
-  // Simply trying to access the value from PocketBase
-  return getUserInfo();
-}
-
-export function setLocalStorageWithExpiry(key: string, value: any, ttl: number) {
-  // We don't need this functionality
-  return;
-}
-
-export function removeLocalStorage(key: string) {
-  localStorage.removeItem(key);
-}

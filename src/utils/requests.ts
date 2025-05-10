@@ -83,18 +83,13 @@ export const submitTask = async (submission: any, userInfo?: any) => {
       data.text = submission.text;
     }
 
-    // For file uploads
-    const formData = new FormData();
-    Object.keys(data).forEach(key => {
-      formData.append(key, data[key]);
-    });
-
+    // For file uploads - submission.file is already a File object from event.target.files[0]
     if (submission.type !== "text" && submission.file) {
-      formData.append("attachments", submission.file);
+      data.attachments = [submission.file];
     }
 
-    // Create the submission
-    const record = await pb.collection('submissions').create(formData);
+    // Create the submission using the blob approach
+    const record = await pb.collection('submissions').create(data);
 
     // For file submissions, return the file URL to be shown in the UI
     if (submission.type !== "text" && record.attachments && record.attachments.length > 0) {

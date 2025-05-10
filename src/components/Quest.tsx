@@ -228,7 +228,7 @@ const Quest = (props: any) => {
         questSubmissions?.questType?.toLocaleUpperCase() === QuestType.VIDEO
       ) {
         newQuestSubmissions.submissions.unshift({
-          id: questSubmissions.submissions.length + 1,
+          id: (questSubmissions.submissions.length + 1).toString(),
           answer: newSubmit,
           uploadTime: new Date().toISOString(),
           status: "PENDING",
@@ -236,7 +236,7 @@ const Quest = (props: any) => {
         });
       } else {
         newQuestSubmissions.submissions.unshift({
-          id: questSubmissions.submissions.length + 1,
+          id: (questSubmissions.submissions.length + 1).toString(),
           answer: submission.text,
           uploadTime: new Date().toISOString(),
           status: "PENDING",

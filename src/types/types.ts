@@ -6,7 +6,7 @@ export enum QuestStatus {
 }
 
 export interface Quest {
-  id: number;
+  id: string;
   name: string;
   type: string;
   description: string;
@@ -65,7 +65,7 @@ export enum QuestType {
 }
 
 export interface QuestSubmission {
-  id: number;
+  id: string;
   answer: string;
   uploadTime: string;
   status: string;
@@ -73,7 +73,7 @@ export interface QuestSubmission {
 }
 
 export interface QuestSubmissions {
-  id: number;
+  id: string;
   questName: string;
   questDate: string;
   questType: string;

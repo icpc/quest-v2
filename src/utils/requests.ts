@@ -144,7 +144,7 @@ export const getQuests = async (userInfo?: any) => {
     // Format response to match expected interface in components
     return {
       quests: records.map(record => ({
-        id: parseInt(record.id) || 0, // Convert string ID to number
+        id: record.id,
         name: record.name,
         type: record.questType || '',
         description: record.text || '',
@@ -195,7 +195,7 @@ export const getQuestSubmissions = async (questId: any, userInfo?: any) => {
 
       // Format response to match QuestSubmissions interface
       const formattedResponse = {
-        id: parseInt(quest.id) || 0, // Convert string ID to number
+        id: quest.id,
         questName: quest.name || '',
         questDate: quest.created,
         questType: quest.questType || 'TEXT',
@@ -212,7 +212,7 @@ export const getQuestSubmissions = async (questId: any, userInfo?: any) => {
             }
 
             return {
-              id: parseInt(sub.id) || 0, // Convert string ID to number
+              id: sub.id,
               answer: sub.text || (sub.attachments && sub.attachments.length > 0 ?
                 pb.files.getUrl(sub, sub.attachments[0]) : ''),
               uploadTime: sub.created,

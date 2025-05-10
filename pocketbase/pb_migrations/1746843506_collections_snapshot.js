@@ -585,7 +585,7 @@ migrate((app) => {
         "body": "<p>Hello,</p>\n<p>Click on the button below to confirm your new email address.</p>\n<p>\n  <a class=\"btn\" href=\"{APP_URL}/_/#/auth/confirm-email-change/{TOKEN}\" target=\"_blank\" rel=\"noopener\">Confirm new email</a>\n</p>\n<p><i>If you didn't ask to change your email address, you can ignore this email.</i></p>\n<p>\n  Thanks,<br/>\n  {APP_NAME} team\n</p>",
         "subject": "Confirm your {APP_NAME} new email address"
       },
-      "createRule": "",
+      "createRule": null,
       "deleteRule": "id = @request.auth.id",
       "emailChangeToken": {
         "duration": 1800
@@ -791,8 +791,8 @@ migrate((app) => {
       "viewRule": "id = @request.auth.id"
     },
     {
-      "createRule": "@request.auth.user.groups ?= \"managers\"\n|| \n(\n  @request.auth.user.groups ?= \"submitters\" &&\n  submitter = @request.auth.id\n)",
-      "deleteRule": "@request.auth.user.groups ?= \"managers\"\n||\n(\n  @request.auth.user.groups ?= \"submitters\" &&\n  submitter = @request.auth.id\n)",
+      "createRule": "@request.auth.role:each ?= \"manager\"\n||\n(\n  @request.auth.role:each ?= \"submitter\" &&\n  submitter.id = @request.auth.id\n)",
+      "deleteRule": "@request.auth.role:each ?= \"manager\"\n||\n(\n  @request.auth.role:each ?= \"submitter\" &&\n  submitter.id = @request.auth.id\n)",
       "fields": [
         {
           "autogeneratePattern": "[a-z0-9]{15}",
@@ -817,7 +817,7 @@ migrate((app) => {
           "minSelect": 0,
           "name": "submitter",
           "presentable": false,
-          "required": false,
+          "required": true,
           "system": false,
           "type": "relation"
         },
@@ -830,7 +830,7 @@ migrate((app) => {
           "minSelect": 0,
           "name": "quest",
           "presentable": false,
-          "required": false,
+          "required": true,
           "system": false,
           "type": "relation"
         },
@@ -885,16 +885,16 @@ migrate((app) => {
       ],
       "id": "pbc_2516444177",
       "indexes": [],
-      "listRule": "@request.auth.user.groups ?= \"managers\"\n||\n@request.auth.user.groups ?= \"validators\"\n||\nsubmitter = @request.auth.id",
+      "listRule": "@request.auth.role:each ?= \"manager\"\n||\n@request.auth.role:each ?= \"validator\"\n||\nsubmitter.id = @request.auth.id",
       "name": "submissions",
       "system": false,
       "type": "base",
-      "updateRule": "@request.auth.user.groups ?= \"managers\"\n||\n(\n  @request.auth.user.groups ?= \"submitters\" &&\n  submitter = @request.auth.id && \n  @request.body.submitter:isset = false\n)",
-      "viewRule": "@request.auth.user.groups ?= \"managers\"\n||\n@request.auth.user.groups ?= \"validators\"\n||\nsubmitter = @request.auth.id"
+      "updateRule": "@request.auth.role:each ?= \"manager\"\n||\n(\n  @request.auth.role:each ?= \"submitter\" &&\n  submitter.id = @request.auth.id && \n  @request.body.submitter:isset = false\n)",
+      "viewRule": "@request.auth.role:each ?= \"manager\"\n||\n@request.auth.role:each ?= \"validator\"\n||\nsubmitter.id = @request.auth.id"
     },
     {
-      "createRule": "@request.auth.user.groups ?= \"managers\"\n||\n@request.auth.user.groups ?= \"validators\"",
-      "deleteRule": "@request.auth.user.groups ?= \"managers\"\n||\n@request.auth.user.groups ?= \"validators\"",
+      "createRule": "@request.auth.role:each ?= \"manager\"\n||\n@request.auth.role:each ?= \"validator\"",
+      "deleteRule": "@request.auth.role:each ?= \"manager\"\n||\n@request.auth.role:each ?= \"validator\"",
       "fields": [
         {
           "autogeneratePattern": "[a-z0-9]{15}",
@@ -919,7 +919,7 @@ migrate((app) => {
           "minSelect": 0,
           "name": "submission",
           "presentable": false,
-          "required": false,
+          "required": true,
           "system": false,
           "type": "relation"
         },
@@ -957,25 +957,25 @@ migrate((app) => {
       "indexes": [
         "CREATE UNIQUE INDEX `unique_submissions` ON `validations` (`submission`)"
       ],
-      "listRule": "@request.auth.user.groups ?= \"managers\"\n||\n@request.auth.user.groups ?= \"validators\"\n||\nsubmission.submitter = @request.auth.id",
+      "listRule": "@request.auth.role:each ?= \"manager\"\n||\n@request.auth.role:each ?= \"validator\"\n||\nsubmission.submitter.id = @request.auth.id",
       "name": "validations",
       "system": false,
       "type": "base",
-      "updateRule": "@request.auth.user.groups ?= \"managers\"\n||\n@request.auth.user.groups ?= \"validators\"",
-      "viewRule": "@request.auth.user.groups ?= \"managers\"\n||\n@request.auth.user.groups ?= \"validators\"\n||\nsubmission.submitter = @request.auth.id"
+      "updateRule": "@request.auth.role:each ?= \"manager\"\n||\n@request.auth.role:each ?= \"validator\"",
+      "viewRule": "@request.auth.role:each ?= \"manager\"\n||\n@request.auth.role:each ?= \"validator\"\n||\nsubmission.submitter.id = @request.auth.id"
     },
     {
-      "createRule": "@request.auth.role ?= \"manager\"",
-      "deleteRule": "@request.auth.role ?= \"manager\"",
+      "createRule": "@request.auth.role:each ?= \"manager\"",
+      "deleteRule": "@request.auth.role:each ?= \"manager\"",
       "fields": [
         {
-          "autogeneratePattern": "[a-z0-9]{15}",
+          "autogeneratePattern": "[0-9]{10}",
           "hidden": false,
           "id": "text3208210256",
-          "max": 15,
-          "min": 15,
+          "max": 10,
+          "min": 1,
           "name": "id",
-          "pattern": "^[a-z0-9]+$",
+          "pattern": "^[0-9]+$",
           "presentable": false,
           "primaryKey": true,
           "required": true,
@@ -1046,7 +1046,7 @@ migrate((app) => {
       "name": "quests",
       "system": false,
       "type": "base",
-      "updateRule": "@request.auth.role ?= \"manager\"",
+      "updateRule": "@request.auth.role:each ?= \"manager\"",
       "viewRule": "@request.auth.id != \"\""
     },
     {
@@ -1092,13 +1092,13 @@ migrate((app) => {
       ],
       "id": "pbc_3396442964",
       "indexes": [],
-      "listRule": null,
+      "listRule": "@request.auth.id != \"\"",
       "name": "submissions_success_stats",
       "system": false,
       "type": "view",
       "updateRule": null,
       "viewQuery": "SELECT\n  q.id as id,\n  COUNT(s.id) AS count,\n  SUM(CASE WHEN v.success THEN 1 ELSE 0 END) AS successful\nFROM quests AS q\nLEFT JOIN submissions AS s\n  ON s.quest = q.id\nLEFT JOIN validations AS v\n  ON v.submission = s.id\nGROUP BY\n  q.id;\n",
-      "viewRule": null
+      "viewRule": "@request.auth.id != \"\""
     },
     {
       "createRule": null,
@@ -1121,7 +1121,7 @@ migrate((app) => {
         {
           "autogeneratePattern": "",
           "hidden": false,
-          "id": "_clone_GXVV",
+          "id": "_clone_fSWq",
           "max": 255,
           "min": 0,
           "name": "user_name",
@@ -1157,13 +1157,13 @@ migrate((app) => {
       ],
       "id": "pbc_795380379",
       "indexes": [],
-      "listRule": null,
+      "listRule": "@request.auth.id != \"\"",
       "name": "total_scores_example",
       "system": false,
       "type": "view",
       "updateRule": null,
       "viewQuery": "SELECT \n  (ROW_NUMBER() OVER())    AS id,\n  u.name                   AS user_name,            \n  COUNT(*)                 AS successful_submissions,\n  SUM(q.score)             AS total_score\nFROM users AS u\nJOIN submissions AS s\n  ON s.submitter = u.id\nJOIN validations AS v\n  ON v.submission = s.id\n AND v.success    = TRUE\nJOIN quests AS q\n  ON q.id        = s.quest\nGROUP BY\n  u.id\nORDER BY\n  total_score DESC,\n  successful_submissions DESC\n;\n",
-      "viewRule": null
+      "viewRule": "@request.auth.id != \"\""
     }
   ];
 

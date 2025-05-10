@@ -70,34 +70,32 @@ export const submitTask = async (submission: any, userInfo?: any) => {
       return null;
     }
 
-    const data: any = {
-      quest: submission.questId,
-      // Use the current user's ID from authStore
-      submitter: pb.authStore.model?.id
-    };
+    const submitterId = pb.authStore.model?.id
 
     if (submission.type === "text") {
       if (!submission.text || submission.text === "") {
         return null;
       }
-      data.text = submission.text;
+      const record = await pb.collection('submissions').create({
+        "quest": submission.questId,
+        "submitter": submitterId,
+        "text": submission.text
+      });
+
+      return record.text || '';
+    } else {
+      // Create the submission using the blob approach
+      const record = await pb.collection('submissions').create({
+        "quest": submission.questId,
+        "submitter": submitterId,
+        "attachments": [submission.file]
+      });
+
+      // For file submissions, return the file URL to be shown in the UI
+      if (submission.type !== "text" && record.attachments && record.attachments.length > 0) {
+        return pb.files.getUrl(record, record.attachments[0]);
+      }
     }
-
-    // For file uploads - submission.file is already a File object from event.target.files[0]
-    if (submission.type !== "text" && submission.file) {
-      data.attachments = [submission.file];
-    }
-
-    // Create the submission using the blob approach
-    const record = await pb.collection('submissions').create(data);
-
-    // For file submissions, return the file URL to be shown in the UI
-    if (submission.type !== "text" && record.attachments && record.attachments.length > 0) {
-      return pb.files.getUrl(record, record.attachments[0]);
-    }
-
-    // For text submissions, return the text
-    return record.text || '';
   } catch (error) {
     console.error("Error:", error);
     if (error instanceof Error && error.message.includes('401')) {

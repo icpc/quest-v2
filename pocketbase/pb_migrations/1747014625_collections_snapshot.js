@@ -985,6 +985,20 @@ migrate((app) => {
         {
           "autogeneratePattern": "",
           "hidden": false,
+          "id": "text2862495610",
+          "max": 10,
+          "min": 10,
+          "name": "date",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+          "presentable": false,
+          "primaryKey": false,
+          "required": true,
+          "system": false,
+          "type": "text"
+        },
+        {
+          "autogeneratePattern": "",
+          "hidden": false,
           "id": "text1579384326",
           "max": 0,
           "min": 0,
@@ -1003,21 +1017,38 @@ migrate((app) => {
           "maxSize": 0,
           "name": "text",
           "presentable": false,
-          "required": false,
+          "required": true,
           "system": false,
           "type": "editor"
         },
         {
           "hidden": false,
-          "id": "number848901969",
-          "max": 1000,
-          "min": 1,
-          "name": "score",
-          "onlyInt": true,
+          "id": "select2363381545",
+          "maxSelect": 1,
+          "name": "type",
           "presentable": false,
-          "required": false,
+          "required": true,
           "system": false,
-          "type": "number"
+          "type": "select",
+          "values": [
+            "VIDEO",
+            "TEXT",
+            "IMAGE"
+          ]
+        },
+        {
+          "autogeneratePattern": "",
+          "hidden": false,
+          "id": "text105650625",
+          "max": 0,
+          "min": 0,
+          "name": "category",
+          "pattern": "",
+          "presentable": false,
+          "primaryKey": false,
+          "required": true,
+          "system": false,
+          "type": "text"
         },
         {
           "hidden": false,
@@ -1068,6 +1099,19 @@ migrate((app) => {
           "type": "text"
         },
         {
+          "cascadeDelete": false,
+          "collectionId": "pbc_2945261690",
+          "hidden": false,
+          "id": "relation1125644311",
+          "maxSelect": 1,
+          "minSelect": 0,
+          "name": "quest",
+          "presentable": false,
+          "required": false,
+          "system": false,
+          "type": "relation"
+        },
+        {
           "hidden": false,
           "id": "number2245608546",
           "max": null,
@@ -1081,9 +1125,9 @@ migrate((app) => {
         },
         {
           "hidden": false,
-          "id": "json1697463681",
+          "id": "json3127518743",
           "maxSize": 1,
-          "name": "successful",
+          "name": "total_ac",
           "presentable": false,
           "required": false,
           "system": false,
@@ -1093,11 +1137,11 @@ migrate((app) => {
       "id": "pbc_3396442964",
       "indexes": [],
       "listRule": "@request.auth.id != \"\"",
-      "name": "submissions_success_stats",
+      "name": "quests_with_submission_stats",
       "system": false,
       "type": "view",
       "updateRule": null,
-      "viewQuery": "SELECT\n  q.id as id,\n  COUNT(s.id) AS count,\n  SUM(CASE WHEN v.success THEN 1 ELSE 0 END) AS successful\nFROM quests AS q\nLEFT JOIN submissions AS s\n  ON s.quest = q.id\nLEFT JOIN validations AS v\n  ON v.submission = s.id\nGROUP BY\n  q.id;\n",
+      "viewQuery": "SELECT\n  q.id as id,\n  q.id as quest,\n  COUNT(s.id) AS count,\n  SUM(CASE WHEN v.success THEN 1 ELSE 0 END) AS total_ac\nFROM quests AS q\nLEFT JOIN submissions AS s\n  ON s.quest = q.id\nLEFT JOIN validations AS v\n  ON v.submission = s.id\nGROUP BY\n  q.id;\n",
       "viewRule": "@request.auth.id != \"\""
     },
     {
@@ -1119,50 +1163,75 @@ migrate((app) => {
           "type": "text"
         },
         {
-          "autogeneratePattern": "",
+          "cascadeDelete": false,
+          "collectionId": "pbc_2945261690",
           "hidden": false,
-          "id": "_clone_fSWq",
-          "max": 255,
-          "min": 0,
-          "name": "user_name",
-          "pattern": "",
+          "id": "_clone_ifYj",
+          "maxSelect": 1,
+          "minSelect": 0,
+          "name": "quest",
           "presentable": false,
-          "primaryKey": false,
+          "required": true,
+          "system": false,
+          "type": "relation"
+        },
+        {
+          "cascadeDelete": false,
+          "collectionId": "pbc_2516444177",
+          "hidden": false,
+          "id": "relation3674561267",
+          "maxSelect": 1,
+          "minSelect": 0,
+          "name": "submission",
+          "presentable": false,
           "required": false,
           "system": false,
-          "type": "text"
+          "type": "relation"
+        },
+        {
+          "cascadeDelete": false,
+          "collectionId": "_pb_users_auth_",
+          "hidden": false,
+          "id": "_clone_L4oy",
+          "maxSelect": 1,
+          "minSelect": 0,
+          "name": "submitter",
+          "presentable": false,
+          "required": true,
+          "system": false,
+          "type": "relation"
+        },
+        {
+          "cascadeDelete": false,
+          "collectionId": "pbc_3910611636",
+          "hidden": false,
+          "id": "relation380394350",
+          "maxSelect": 1,
+          "minSelect": 0,
+          "name": "validation",
+          "presentable": false,
+          "required": false,
+          "system": false,
+          "type": "relation"
         },
         {
           "hidden": false,
-          "id": "number3575099926",
-          "max": null,
-          "min": null,
-          "name": "successful_submissions",
-          "onlyInt": false,
+          "id": "_clone_3Ptg",
+          "name": "success",
           "presentable": false,
           "required": false,
           "system": false,
-          "type": "number"
-        },
-        {
-          "hidden": false,
-          "id": "json4058751331",
-          "maxSize": 1,
-          "name": "total_score",
-          "presentable": false,
-          "required": false,
-          "system": false,
-          "type": "json"
+          "type": "bool"
         }
       ],
-      "id": "pbc_795380379",
+      "id": "pbc_2400855954",
       "indexes": [],
       "listRule": "@request.auth.id != \"\"",
-      "name": "total_scores_example",
+      "name": "validated_submissions",
       "system": false,
       "type": "view",
       "updateRule": null,
-      "viewQuery": "SELECT \n  (ROW_NUMBER() OVER())    AS id,\n  u.name                   AS user_name,            \n  COUNT(*)                 AS successful_submissions,\n  SUM(q.score)             AS total_score\nFROM users AS u\nJOIN submissions AS s\n  ON s.submitter = u.id\nJOIN validations AS v\n  ON v.submission = s.id\n AND v.success    = TRUE\nJOIN quests AS q\n  ON q.id        = s.quest\nGROUP BY\n  u.id\nORDER BY\n  total_score DESC,\n  successful_submissions DESC\n;\n",
+      "viewQuery": "SELECT  \n  s.id              AS id,\n  s.quest           AS quest,\n  s.id              AS submission,\n  s.submitter       AS submitter,\n  v.id              AS validation,\n  v.success         AS success\nFROM submissions AS s\nLEFT JOIN validations AS v\n  ON v.submission = s.id\nGROUP BY s.id, v.success;",
       "viewRule": "@request.auth.id != \"\""
     }
   ];

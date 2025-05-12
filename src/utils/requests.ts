@@ -1,5 +1,6 @@
 import PocketBase from 'pocketbase';
 import { POCKETBASE_URL } from './env';
+import { QuestStatus, Quest } from '../types/types';
 
 // Create a singleton instance with the environment variable
 const pb = new PocketBase(POCKETBASE_URL);
@@ -125,34 +126,50 @@ export const login = async (user: any) => {
   }
 };
 
-// Note: userInfo parameter is kept for compatibility but ignored
-export const getQuests = async (userInfo?: any) => {
+export const getQuests = async (): Promise<Quest[]> => {
   try {
-    if (!checkAuth()) return { quests: [] };
+    if (!checkAuth()) return [];
 
-    const records = await pb.collection('quests').getFullList({
-      sort: '-created'
+    const [quests, userSubmissions] = await Promise.all([
+      pb.collection('quests_with_submission_stats').getFullList({
+        expand: 'quest'
+      }),
+      pb.collection('validated_submissions').getFullList({
+        filter: `submitter = '${pb.authStore.record?.id}'`
+      })
+    ]);
+
+    const formattedQuests = quests.flatMap(q => {
+      if (!q.expand?.quest) return [];
+
+      const quest = q.expand.quest;
+      const submission = userSubmissions.find(s => s.quest === quest.id);
+      const status = (() => {
+        if (!submission) return QuestStatus.NOTATTEMPTED;
+        if (!submission.validation) return QuestStatus.PENDING;
+        if (submission.success) return QuestStatus.CORRECT;
+        return QuestStatus.WRONG;
+      })();
+
+      return {
+        id: quest.id,
+        name: quest.name,
+        type: quest.type,
+        description: quest.text,
+        date: quest.date,
+        category: quest.category,
+        status: status,
+        totalAc: q.total_ac,
+      };
     });
 
-    // Format response to match expected interface in components
-    return {
-      quests: records.map(record => ({
-        id: record.id,
-        name: record.name,
-        type: record.questType || '',
-        description: record.text || '',
-        status: 'NOT ATTEMPTED',
-        date: record.created,
-        totalAc: '0',
-        category: record.category || '',
-      }))
-    };
+    return formattedQuests;
   } catch (error) {
     console.error("Error:", error);
     if (error instanceof Error && error.message.includes('401')) {
       logout();
     }
-    return { quests: [] };
+    return [];
   }
 };
 

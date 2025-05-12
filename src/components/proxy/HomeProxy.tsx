@@ -10,8 +10,8 @@ const HomeProxyHelper: React.FC<UserInfoProps> = ({ userInfo }) => {
 
   React.useEffect(() => {
     if (userInfo) {
-      getQuests(userInfo).then((response) => {
-        setQuests(response?.quests || []);
+      getQuests().then((response) => {
+        setQuests(response);
         setIsQuestsLoading(false);
       });
     }

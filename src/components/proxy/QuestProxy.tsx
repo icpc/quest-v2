@@ -1,42 +1,43 @@
 import React from "react";
-import Quest from "../Quest";
+import QuestComponent from "../Quest";
 import { useParams } from "react-router-dom";
-import { getQuestSubmissions } from "../../utils/requests";
-import { UserInfoProps, QuestSubmissions } from "../../types/types";
+import { getQuestWithSubmissions } from "../../utils/requests";
+import { QuestWithSubmissions } from "../../types/types";
 import Loader, { LoaderComponent } from "./Loader";
 
-const QuestProxyHelper: React.FC<UserInfoProps> = ({ userInfo }) => {
+const QuestProxyHelper: React.FC = () => {
   const { questId } = useParams();
   const [isQuestsSubmissionsLoading, setIsQuestsSubmissionsLoading] =
     React.useState(true);
-  const [questSubmissions, setQuestSubmissions] =
-    React.useState<QuestSubmissions | null>({} as QuestSubmissions);
+  const [questWithSubmissions, setQuestWithSubmissions] =
+    React.useState<QuestWithSubmissions | null>(null);
+
+  const load_quests = React.useCallback(() => {
+    setIsQuestsSubmissionsLoading(true);
+    if (!questId) {
+      return;
+    }
+    getQuestWithSubmissions(questId as string).then((response) => {
+      setQuestWithSubmissions(response);
+      setIsQuestsSubmissionsLoading(false);
+    });
+  }, [questId]);
 
   React.useEffect(() => {
-    if (userInfo) {
-      getQuestSubmissions(questId, userInfo).then((response) => {
-        if (response) {
-          setQuestSubmissions(response);
-          setIsQuestsSubmissionsLoading(false);
-        } else {
-          setQuestSubmissions(null);
-          setIsQuestsSubmissionsLoading(false);
-        }
-      });
-    }
-  }, [questId, userInfo]);
+    load_quests();
+  }, [load_quests]);
 
   if (isQuestsSubmissionsLoading) {
     return <LoaderComponent />;
   }
-  if (!questSubmissions || !questSubmissions.id) {
+  if (!questWithSubmissions) {
     return <div>This quest not found</div>;
   }
   return (
-    <Quest
-      userInfo={userInfo}
-      questSubmissions={questSubmissions}
-      questId={questId}
+    <QuestComponent
+      quest={questWithSubmissions.quest}
+      submissions={questWithSubmissions.submissions}
+      onSubmit={load_quests}
     />
   );
 };

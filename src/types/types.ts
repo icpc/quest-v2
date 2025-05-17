@@ -5,14 +5,20 @@ export enum QuestStatus {
   WRONG = "WRONG",
 }
 
-export interface Quest {
+export enum QuestType {
+  VIDEO = "VIDEO",
+  TEXT = "TEXT",
+  IMAGE = "IMAGE",
+}
+
+export type Quest = {
   id: string;
   name: string;
-  type: string;
+  type: QuestType;
   description: string;
-  status: string;
+  status: QuestStatus;
   date: string;
-  totalAc: string;
+  totalAc: number;
   category: string;
 }
 
@@ -58,28 +64,40 @@ export interface ILeaderboard {
   curUser: LeaderboardPerson;
 }
 
-export enum QuestType {
+export enum QuestSubmissionContentType {
   VIDEO = "VIDEO",
   TEXT = "TEXT",
   IMAGE = "IMAGE",
 }
 
-export interface QuestSubmission {
+export type QuestSubmissionText = {
+  type: QuestSubmissionContentType.TEXT;
+  text: string;
+};
+
+export type QuestSubmissionVideo = {
+  type: QuestSubmissionContentType.VIDEO;
+  url: string;
+};
+
+export type QuestSubmissionImage = {
+  type: QuestSubmissionContentType.IMAGE;
+  url: string;
+};
+
+export type QuestSubmissionContent =
+  | QuestSubmissionText
+  | QuestSubmissionVideo
+  | QuestSubmissionImage;
+
+export type QuestSubmission = {
   id: string;
-  answer: string;
   uploadTime: string;
-  status: string;
-  submissionType: string;
+  status: QuestStatus;
+  content: QuestSubmissionContent;
 }
 
-export interface QuestSubmissions {
-  id: string;
-  questName: string;
-  questDate: string;
-  questType: string;
-  questDescription: string;
-  questStatus: string;
-  questAcceptSubmissions: boolean;
-  questCategory: string;
+export type QuestWithSubmissions = {
+  quest: Quest;
   submissions: QuestSubmission[];
 }

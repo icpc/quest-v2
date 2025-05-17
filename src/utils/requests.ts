@@ -1,9 +1,10 @@
 import PocketBase from 'pocketbase';
 import { POCKETBASE_URL } from './env';
-import { QuestStatus, Quest } from '../types/types';
+import { QuestStatus, Quest, QuestWithSubmissions, QuestType, QuestSubmissionContent, QuestSubmissionContentType } from '../types/types';
 
 // Create a singleton instance with the environment variable
 const pb = new PocketBase(POCKETBASE_URL);
+pb.autoCancellation(false);
 
 // Authentication functions
 
@@ -24,7 +25,7 @@ export function getCurrentUser() {
     return null;
   }
 
-  return pb.authStore.model;
+  return pb.authStore.record;
 }
 
 /**
@@ -53,6 +54,10 @@ export function getUserInfo() {
   return null;
 }
 
+function getCurrentUserId() {
+  return pb.authStore.record?.id;
+}
+
 /**
  * Log out the current user
  */
@@ -62,61 +67,36 @@ export const logout = () => {
   localStorage.removeItem("isAuthenticated");
 };
 
-// API Functions
+export type TaskSubmission = { text: string, file?: File };
 
-// Note: userInfo parameter is kept for compatibility but ignored
-export const submitTask = async (submission: any, userInfo?: any) => {
+export const submitTask = async (questId: string, submission: TaskSubmission) => {
   try {
-    if (!submission.questId || !checkAuth()) {
-      return null;
+    if (!questId || !checkAuth()) {
+      return false;
     }
-
-    const submitterId = pb.authStore.model?.id
-
-    if (submission.type === "text") {
-      if (!submission.text || submission.text === "") {
-        return null;
-      }
-      const record = await pb.collection('submissions').create({
-        "quest": submission.questId,
-        "submitter": submitterId,
-        "text": submission.text
-      });
-
-      return record.text || '';
-    } else {
-      // Create the submission using the blob approach
-      const record = await pb.collection('submissions').create({
-        "quest": submission.questId,
-        "submitter": submitterId,
-        "attachments": [submission.file]
-      });
-
-      // For file submissions, return the file URL to be shown in the UI
-      if (submission.type !== "text" && record.attachments && record.attachments.length > 0) {
-        return pb.files.getUrl(record, record.attachments[0]);
-      }
-    }
+    await pb.collection('submissions').create({
+      "quest": questId,
+      "submitter": pb.authStore.record?.id,
+      "text": submission.text,
+      "attachment": submission.file
+    });
+    return true;
   } catch (error) {
     console.error("Error:", error);
     if (error instanceof Error && error.message.includes('401')) {
       logout();
     }
-    return null;
+    return false;
   }
 };
 
 export const login = async (user: any) => {
   try {
-    const authData = await pb.collection('users').authWithPassword(
+    await pb.collection('users').authWithPassword(
       user.email,
       user.password
     );
 
-    // Store auth in localStorage for persistence across page reloads
-    localStorage.setItem("isAuthenticated", "true");
-
-    // Get user info
     const userInfo = getUserInfo();
 
     return userInfo;
@@ -126,30 +106,31 @@ export const login = async (user: any) => {
   }
 };
 
+function submissionStatus(validated_submission: any) {
+  if (!validated_submission) return QuestStatus.NOTATTEMPTED;
+  if (!validated_submission.validation) return QuestStatus.PENDING;
+  if (validated_submission.success) return QuestStatus.CORRECT;
+  return QuestStatus.WRONG;
+}
+
 export const getQuests = async (): Promise<Quest[]> => {
   try {
     if (!checkAuth()) return [];
 
-    const [quests, userSubmissions] = await Promise.all([
+    const [quests, validated_submissions] = await Promise.all([
       pb.collection('quests_with_submission_stats').getFullList({
         expand: 'quest'
       }),
       pb.collection('validated_submissions').getFullList({
-        filter: `submitter = '${pb.authStore.record?.id}'`
+        filter: `submitter = '${getCurrentUserId()}'`
       })
     ]);
 
     const formattedQuests = quests.flatMap(q => {
-      if (!q.expand?.quest) return [];
+      const quest = q.expand?.quest;
+      if (!quest) return [];
 
-      const quest = q.expand.quest;
-      const submission = userSubmissions.find(s => s.quest === quest.id);
-      const status = (() => {
-        if (!submission) return QuestStatus.NOTATTEMPTED;
-        if (!submission.validation) return QuestStatus.PENDING;
-        if (submission.success) return QuestStatus.CORRECT;
-        return QuestStatus.WRONG;
-      })();
+      const validated_submission = validated_submissions.find(s => s.quest === quest.id);
 
       return {
         id: quest.id,
@@ -158,7 +139,7 @@ export const getQuests = async (): Promise<Quest[]> => {
         description: quest.text,
         date: quest.date,
         category: quest.category,
-        status: status,
+        status: submissionStatus(validated_submission),
         totalAc: q.total_ac,
       };
     });
@@ -173,71 +154,44 @@ export const getQuests = async (): Promise<Quest[]> => {
   }
 };
 
-// Note: userInfo parameter is kept for compatibility but ignored
-export const getQuestSubmissions = async (questId: any, userInfo?: any) => {
+export const getQuestWithSubmissions = async (questId: string): Promise<QuestWithSubmissions | null> => {
   try {
-    if (!checkAuth() || !questId) return null;
+    const [quest, validated_submissions] = await Promise.all([
+      getQuests().then(quests => quests.find(q => q.id === questId)),
+      pb.collection('validated_submissions').getFullList({
+        filter: `quest = "${questId}" && submitter = "${getCurrentUserId()}"`,
+        expand: "submission"
+      })
+    ]);
 
-    try {
-      // Get quest details
-      const quest = await pb.collection('quests').getOne(questId);
+    if (!quest) return null;
 
-      // Get submissions for this quest
-      const submissions = await pb.collection('submissions').getFullList({
-        filter: `quest = "${questId}"`,
-        expand: 'submitter,quest,validations'
-      });
+    const fileToken = await pb.files.getToken();
+    const submissions = validated_submissions.flatMap(validated_submission => {
+      const submission = validated_submission.expand?.submission;
+      if (!submission) return [];
 
-      // Get current user submissions statuses
-      const currentUserId = pb.authStore.model?.id;
-      let questStatus = 'NOT ATTEMPTED';
-
-      // Check if there are any submissions and update status accordingly
-      const userSubmissions = submissions.filter(sub => sub.submitter === currentUserId);
-      if (userSubmissions.length > 0) {
-        const lastSubmission = userSubmissions[0];
-        if (lastSubmission.expand?.validations) {
-          questStatus = lastSubmission.expand.validations.success ? 'ACCEPTED' : 'WRONG';
-        } else {
-          questStatus = 'PENDING';
-        }
-      }
-
-      // Format response to match QuestSubmissions interface
-      const formattedResponse = {
-        id: quest.id,
-        questName: quest.name || '',
-        questDate: quest.created,
-        questType: quest.questType || 'TEXT',
-        questDescription: quest.text || '',
-        questStatus: questStatus,
-        questAcceptSubmissions: true,
-        questCategory: quest.category || '',
-        submissions: userSubmissions
-          .map(sub => {
-            // Determine status from validations
-            let status = 'PENDING';
-            if (sub.expand?.validations) {
-              status = sub.expand.validations.success ? 'ACCEPTED' : 'WRONG';
-            }
-
-            return {
-              id: sub.id,
-              answer: sub.text || (sub.attachments && sub.attachments.length > 0 ?
-                pb.files.getUrl(sub, sub.attachments[0]) : ''),
-              uploadTime: sub.created,
-              status: status,
-              submissionType: quest.questType || 'TEXT'
-            };
-          })
-          .sort((a, b) => new Date(b.uploadTime).getTime() - new Date(a.uploadTime).getTime()) // Sort newest first
+      function getAttachmentUrl() {
+        return pb.files.getURL(submission, submission.attachment, { 'token': fileToken })
       };
 
-      return formattedResponse;
-    } catch (e) {
-      console.error("Error in quest processing:", e);
-      return null;
-    }
+      // TODO: Rewrite this to make it more readable
+      const content: QuestSubmissionContent =
+        (quest.type === QuestType.TEXT) ?
+          { type: QuestSubmissionContentType.TEXT, text: submission.text } :
+          (quest.type === QuestType.IMAGE) ?
+            { type: QuestSubmissionContentType.IMAGE, url: getAttachmentUrl() }
+            : { type: QuestSubmissionContentType.VIDEO, url: getAttachmentUrl() };
+
+      return {
+        id: submission.id,
+        uploadTime: submission.created,
+        status: submissionStatus(validated_submission),
+        content: content
+      }
+    });
+
+    return { quest: quest, submissions: submissions };
   } catch (error) {
     console.error("Error:", error);
     if (error instanceof Error && error.message.includes('401')) {

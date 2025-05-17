@@ -67,13 +67,8 @@ function getCurrentUserId() {
   return pb.authStore.record?.id;
 }
 
-/**
- * Log out the current user
- */
 export const logout = () => {
   pb.authStore.clear();
-  localStorage.removeItem("userInfo");
-  localStorage.removeItem("isAuthenticated");
 };
 
 export type TaskSubmission = { text: string; file?: File };
@@ -88,7 +83,7 @@ export const submitTask = async (
     }
     await pb.collection("submissions").create({
       quest: questId,
-      submitter: pb.authStore.record?.id,
+      submitter: getCurrentUserId(),
       text: submission.text,
       attachment: submission.file,
     });
@@ -197,13 +192,13 @@ export const getQuestWithSubmissions = async (
             ? { type: QuestSubmissionContentType.TEXT, text: submission.text }
             : quest.type === QuestType.IMAGE
               ? {
-                  type: QuestSubmissionContentType.IMAGE,
-                  url: getAttachmentUrl(),
-                }
+                type: QuestSubmissionContentType.IMAGE,
+                url: getAttachmentUrl(),
+              }
               : {
-                  type: QuestSubmissionContentType.VIDEO,
-                  url: getAttachmentUrl(),
-                };
+                type: QuestSubmissionContentType.VIDEO,
+                url: getAttachmentUrl(),
+              };
 
         return {
           id: submission.id,

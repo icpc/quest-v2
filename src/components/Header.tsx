@@ -1,6 +1,11 @@
 import * as React from "react";
+import { useNavigate } from "react-router-dom";
+
+import { AccountCircle } from "@material-ui/icons";
+import MenuIcon from "@material-ui/icons/Menu";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import Drawer from "@mui/material/Drawer";
 import IconButton from "@mui/material/IconButton";
@@ -8,17 +13,14 @@ import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
-import MenuItem from "@mui/material/MenuItem";
-import Menu from "@mui/material/Menu";
-import MenuIcon from "@material-ui/icons/Menu";
-import { AccountCircle } from "@material-ui/icons";
+
 import logo from "../assets/logo.svg";
-import { useNavigate } from "react-router-dom";
-import { logout, getUserInfo } from "../utils/requests";
 import config from "../config";
+import { getUserInfo, logout } from "../utils/requests";
 
 interface Props {
   /**

@@ -1,9 +1,11 @@
 import React from "react";
+
 import { Card, CardContent, CardMedia, Typography } from "@mui/material";
+
 import {
+  QuestStatus,
   QuestSubmission,
   QuestSubmissionContentType,
-  QuestStatus,
 } from "../types/types";
 
 interface ImgMediaCardProps {
@@ -26,8 +28,8 @@ const ImgMediaCard: React.FC<ImgMediaCardProps> = ({ submission }) => {
           status === QuestStatus.CORRECT
             ? "green"
             : status === QuestStatus.WRONG
-            ? "red"
-            : undefined,
+              ? "red"
+              : undefined,
       }}
     >
       {content.type === QuestSubmissionContentType.IMAGE ? (

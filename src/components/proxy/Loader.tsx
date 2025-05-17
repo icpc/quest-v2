@@ -1,8 +1,10 @@
 import React, { ComponentType } from "react";
 import { useNavigate } from "react-router-dom";
-import styled from "styled-components";
 import { ClipLoader } from "react-spinners";
-import { getUserInfo, checkAuth } from "../../utils/requests";
+
+import styled from "styled-components";
+
+import { checkAuth, getUserInfo } from "../../utils/requests";
 
 interface LoaderProps {
   component: ComponentType<any>;

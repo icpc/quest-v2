@@ -1,18 +1,21 @@
 import * as React from "react";
-import { styled } from "@mui/material/styles";
+
+import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
+import { styled } from "@mui/material/styles";
+
+import { UserInfoProps } from "../types/types";
 import {
   getQuestsSubmissions,
   updateQuestSubmissionStatus,
 } from "../utils/requests";
+
 import { Loader, LoaderComponent } from "./proxy/Loader";
-import { UserInfoProps } from "../types/types";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -125,7 +128,7 @@ const AdminHelper: React.FC<UserInfoProps> = ({ userInfo }) => {
                             "ACCEPTED",
                             userInfo,
                             questsSubmission.email,
-                            questsSubmission.questId
+                            questsSubmission.questId,
                           ).then((response) => {
                             if (response) {
                               alert("Accepted successfully");
@@ -141,14 +144,14 @@ const AdminHelper: React.FC<UserInfoProps> = ({ userInfo }) => {
                                         submissions:
                                           questSubmission.submissions.filter(
                                             (sub: any) =>
-                                              sub.id !== submission.id
+                                              sub.id !== submission.id,
                                           ),
                                       };
                                     } else {
                                       return questSubmission;
                                     }
-                                  }
-                                )
+                                  },
+                                ),
                               );
                             } else {
                               alert("Error in accepting submission");
@@ -165,7 +168,7 @@ const AdminHelper: React.FC<UserInfoProps> = ({ userInfo }) => {
                             "WRONG",
                             userInfo,
                             questsSubmission.email,
-                            questsSubmission.questId
+                            questsSubmission.questId,
                           ).then((response) => {
                             if (response) {
                               alert("Rejected successfully");
@@ -181,14 +184,14 @@ const AdminHelper: React.FC<UserInfoProps> = ({ userInfo }) => {
                                         submissions:
                                           questSubmission.submissions.filter(
                                             (sub: any) =>
-                                              sub.id !== submission.id
+                                              sub.id !== submission.id,
                                           ),
                                       };
                                     } else {
                                       return questSubmission;
                                     }
-                                  }
-                                )
+                                  },
+                                ),
                               );
                             } else {
                               alert("Error in accepting submission");

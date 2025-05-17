@@ -1,14 +1,15 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
-import { Box } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { Box } from "@mui/material";
 
-import { Quest, QuestSubmission, QuestStatus } from "../types/types";
+import { Quest, QuestStatus, QuestSubmission } from "../types/types";
+import { checkIsMobile } from "../utils/responsive";
+
+import QuestStatusIcon from "./QuestStatusIcon";
 import QuestSubmissionForm from "./QuestSubmissionForm";
 import QuestSubmissionsList from "./QuestSubmissionsList";
-import QuestStatusIcon from "./QuestStatusIcon";
-import { checkIsMobile } from "../utils/responsive";
 
 interface QuestProps {
   quest: Quest;

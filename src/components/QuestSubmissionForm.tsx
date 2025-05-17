@@ -1,5 +1,7 @@
-import React, { useState, useCallback } from "react";
-import { Box, TextField, Button, Typography } from "@mui/material";
+import React, { useCallback, useState } from "react";
+
+import { Box, Button, TextField, Typography } from "@mui/material";
+
 import { Quest, QuestType } from "../types/types";
 import { submitTask } from "../utils/requests";
 
@@ -21,7 +23,7 @@ const QuestSubmissionForm: React.FC<QuestSubmissionFormProps> = ({
     (event: React.ChangeEvent<HTMLInputElement>) => {
       setText(event.target.value);
     },
-    []
+    [],
   );
 
   const handleFileChange = useCallback(
@@ -56,7 +58,7 @@ const QuestSubmissionForm: React.FC<QuestSubmissionFormProps> = ({
         setFile(event.target.files[0]);
       }
     },
-    [quest.type, setSubmitTaskStatus]
+    [quest.type, setSubmitTaskStatus],
   );
 
   const handleSubmit = useCallback(
@@ -73,7 +75,7 @@ const QuestSubmissionForm: React.FC<QuestSubmissionFormProps> = ({
         alert("Error submitting task");
       }
     },
-    [quest.id, text, file, onSubmit]
+    [quest.id, text, file, onSubmit],
   );
 
   return (

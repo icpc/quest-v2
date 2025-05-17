@@ -1,15 +1,17 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { Typography, Box, Card, CardContent, Grid } from "@mui/material";
-import Accordion from "@mui/material/Accordion";
-import AccordionSummary from "@mui/material/AccordionSummary";
-import AccordionDetails from "@mui/material/AccordionDetails";
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import CheckCircleOutlineIcon from "@material-ui/icons/CheckCircleOutline";
+
 import AccessTimeOutlinedIcon from "@material-ui/icons/AccessTimeOutlined";
+import CheckCircleOutlineIcon from "@material-ui/icons/CheckCircleOutline";
+import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import HighlightOffOutlinedIcon from "@material-ui/icons/HighlightOffOutlined";
 import StarBorderOutlinedIcon from "@material-ui/icons/StarBorderOutlined";
-import { QuestsDays, QuestStatus } from "../types/types";
+import { Box, Card, CardContent, Grid, Typography } from "@mui/material";
+import Accordion from "@mui/material/Accordion";
+import AccordionDetails from "@mui/material/AccordionDetails";
+import AccordionSummary from "@mui/material/AccordionSummary";
+
+import { QuestStatus, QuestsDays } from "../types/types";
 import { aggregateQuestsByDate } from "../utils/utils";
 
 const Home = (pros: any) => {
@@ -18,7 +20,7 @@ const Home = (pros: any) => {
   const navigate = useNavigate();
   const quests = pros.quests;
   const [questsDays] = React.useState<QuestsDays[]>(
-    aggregateQuestsByDate(quests)
+    aggregateQuestsByDate(quests),
   );
   const daysTasksListJSX = React.useCallback(() => {
     const questsDaysRev = [...questsDays];
@@ -31,7 +33,7 @@ const Home = (pros: any) => {
         day: "numeric",
       });
       const numberOfCorrectTasks = questDay?.detailsQuests?.filter(
-        (task) => task?.status?.toLocaleUpperCase() === QuestStatus.CORRECT
+        (task) => task?.status?.toLocaleUpperCase() === QuestStatus.CORRECT,
       ).length;
 
       return (
@@ -84,16 +86,16 @@ const Home = (pros: any) => {
                   questStatus === QuestStatus.CORRECT
                     ? "rgba(0, 128, 0, 0.7)"
                     : questStatus === QuestStatus.PENDING
-                    ? "rgb(147 143 74)"
-                    : questStatus === QuestStatus.WRONG
-                    ? "#f44336ba"
-                    : "grey";
+                      ? "rgb(147 143 74)"
+                      : questStatus === QuestStatus.WRONG
+                        ? "#f44336ba"
+                        : "grey";
                 const color =
                   questStatus === QuestStatus.CORRECT
                     ? "white"
                     : questStatus === QuestStatus.PENDING
-                    ? "white"
-                    : "white";
+                      ? "white"
+                      : "white";
                 return (
                   <Grid item key={index}>
                     <Card

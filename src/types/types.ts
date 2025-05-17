@@ -20,13 +20,12 @@ export type Quest = {
   date: string;
   totalAc: number;
   category: string;
-}
+};
 
 export interface QuestsDays {
   date: string;
   detailsQuests: Quest[];
 }
-
 
 export interface UserInfo {
   user?: {
@@ -95,9 +94,9 @@ export type QuestSubmission = {
   uploadTime: string;
   status: QuestStatus;
   content: QuestSubmissionContent;
-}
+};
 
 export type QuestWithSubmissions = {
   quest: Quest;
   submissions: QuestSubmission[];
-}
+};

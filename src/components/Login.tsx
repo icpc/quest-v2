@@ -1,15 +1,17 @@
 import * as React from "react";
+import { useNavigate } from "react-router-dom";
+
+import { Link } from "@mui/material";
+import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
+import Container from "@mui/material/Container";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
-import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import Container from "@mui/material/Container";
-import { Link } from "@mui/material";
-import { createTheme, styled, ThemeProvider } from "@mui/material/styles";
-import { useNavigate } from "react-router-dom";
-import { login, checkAuth } from "../utils/requests";
+import { ThemeProvider, createTheme, styled } from "@mui/material/styles";
+
 import config from "../config";
+import { checkAuth, login } from "../utils/requests";
 
 const defaultTheme = createTheme();
 

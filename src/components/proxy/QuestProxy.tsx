@@ -1,8 +1,10 @@
 import React from "react";
-import QuestComponent from "../Quest";
 import { useParams } from "react-router-dom";
-import { getQuestWithSubmissions } from "../../utils/requests";
+
 import { QuestWithSubmissions } from "../../types/types";
+import { getQuestWithSubmissions } from "../../utils/requests";
+import QuestComponent from "../Quest";
+
 import Loader, { LoaderComponent } from "./Loader";
 
 const QuestProxyHelper: React.FC = () => {

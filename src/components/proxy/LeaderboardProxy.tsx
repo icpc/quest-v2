@@ -1,8 +1,10 @@
 import React from "react";
 import { useParams } from "react-router-dom";
-import { getLeaderboard } from "../../utils/requests";
+
 import { ILeaderboard, UserInfoProps } from "../../types/types";
+import { getLeaderboard } from "../../utils/requests";
 import LeaderBoard from "../Leaderboard";
+
 import Loader, { LoaderComponent } from "./Loader";
 
 const LeaderboardProxyHelper: React.FC<UserInfoProps> = ({ userInfo }) => {
@@ -49,7 +51,7 @@ const LeaderboardProxyHelper: React.FC<UserInfoProps> = ({ userInfo }) => {
         setRows(() => rowsData);
         const columnsNamesData = ["Rank", "Name", "Total"];
         const dates = response?.result[0].totalPerDay.map((date: any) =>
-          new Date(date.date).toDateString().slice(4, 10)
+          new Date(date.date).toDateString().slice(4, 10),
         );
         if (dates) {
           dates.forEach((date: any) => {

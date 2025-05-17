@@ -1,13 +1,8 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { styled } from "@mui/material/styles";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell, { tableCellClasses } from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
+
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import {
   Box,
   Collapse,
@@ -15,9 +10,16 @@ import {
   Pagination,
   Typography,
 } from "@mui/material";
+import Paper from "@mui/material/Paper";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell, { tableCellClasses } from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import { styled } from "@mui/material/styles";
+
 import { QuestStatus } from "../types/types";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -168,7 +170,7 @@ function Row(props: any) {
                               </TableCell>
                             </TableRow>
                           );
-                        })
+                        }),
                       )}
                     </TableBody>
                   </Table>
@@ -190,7 +192,7 @@ const Leaderboard = (props: any) => {
     (_: React.ChangeEvent<unknown>, value: number) => {
       navigate(`/leaderboard/${value}`);
     },
-    [navigate]
+    [navigate],
   );
 
   const leaderboardTableJSX = React.useMemo(() => {

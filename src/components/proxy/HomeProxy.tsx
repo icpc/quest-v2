@@ -1,8 +1,10 @@
 import React from "react";
-import Home from "../Home";
+
+import { Quest, UserInfoProps } from "../../types/types";
 import { getQuests } from "../../utils/requests";
+import Home from "../Home";
+
 import Loader, { LoaderComponent } from "./Loader";
-import { UserInfoProps, Quest } from "../../types/types";
 
 const HomeProxyHelper: React.FC<UserInfoProps> = ({ userInfo }) => {
   const [quests, setQuests] = React.useState<Quest[]>([]);

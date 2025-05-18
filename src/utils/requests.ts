@@ -136,7 +136,7 @@ export const getQuests = async (): Promise<Quest[]> => {
       pb
         .collection(Collections.QuestsWithSubmissionStats)
         .getFullList<
-          QuestsWithSubmissionStatsResponse<unknown, { quest: QuestsRecord }>
+          QuestsWithSubmissionStatsResponse<{ quest: QuestsRecord }>
         >({
           expand: "quest",
         }),
@@ -161,7 +161,7 @@ export const getQuests = async (): Promise<Quest[]> => {
         date: quest.date,
         category: quest.category,
         status: submissionStatus(validated_submission),
-        totalAc: Number(q.total_ac),
+        totalAc: q.total_ac,
       };
     });
 

@@ -118,11 +118,11 @@ export type QuestsRecord = {
 	updated?: IsoDateString
 }
 
-export type QuestsWithSubmissionStatsRecord<Ttotal_ac = unknown> = {
+export type QuestsWithSubmissionStatsRecord = {
 	count?: number
 	id: string
 	quest?: RecordIdString
-	total_ac?: null | Ttotal_ac
+	total_ac?: number
 }
 
 export type SubmissionsRecord = {
@@ -179,7 +179,7 @@ export type OtpsResponse<Texpand = unknown> = Required<OtpsRecord> & BaseSystemF
 export type SuperusersResponse<Texpand = unknown> = Required<SuperusersRecord> & AuthSystemFields<Texpand>
 export type LeaderboardResponse<Texpand = unknown> = Required<LeaderboardRecord> & BaseSystemFields<Texpand>
 export type QuestsResponse<Texpand = unknown> = Required<QuestsRecord> & BaseSystemFields<Texpand>
-export type QuestsWithSubmissionStatsResponse<Ttotal_ac = unknown, Texpand = unknown> = Required<QuestsWithSubmissionStatsRecord<Ttotal_ac>> & BaseSystemFields<Texpand>
+export type QuestsWithSubmissionStatsResponse<Texpand = unknown> = Required<QuestsWithSubmissionStatsRecord> & BaseSystemFields<Texpand>
 export type SubmissionsResponse<Texpand = unknown> = Required<SubmissionsRecord> & BaseSystemFields<Texpand>
 export type UsersResponse<Texpand = unknown> = Required<UsersRecord> & AuthSystemFields<Texpand>
 export type ValidatedSubmissionsResponse<Texpand = unknown> = Required<ValidatedSubmissionsRecord> & BaseSystemFields<Texpand>

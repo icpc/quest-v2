@@ -8,7 +8,7 @@ import LeaderBoard from "../Leaderboard";
 import Loader, { LoaderComponent } from "./Loader";
 
 const LeaderboardProxyHelper: React.FC<UserInfoProps> = ({ userInfo }) => {
-  const { pageNumber } = useParams() ?? "1";
+  const pageNumber = Number(useParams() ?? "1");
   const [isLoadingLeaderboard, setIsLoadingLeaderboard] = React.useState(true);
   const [leaderboardData, setLeaderboardData] =
     React.useState<ILeaderboard | null>(null);
@@ -17,7 +17,7 @@ const LeaderboardProxyHelper: React.FC<UserInfoProps> = ({ userInfo }) => {
   const [curUser, setCurUser] = React.useState<any>(null);
 
   React.useEffect(() => {
-    getLeaderboard(pageNumber, userInfo).then((response) => {
+    getLeaderboard(pageNumber).then((response) => {
       if (response) {
         setLeaderboardData(response);
         if (response?.result.length === 0) {

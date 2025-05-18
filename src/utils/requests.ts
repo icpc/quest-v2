@@ -220,7 +220,7 @@ export const getQuestWithSubmissions = async (
 };
 
 // Note: userInfo parameter is kept for compatibility but ignored
-export const getLeaderboard = async (pageNumber: any, userInfo?: any) => {
+export const getLeaderboard = async (pageNumber: number) => {
   try {
     if (!checkAuth()) return null;
 

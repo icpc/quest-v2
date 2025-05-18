@@ -1,14 +1,11 @@
 #!/bin/bash
 set -e
 
-ENCRYPTION="AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
-PORT=8090
+mkdir -p ./pb_data ./pb_public ./pb_hooks ./pb_migrations
 
-export ENCRYPTION
 pocketbase serve \
-  --http=0.0.0.0:$PORT \
+  --dev \
   --dir=./pb_data \
   --publicDir=./pb_public \
   --hooksDir=./pb_hooks \
-  --migrationsDir=./pb_migrations \
-  --encryptionEnv ENCRYPTION
+  --migrationsDir=./pb_migrations 

@@ -10,7 +10,6 @@ import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import { ThemeProvider, createTheme, styled } from "@mui/material/styles";
 
-import config from "../config";
 import { checkAuth, login } from "../utils/requests";
 
 const defaultTheme = createTheme();
@@ -97,8 +96,8 @@ export default function SignIn() {
               target="_blank"
               rel="noreferrer"
             >
-              Don't use your ICPC.global password! Fill this form with your icpc
-              email to receive dedicated Quest password.
+              Don&apos;t use your ICPC.global password! Fill this form with your
+              icpc email to receive dedicated Quest password.
             </Link>
           </Box>
         </LoginFormWrapper>

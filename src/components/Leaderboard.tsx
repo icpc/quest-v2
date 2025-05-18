@@ -1,3 +1,5 @@
+/* eslint-disable react/jsx-key */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -46,6 +48,7 @@ export interface LeaderboardUser {
   firstName: string;
   lastName: string;
 }
+
 export interface LeaderboardRow {
   email: string;
   firstName: string;

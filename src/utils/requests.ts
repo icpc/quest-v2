@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import PocketBase from "pocketbase";
 
 import {
@@ -308,6 +309,7 @@ export const getLeaderboard = async (pageNumber: number) => {
 };
 
 // Note: userInfo parameter is kept for compatibility but ignored
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const getQuestsSubmissions = async (status: string, userInfo?: any) => {
   try {
     if (!checkAuth()) return null;
@@ -375,8 +377,11 @@ export const getQuestsSubmissions = async (status: string, userInfo?: any) => {
 export const updateQuestSubmissionStatus = async (
   submissionId: string,
   status: string,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   email?: any, // Changed to any to address type error with UserInfo
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   questId?: string,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   userInfo?: any,
 ) => {
   try {
@@ -388,7 +393,7 @@ export const updateQuestSubmissionStatus = async (
       validationRecord = await pb
         .collection("validations")
         .getFirstListItem(`submission="${submissionId}"`);
-    } catch (e) {
+    } catch {
       // If no validation record exists, create one
       validationRecord = null;
     }

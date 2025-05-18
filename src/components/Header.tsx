@@ -1,8 +1,7 @@
 import * as React from "react";
 import { useNavigate } from "react-router-dom";
 
-import { AccountCircle } from "@material-ui/icons";
-import MenuIcon from "@material-ui/icons/Menu";
+import { AccountCircle, Menu as MenuIcon } from "@mui/icons-material";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -22,21 +21,13 @@ import logo from "../assets/logo.svg";
 import config from "../config";
 import { getUserInfo, logout } from "../utils/requests";
 
-interface Props {
-  /**
-   * Injected by the documentation to work in an iframe.
-   * You won't need it on your project.
-   */
-  window?: () => Window;
-}
-
 const pages = {
   HOME: "/home",
   LEADERBOARD: "/leaderboard/1",
   RULES: "/rules",
 };
 
-export default function DrawerAppBar(props: Props) {
+export default function DrawerAppBar() {
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const userInfo = getUserInfo();

@@ -1,11 +1,12 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
-import AccessTimeOutlinedIcon from "@material-ui/icons/AccessTimeOutlined";
-import CheckCircleOutlineIcon from "@material-ui/icons/CheckCircleOutline";
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import HighlightOffOutlinedIcon from "@material-ui/icons/HighlightOffOutlined";
-import StarBorderOutlinedIcon from "@material-ui/icons/StarBorderOutlined";
+import AccessTimeOutlinedIcon from "@mui/icons-material/AccessTimeOutlined";
+import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import HighlightOffOutlinedIcon from "@mui/icons-material/HighlightOffOutlined";
+import StarBorderOutlinedIcon from "@mui/icons-material/StarBorderOutlined";
 import { Box, Card, CardContent, Grid, Typography } from "@mui/material";
 import Accordion from "@mui/material/Accordion";
 import AccordionDetails from "@mui/material/AccordionDetails";
@@ -97,7 +98,7 @@ const Home = (pros: any) => {
                       ? "white"
                       : "white";
                 return (
-                  <Grid item key={index}>
+                  <Grid key={index}>
                     <Card
                       sx={{
                         display: "flex",

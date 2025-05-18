@@ -2,26 +2,25 @@ import React, { ComponentType } from "react";
 import { useNavigate } from "react-router-dom";
 import { ClipLoader } from "react-spinners";
 
-import styled from "styled-components";
-
+import { UserInfo } from "../../types/types";
 import { checkAuth, getUserInfo } from "../../utils/requests";
 
 interface LoaderProps {
-  component: ComponentType<any>;
+  component: ComponentType<{ userInfo: UserInfo }>;
 }
-
-const LoaderComponentWrapper = styled.div`
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-`;
 
 export const LoaderComponent = () => {
   return (
-    <LoaderComponentWrapper>
+    <div
+      style={{
+        position: "fixed",
+        top: "50%",
+        left: "50%",
+        transform: "translate(-50%, -50%)",
+      }}
+    >
       <ClipLoader color={"#123abc"} size={150} />
-    </LoaderComponentWrapper>
+    </div>
   );
 };
 

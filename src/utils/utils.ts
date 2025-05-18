@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Quest, QuestsDays } from "../types/types";
 
 export const aggregateQuestsByDate = (quests: Quest[]): QuestsDays[] => {

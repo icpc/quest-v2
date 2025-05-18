@@ -100,3 +100,31 @@ export type QuestWithSubmissions = {
   quest: Quest;
   submissions: QuestSubmission[];
 };
+
+export type LeaderboardRowDayQuest = {
+  id: string;
+  name: string;
+  status: QuestStatus;
+}
+
+export type LeaderboardRowDay = {
+  date: string;
+  total: string;
+  quests: LeaderboardRowDayQuest[];
+}
+
+export type LeaderboardRow = {
+  rank: number;
+  name: string;
+  email: string;
+  total: string;
+  totalPerday: LeaderboardRowDay[];
+}
+
+export type LeaderboardData = {
+  rows: LeaderboardRow[];
+  _columnsNames: string[];
+  pageNumber: number;
+  totalUsers: number;
+  curUser?: LeaderboardPerson;
+}

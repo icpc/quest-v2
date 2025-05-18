@@ -41,7 +41,35 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-function Row(props: any) {
+export interface LeaderboardUser {
+  email: string;
+  firstName: string;
+  lastName: string;
+}
+export interface LeaderboardRow {
+  email: string;
+  firstName: string;
+  lastName: string;
+  rank: number;
+  total: number;
+  totalPerDay: {
+    date: string;
+    total: number;
+    quests: {
+      id: string;
+      name: string;
+      status: QuestStatus;
+    }[];
+  }[];
+}
+
+interface RowProps {
+  row: LeaderboardRow;
+  index: number;
+  isCurUser: boolean | undefined;
+}
+
+const Row: React.FC<RowProps> = (props) => {
   const { row, index, isCurUser } = props;
   const [open, setOpen] = React.useState(false);
   const isMobile = window?.innerWidth <= 500;
@@ -51,7 +79,7 @@ function Row(props: any) {
       {
         <>
           <StyledTableRow
-            key={row.name + index}
+            key={row.email + index}
             style={{ backgroundColor: isCurUser ? "rgb(156 178 212)" : "" }}
           >
             <TableCell>
@@ -66,9 +94,11 @@ function Row(props: any) {
             <StyledTableCell component="th" scope="row">
               {row.rank}
             </StyledTableCell>
-            <StyledTableCell>{row.name}</StyledTableCell>
+            <StyledTableCell>
+              {row.firstName} {row.lastName}
+            </StyledTableCell>
             <StyledTableCell>{row.total}</StyledTableCell>
-            {row.totalPerday.map((day: any) => (
+            {row.totalPerDay.map((day: any) => (
               <StyledTableCell>
                 <span>{day.total}</span>
                 {!isMobile && (
@@ -130,7 +160,7 @@ function Row(props: any) {
                       </TableRow>
                     </TableHead>
                     <TableBody>
-                      {row.totalPerday.map((day: any) =>
+                      {row.totalPerDay.map((day: any) =>
                         day.quests.map((quest: any) => {
                           if (
                             !quest ||
@@ -182,9 +212,17 @@ function Row(props: any) {
       }
     </React.Fragment>
   );
+};
+
+interface LeaderboardProps {
+  rows: LeaderboardRow[];
+  _columnsNames: string[];
+  pageNumber: number;
+  totalUsers: number;
+  curUser?: LeaderboardUser;
 }
 
-const Leaderboard = (props: any) => {
+const Leaderboard: React.FC<LeaderboardProps> = (props) => {
   const { rows, _columnsNames, pageNumber, totalUsers } = props;
 
   const navigate = useNavigate();

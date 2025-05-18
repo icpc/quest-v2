@@ -14,7 +14,7 @@ const QuestProxyHelper: React.FC = () => {
   const [questWithSubmissions, setQuestWithSubmissions] =
     React.useState<QuestWithSubmissions | null>(null);
 
-  const load_quests = React.useCallback(() => {
+  const loadQuests = React.useCallback(() => {
     setIsQuestsSubmissionsLoading(true);
     if (!questId) {
       return;
@@ -26,8 +26,8 @@ const QuestProxyHelper: React.FC = () => {
   }, [questId]);
 
   React.useEffect(() => {
-    load_quests();
-  }, [load_quests]);
+    loadQuests();
+  }, [loadQuests]);
 
   if (isQuestsSubmissionsLoading) {
     return <LoaderComponent />;
@@ -39,7 +39,7 @@ const QuestProxyHelper: React.FC = () => {
     <QuestComponent
       quest={questWithSubmissions.quest}
       submissions={questWithSubmissions.submissions}
-      onSubmit={load_quests}
+      onSubmit={loadQuests}
     />
   );
 };

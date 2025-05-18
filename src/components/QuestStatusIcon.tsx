@@ -1,8 +1,8 @@
 import React from "react";
 
-import AccessTimeOutlinedIcon from "@material-ui/icons/AccessTimeOutlined";
-import CheckCircleOutlineIcon from "@material-ui/icons/CheckCircleOutline";
-import HighlightOffOutlinedIcon from "@material-ui/icons/HighlightOffOutlined";
+import AccessTimeOutlinedIcon from "@mui/icons-material/AccessTimeOutlined";
+import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
+import HighlightOffOutlinedIcon from "@mui/icons-material/HighlightOffOutlined";
 
 import { QuestStatus } from "../types/types";
 import { checkIsMobile } from "../utils/responsive";

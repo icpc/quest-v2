@@ -74,12 +74,10 @@ const Home = (pros: any) => {
           </AccordionSummary>
           <AccordionDetails
             style={{
-              display: "flex",
-              justifyContent: "center",
               padding: isMobile ? "5px" : "10px",
             }}
           >
-            <Grid gap={3} container>
+            <Grid spacing={3} container>
               {questDay?.detailsQuests.map((quest, index) => {
                 const questStatus = quest?.status?.toLocaleUpperCase();
                 const questId = quest.id;

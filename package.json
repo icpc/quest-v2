@@ -26,7 +26,10 @@
     "predeploy": "pnpm run build",
     "deploy": "gh-pages -d build",
     "start": "vite",
-    "build": "tsc -b && vite build"
+    "build": "tsc -b && vite build",
+    "pocketbase": "cd pocketbase && pocketbase serve --dev --migrationsDir=./pb_migrations",
+    "pocketbase:migration": "cd pocketbase && pocketbase migrate collections --migrationsDir=./pb_migrations",
+    "pocketbase:typegen": "cd pocketbase && pocketbase-typegen --db ./pb_data/data.db --out ../src/types/pocketbase-types.ts"
   },
   "browserslist": {
     "production": [

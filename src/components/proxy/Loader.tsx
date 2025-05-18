@@ -1,5 +1,5 @@
 import React, { ComponentType } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { ClipLoader } from "react-spinners";
 
 import { UserInfo } from "../../types/types";

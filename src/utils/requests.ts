@@ -2,6 +2,14 @@
 import PocketBase from "pocketbase";
 
 import {
+  Collections,
+  QuestsRecord,
+  QuestsWithSubmissionStatsResponse,
+  SubmissionsRecord,
+  TypedPocketBase,
+  ValidatedSubmissionsResponse,
+} from "../types/pocketbase-types";
+import {
   Quest,
   QuestStatus,
   QuestSubmissionContent,
@@ -13,7 +21,7 @@ import {
 import { POCKETBASE_URL } from "./env";
 
 // Create a singleton instance with the environment variable
-const pb = new PocketBase(POCKETBASE_URL);
+const pb = new PocketBase(POCKETBASE_URL) as TypedPocketBase;
 pb.autoCancellation(false);
 
 // Authentication functions
@@ -82,7 +90,7 @@ export const submitTask = async (
     if (!questId || !checkAuth()) {
       return false;
     }
-    await pb.collection("submissions").create({
+    await pb.collection(Collections.Submissions).create({
       quest: questId,
       submitter: getCurrentUserId(),
       text: submission.text,
@@ -100,7 +108,9 @@ export const submitTask = async (
 
 export const login = async (user: any) => {
   try {
-    await pb.collection("users").authWithPassword(user.email, user.password);
+    await pb
+      .collection(Collections.Users)
+      .authWithPassword(user.email, user.password);
 
     const userInfo = getUserInfo();
 
@@ -123,16 +133,20 @@ export const getQuests = async (): Promise<Quest[]> => {
     if (!checkAuth()) return [];
 
     const [quests, validated_submissions] = await Promise.all([
-      pb.collection("quests_with_submission_stats").getFullList({
-        expand: "quest",
-      }),
-      pb.collection("validated_submissions").getFullList({
+      pb
+        .collection(Collections.QuestsWithSubmissionStats)
+        .getFullList<
+          QuestsWithSubmissionStatsResponse<unknown, { quest: QuestsRecord }>
+        >({
+          expand: "quest",
+        }),
+      pb.collection(Collections.ValidatedSubmissions).getFullList({
         filter: `submitter = '${getCurrentUserId()}'`,
       }),
     ]);
 
     const formattedQuests = quests.flatMap((q) => {
-      const quest = q.expand?.quest;
+      const quest = q.expand.quest;
       if (!quest) return [];
 
       const validated_submission = validated_submissions.find(
@@ -142,12 +156,12 @@ export const getQuests = async (): Promise<Quest[]> => {
       return {
         id: quest.id,
         name: quest.name,
-        type: quest.type,
+        type: quest.type as unknown as QuestType,
         description: quest.text,
         date: quest.date,
         category: quest.category,
         status: submissionStatus(validated_submission),
-        totalAc: q.total_ac,
+        totalAc: Number(q.total_ac),
       };
     });
 
@@ -167,10 +181,14 @@ export const getQuestWithSubmissions = async (
   try {
     const [quest, validated_submissions] = await Promise.all([
       getQuests().then((quests) => quests.find((q) => q.id === questId)),
-      pb.collection("validated_submissions").getFullList({
-        filter: `quest = "${questId}" && submitter = "${getCurrentUserId()}"`,
-        expand: "submission",
-      }),
+      pb
+        .collection(Collections.ValidatedSubmissions)
+        .getFullList<
+          ValidatedSubmissionsResponse<{ submission: SubmissionsRecord }>
+        >({
+          filter: `quest = "${questId}" && submitter = "${getCurrentUserId()}"`,
+          expand: "submission",
+        }),
     ]);
 
     if (!quest) return null;
@@ -182,7 +200,7 @@ export const getQuestWithSubmissions = async (
         if (!submission) return [];
 
         function getAttachmentUrl() {
-          return pb.files.getURL(submission, submission.attachment, {
+          return pb.files.getURL(submission, submission.attachment!, {
             token: fileToken,
           });
         }
@@ -190,20 +208,23 @@ export const getQuestWithSubmissions = async (
         // TODO: Rewrite this to make it more readable
         const content: QuestSubmissionContent =
           quest.type === QuestType.TEXT
-            ? { type: QuestSubmissionContentType.TEXT, text: submission.text }
+            ? {
+                type: QuestSubmissionContentType.TEXT,
+                text: submission.text!,
+              }
             : quest.type === QuestType.IMAGE
               ? {
-                type: QuestSubmissionContentType.IMAGE,
-                url: getAttachmentUrl(),
-              }
+                  type: QuestSubmissionContentType.IMAGE,
+                  url: getAttachmentUrl(),
+                }
               : {
-                type: QuestSubmissionContentType.VIDEO,
-                url: getAttachmentUrl(),
-              };
+                  type: QuestSubmissionContentType.VIDEO,
+                  url: getAttachmentUrl(),
+                };
 
         return {
           id: submission.id,
-          uploadTime: submission.created,
+          uploadTime: submission.created!,
           status: submissionStatus(validated_submission),
           content: content,
         };
@@ -220,7 +241,6 @@ export const getQuestWithSubmissions = async (
   }
 };
 
-// Note: userInfo parameter is kept for compatibility but ignored
 export const getLeaderboard = async (pageNumber: number) => {
   try {
     if (!checkAuth()) return null;
@@ -311,71 +331,14 @@ export const getLeaderboard = async (pageNumber: number) => {
 // Note: userInfo parameter is kept for compatibility but ignored
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const getQuestsSubmissions = async (status: string, userInfo?: any) => {
-  try {
-    if (!checkAuth()) return null;
-
-    let filter = "";
-
-    if (status === "accepted") {
-      filter = "validations.success=true";
-    } else if (status === "pending") {
-      filter = "validations.id=null";
-    } else if (status === "rejected") {
-      filter = "validations.success=false";
-    }
-
-    const records = await pb.collection("submissions").getFullList({
-      filter: filter,
-      expand: "submitter,quest,validations",
-    });
-
-    // Format the submissions for the admin interface
-    return records.map((record) => {
-      const submitter = record.expand?.submitter || {};
-      const quest = record.expand?.quest || {};
-
-      // Determine status from validations
-      let submissionStatus = "PENDING";
-      if (record.expand?.validations) {
-        submissionStatus = record.expand.validations.success
-          ? "ACCEPTED"
-          : "WRONG";
-      }
-
-      return {
-        id: record.id,
-        questId: quest.id,
-        name: quest.name,
-        firstName: submitter.name?.split(" ")[0] || "",
-        lastName: submitter.name?.split(" ")[1] || "",
-        email: submitter.email || "",
-        correctAnswer: quest.correctAnswer || "",
-        submissions: [
-          {
-            id: record.id,
-            answer:
-              record.text ||
-              (record.attachments && record.attachments.length > 0
-                ? pb.files.getUrl(record, record.attachments[0])
-                : ""),
-            submissionType: quest.questType || "TEXT",
-            status: submissionStatus,
-          },
-        ],
-      };
-    });
-  } catch (error) {
-    console.error("Error:", error);
-    if (error instanceof Error && error.message.includes("401")) {
-      logout();
-    }
-    return null;
-  }
+  return null;
 };
 
 // Note: userInfo parameter is kept for compatibility but ignored
 export const updateQuestSubmissionStatus = async (
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   submissionId: string,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   status: string,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   email?: any, // Changed to any to address type error with UserInfo
@@ -384,41 +347,5 @@ export const updateQuestSubmissionStatus = async (
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   userInfo?: any,
 ) => {
-  try {
-    if (!checkAuth() || !submissionId) return null;
-
-    // Check if validation record exists
-    let validationRecord;
-    try {
-      validationRecord = await pb
-        .collection("validations")
-        .getFirstListItem(`submission="${submissionId}"`);
-    } catch {
-      // If no validation record exists, create one
-      validationRecord = null;
-    }
-
-    const success = status === "ACCEPTED";
-
-    if (validationRecord) {
-      // Update existing validation
-      await pb.collection("validations").update(validationRecord.id, {
-        success: success,
-      });
-    } else {
-      // Create new validation
-      await pb.collection("validations").create({
-        submission: submissionId,
-        success: success,
-      });
-    }
-
-    return true;
-  } catch (error) {
-    console.error("Error:", error);
-    if (error instanceof Error && error.message.includes("401")) {
-      logout();
-    }
-    return null;
-  }
+  return null;
 };

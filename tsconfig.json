@@ -2,7 +2,8 @@
   "compilerOptions": {
     "target": "es5",
     "lib": [
-      "dom"
+      "dom",
+      "ESNext"
     ],
     "sourceMap": true,
     "allowJs": true,
@@ -15,6 +16,7 @@
     "noFallthroughCasesInSwitch": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
+    "module": "esnext"
   },
   "include": [
     "src"

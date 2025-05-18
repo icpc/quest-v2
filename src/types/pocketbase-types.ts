@@ -96,9 +96,10 @@ export type SuperusersRecord = {
 	verified?: boolean
 }
 
-export type LeaderboardRecord = {
+export type LeaderboardRecord<Trank = unknown> = {
 	id: string
 	name?: string
+	rank?: null | Trank
 	total_solved?: number
 }
 
@@ -177,7 +178,7 @@ export type ExternalauthsResponse<Texpand = unknown> = Required<ExternalauthsRec
 export type MfasResponse<Texpand = unknown> = Required<MfasRecord> & BaseSystemFields<Texpand>
 export type OtpsResponse<Texpand = unknown> = Required<OtpsRecord> & BaseSystemFields<Texpand>
 export type SuperusersResponse<Texpand = unknown> = Required<SuperusersRecord> & AuthSystemFields<Texpand>
-export type LeaderboardResponse<Texpand = unknown> = Required<LeaderboardRecord> & BaseSystemFields<Texpand>
+export type LeaderboardResponse<Trank = unknown, Texpand = unknown> = Required<LeaderboardRecord<Trank>> & BaseSystemFields<Texpand>
 export type QuestsResponse<Texpand = unknown> = Required<QuestsRecord> & BaseSystemFields<Texpand>
 export type QuestsWithSubmissionStatsResponse<Texpand = unknown> = Required<QuestsWithSubmissionStatsRecord> & BaseSystemFields<Texpand>
 export type SubmissionsResponse<Texpand = unknown> = Required<SubmissionsRecord> & BaseSystemFields<Texpand>

@@ -1,76 +1,41 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from "react";
 import { useParams } from "react-router-dom";
 
-import { ILeaderboard, UserInfoProps } from "../../types/types";
+import { LeaderboardRow } from "../../types/types";
 import { getLeaderboard } from "../../utils/requests";
 import LeaderBoard from "../Leaderboard";
 
 import Loader, { LoaderComponent } from "./Loader";
 
-const LeaderboardProxyHelper: React.FC<UserInfoProps> = ({ userInfo }) => {
-  const pageNumber = Number(useParams() ?? "1");
+const LeaderboardProxyHelper: React.FC = () => {
+  // page number is the first path in the URL
+  const { pageNumber } = useParams();
+  const [totalPages, setTotalPages] = React.useState<number>(0);
   const [isLoadingLeaderboard, setIsLoadingLeaderboard] = React.useState(true);
-  const [leaderboardData, setLeaderboardData] =
-    React.useState<ILeaderboard | null>(null);
-  const [rows, setRows] = React.useState<any>([]);
+  const [rows, setRows] = React.useState<LeaderboardRow[]>([]);
   const [columnsNames, setColumnsNames] = React.useState<string[]>([]);
-  const [curUser, setCurUser] = React.useState<any>(null);
 
   React.useEffect(() => {
-    getLeaderboard(pageNumber).then((response) => {
-      if (response) {
-        setLeaderboardData(response);
-        if (response?.result.length === 0) {
-          setIsLoadingLeaderboard(false);
-          return;
-        }
-        const rowsData = response?.result.map((person: any) => {
-          return {
-            name: `${person.firstName} ${person.lastName}`,
-            rank: person.rank,
-            total: person.total,
-            totalPerday: person.totalPerDay,
-            email: person?.email,
-          };
-        });
-
-        if (
-          response.curUser &&
-          rowsData.length > 0 &&
-          !rowsData.find((row: any) => row.email === response.curUser?.email)
-        ) {
-          rowsData.push({
-            name: `${response.curUser.firstName} ${response.curUser.lastName}`,
-            rank: response.curUser?.rank,
-            total: response.curUser?.total,
-            totalPerday: response?.curUser?.totalPerDay,
-            email: response?.curUser?.email,
-          });
-          rowsData.sort((a: any, b: any) => a.rank - b.rank);
-        }
-        setRows(() => rowsData);
-        const columnsNamesData = ["Rank", "Name", "Total"];
-        const dates = response?.result[0].totalPerDay.map((date: any) =>
-          new Date(date.date).toDateString().slice(4, 10),
-        );
-        if (dates) {
-          dates.forEach((date: any) => {
-            columnsNamesData.push(date);
-          });
-        }
-
-        setColumnsNames(columnsNamesData);
-        setCurUser(response.curUser);
-        setIsLoadingLeaderboard(false);
+    getLeaderboard(Number(pageNumber) - 1).then((leaderboardResult) => {
+      if (leaderboardResult && leaderboardResult.rows.length > 0) {
+        setRows(leaderboardResult.rows);
+        setColumnsNames([
+          "Rank",
+          "Name",
+          "Total",
+          ...leaderboardResult.rows[0].totalPerDay.map((day) => day.date),
+        ]);
+        setTotalPages(leaderboardResult.totalPages);
       }
-    });
-  }, [pageNumber, userInfo]);
 
-  if (isLoadingLeaderboard || !leaderboardData) {
+      setIsLoadingLeaderboard(false);
+    });
+  }, [pageNumber]);
+
+  if (isLoadingLeaderboard) {
     return <LoaderComponent />;
   }
-  if (!leaderboardData?.result || leaderboardData?.result.length === 0) {
+  if (rows.length === 0) {
     return (
       <div
         style={{
@@ -98,9 +63,8 @@ const LeaderboardProxyHelper: React.FC<UserInfoProps> = ({ userInfo }) => {
     <LeaderBoard
       rows={rows}
       _columnsNames={columnsNames}
-      pageNumber={pageNumber}
-      totalUsers={leaderboardData.totalUsers}
-      curUser={curUser}
+      pageNumber={Number(pageNumber)}
+      totalPages={totalPages}
     />
   );
 };

@@ -1,8 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import PocketBase from "pocketbase";
 
+import config from "../config";
 import {
   Collections,
+  LeaderboardResponse,
   QuestsRecord,
   QuestsWithSubmissionStatsResponse,
   SubmissionsRecord,
@@ -10,6 +12,7 @@ import {
   ValidatedSubmissionsResponse,
 } from "../types/pocketbase-types";
 import {
+  LeaderboardRow,
   Quest,
   QuestStatus,
   QuestSubmissionContent,
@@ -19,6 +22,7 @@ import {
 } from "../types/types";
 
 import { POCKETBASE_URL } from "./env";
+import { aggregateQuestsByDate } from "./utils";
 
 // Create a singleton instance with the environment variable
 const pb = new PocketBase(POCKETBASE_URL) as TypedPocketBase;
@@ -241,83 +245,82 @@ export const getQuestWithSubmissions = async (
   }
 };
 
-export const getLeaderboard = async (pageNumber: number) => {
+export const getLeaderboard = async (
+  pageNumber: number,
+): Promise<{ rows: LeaderboardRow[]; totalPages: number } | null> => {
   try {
-    if (!checkAuth()) return null;
+    const currentUserId = getCurrentUserId()!;
 
-    if (!pageNumber) pageNumber = 1;
-    const pageSize = 10;
+    const [leaderboard, currentUserRow] = await Promise.all([
+      pb
+        .collection(Collections.Leaderboard)
+        .getList<
+          LeaderboardResponse<number>
+        >(pageNumber, config.LEADERBOARD_PAGE_SIZE),
+      pb
+        .collection(Collections.Leaderboard)
+        .getOne<LeaderboardResponse<number>>(currentUserId),
+    ]);
 
-    // Using the total_scores_example view
-    const records = await pb
-      .collection("total_scores_example")
-      .getList(pageNumber, pageSize, {
-        sort: "-total_score,-successful_submissions",
-      });
-
-    // Get current user info
-    const currentUser = getCurrentUser();
-
-    // Find current user's rank and score if available
-    let currentUserRank = 0;
-    let currentUserTotal = "0";
-
-    // Try to find current user in leaderboard
-    if (currentUser) {
-      // Get all records to find user's position
-      const allRecords = await pb
-        .collection("total_scores_example")
-        .getFullList({
-          sort: "-total_score,-successful_submissions",
-        });
-
-      const userIndex = allRecords.findIndex(
-        (item) =>
-          item.user_name?.split(" ")[0] === currentUser.name?.split(" ")[0] &&
-          item.user_name?.split(" ")[1] === currentUser.name?.split(" ")[1],
-      );
-
-      if (userIndex !== -1) {
-        currentUserRank = userIndex + 1;
-        currentUserTotal = allRecords[userIndex].total_score?.toString() || "0";
+    // If our user not in the leaderboard, we need to add them
+    if (!leaderboard.items.some((user) => user.id === currentUserId)) {
+      if (currentUserRow.rank ?? 0 < (leaderboard.items[0]?.rank ?? 0)) {
+        leaderboard.items.unshift(currentUserRow);
+      } else {
+        leaderboard.items.push(currentUserRow);
       }
     }
 
-    // Create a sample totalPerDay with proper structure for frontend
-    // Since PocketBase doesn't have this data, we'll create a placeholder
-    const today = new Date();
-    const sampleTotalPerDay = [
-      {
-        date: today.toISOString().split("T")[0],
-        total: "0",
-        quests: [], // Empty quests array
-      },
-    ];
-
-    // Format response to match ILeaderboard interface
-    return {
-      result: records.items.map((item, index) => {
-        const firstName = item.user_name?.split(" ")[0] || "";
-        const lastName = item.user_name?.split(" ")[1] || "";
-
-        return {
-          rank: index + 1 + (pageNumber - 1) * pageSize,
-          firstName,
-          lastName,
-          email: "", // Not available in the view
-          total: item.total_score?.toString() || "0",
-          totalPerDay: sampleTotalPerDay, // Provide the required structure
-        };
+    const [validated_submissions, quests] = await Promise.all([
+      pb.collection(Collections.ValidatedSubmissions).getFullList({
+        filter: leaderboard.items
+          .map((item) => `submitter="${item.id}"`)
+          .join("||"),
       }),
-      totalUsers: records.totalItems,
-      curUser: {
-        rank: currentUserRank,
-        firstName: currentUser?.name?.split(" ")[0] || "",
-        lastName: currentUser?.name?.split(" ")[1] || "",
-        email: currentUser?.email || "",
-        total: currentUserTotal,
-        totalPerDay: sampleTotalPerDay, // Provide the required structure
-      },
+      pb.collection(Collections.Quests).getFullList(),
+    ]);
+
+    const questsByDate = aggregateQuestsByDate(quests);
+
+    const createLeaderboardRowDayQuest = (
+      quest: QuestsRecord,
+      userId: string,
+    ) => {
+      const validated_submission = validated_submissions.find(
+        (s) => s.quest === quest.id && s.submitter === userId,
+      );
+      return {
+        id: quest.id,
+        name: quest.name,
+        status: submissionStatus(validated_submission),
+      };
+    };
+
+    const createLeaderboardRow = (user: LeaderboardResponse<number>) => {
+      return {
+        rank: user.rank ?? 0,
+        userId: user.id,
+        userName: user.name,
+        total: user.total_solved,
+        totalPerDay: questsByDate.map(({ date, detailsQuests }) => {
+          const quests = detailsQuests.map((quest) =>
+            createLeaderboardRowDayQuest(quest, user.id),
+          );
+          const total = quests.filter(
+            (quest) => quest.status === QuestStatus.CORRECT,
+          ).length;
+          return {
+            date,
+            total,
+            quests,
+          };
+        }),
+      };
+    };
+
+    return {
+      rows: leaderboard.items.map(createLeaderboardRow),
+      totalPages: leaderboard.totalPages,
     };
   } catch (error) {
     console.error("Error:", error);

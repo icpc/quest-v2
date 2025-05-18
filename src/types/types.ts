@@ -40,27 +40,24 @@ export interface UserInfoProps {
   userInfo: UserInfo;
 }
 
-export interface LeaderboardPerson {
-  rank: number;
-  firstName: string;
-  lastName: string;
-  email: string;
-  total: string;
-  totalPerDay: {
-    date: string;
-    total: string;
-    quests: {
-      id: string;
-      name: string;
-      status: string;
-    }[];
-  }[];
-}
+export type LeaderboardRowDayQuest = {
+  id: string;
+  name: string;
+  status: QuestStatus;
+};
 
-export interface ILeaderboard {
-  result: LeaderboardPerson[];
-  totalUsers: number;
-  curUser: LeaderboardPerson;
+export type LeaderboardRowDay = {
+  date: string;
+  total: number;
+  quests: LeaderboardRowDayQuest[];
+};
+
+export interface LeaderboardRow {
+  rank: number;
+  userId: string;
+  userName: string;
+  total: number;
+  totalPerDay: LeaderboardRowDay[];
 }
 
 export enum QuestSubmissionContentType {
@@ -100,31 +97,3 @@ export type QuestWithSubmissions = {
   quest: Quest;
   submissions: QuestSubmission[];
 };
-
-export type LeaderboardRowDayQuest = {
-  id: string;
-  name: string;
-  status: QuestStatus;
-}
-
-export type LeaderboardRowDay = {
-  date: string;
-  total: string;
-  quests: LeaderboardRowDayQuest[];
-}
-
-export type LeaderboardRow = {
-  rank: number;
-  name: string;
-  email: string;
-  total: string;
-  totalPerday: LeaderboardRowDay[];
-}
-
-export type LeaderboardData = {
-  rows: LeaderboardRow[];
-  _columnsNames: string[];
-  pageNumber: number;
-  totalUsers: number;
-  curUser?: LeaderboardPerson;
-}

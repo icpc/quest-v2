@@ -21,7 +21,8 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import { styled } from "@mui/material/styles";
 
-import { QuestStatus } from "../types/types";
+import { LeaderboardRow, QuestStatus } from "../types/types";
+import { getUserInfo } from "../utils/requests";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -43,37 +44,12 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-export interface LeaderboardUser {
-  email: string;
-  firstName: string;
-  lastName: string;
-}
-
-export interface LeaderboardRow {
-  email: string;
-  firstName: string;
-  lastName: string;
-  rank: number;
-  total: number;
-  totalPerDay: {
-    date: string;
-    total: number;
-    quests: {
-      id: string;
-      name: string;
-      status: QuestStatus;
-    }[];
-  }[];
-}
-
 interface RowProps {
   row: LeaderboardRow;
-  index: number;
-  isCurUser: boolean | undefined;
+  isCurrentUser: boolean;
 }
 
-const Row: React.FC<RowProps> = (props) => {
-  const { row, index, isCurUser } = props;
+const Row: React.FC<RowProps> = ({ row, isCurrentUser }) => {
   const [open, setOpen] = React.useState(false);
   const isMobile = window?.innerWidth <= 500;
   const navigate = useNavigate();
@@ -82,8 +58,8 @@ const Row: React.FC<RowProps> = (props) => {
       {
         <>
           <StyledTableRow
-            key={row.email + index}
-            style={{ backgroundColor: isCurUser ? "rgb(156 178 212)" : "" }}
+            key={row.userId}
+            style={{ backgroundColor: isCurrentUser ? "rgb(156 178 212)" : "" }}
           >
             <TableCell>
               <IconButton
@@ -97,18 +73,16 @@ const Row: React.FC<RowProps> = (props) => {
             <StyledTableCell component="th" scope="row">
               {row.rank}
             </StyledTableCell>
-            <StyledTableCell>
-              {row.firstName} {row.lastName}
-            </StyledTableCell>
+            <StyledTableCell>{row.userName}</StyledTableCell>
             <StyledTableCell>{row.total}</StyledTableCell>
-            {row.totalPerDay.map((day: any) => (
+            {row.totalPerDay.map((day) => (
               <StyledTableCell>
                 <span>{day.total}</span>
                 {!isMobile && (
                   <>
                     <br />
-                    {day.quests.map((quest: any) => {
-                      const colorIcon: any = {
+                    {day.quests.map((quest) => {
+                      const colorIcon = {
                         [QuestStatus.CORRECT]: "green",
                         [QuestStatus.WRONG]: "red",
                         [QuestStatus.PENDING]: "rgb(240 231 72)",
@@ -122,8 +96,7 @@ const Row: React.FC<RowProps> = (props) => {
                             margin: "2px",
                             display: "inline-block",
                             cursor: "pointer",
-                            backgroundColor:
-                              colorIcon[quest?.status.toLocaleUpperCase()],
+                            backgroundColor: colorIcon[quest?.status],
                             width: "10px",
                             height: "10px",
                           }}
@@ -221,12 +194,11 @@ interface LeaderboardProps {
   rows: LeaderboardRow[];
   _columnsNames: string[];
   pageNumber: number;
-  totalUsers: number;
-  curUser?: LeaderboardUser;
+  totalPages: number;
 }
 
 const Leaderboard: React.FC<LeaderboardProps> = (props) => {
-  const { rows, _columnsNames, pageNumber, totalUsers } = props;
+  const { rows, _columnsNames, pageNumber, totalPages } = props;
 
   const navigate = useNavigate();
   const handleChange = React.useCallback(
@@ -235,71 +207,55 @@ const Leaderboard: React.FC<LeaderboardProps> = (props) => {
     },
     [navigate],
   );
+  const userInfo = getUserInfo();
 
-  const leaderboardTableJSX = React.useMemo(() => {
-    return (
-      <div>
+  return (
+    <div>
+      <div
+        style={{
+          padding: "20px",
+        }}
+      >
+        <h1>Leaderboard</h1>
         <div
           style={{
-            padding: "20px",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
           }}
         >
-          <h1>Leaderboard</h1>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <TableContainer component={Paper}>
-              <Table sx={{ minWidth: 700 }} aria-label="collapsible table">
-                <TableHead>
-                  <TableRow>
-                    <StyledTableCell />
-                    {_columnsNames.map((column: string) => (
-                      <StyledTableCell>{column}</StyledTableCell>
-                    ))}
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {rows.map((row: any, index: number) => (
-                    <Row
-                      row={row}
-                      index={index}
-                      isCurUser={
-                        props.curUser && row.email === props.curUser.email
-                      }
-                    />
+          <TableContainer component={Paper}>
+            <Table sx={{ minWidth: 700 }} aria-label="collapsible table">
+              <TableHead>
+                <TableRow>
+                  <StyledTableCell />
+                  {_columnsNames.map((column: string) => (
+                    <StyledTableCell>{column}</StyledTableCell>
                   ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </div>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {rows.map((row) => (
+                  <Row row={row} isCurrentUser={row.userId === userInfo?.id} />
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
         </div>
-        <Pagination
-          count={Math.ceil(totalUsers / 10)}
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            marginTop: "20px",
-          }}
-          page={+pageNumber}
-          onChange={handleChange}
-        />
       </div>
-    );
-  }, [
-    _columnsNames,
-    handleChange,
-    pageNumber,
-    props.curUser,
-    rows,
-    totalUsers,
-  ]);
-
-  return <>{leaderboardTableJSX}</>;
+      <Pagination
+        count={totalPages}
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          marginTop: "20px",
+        }}
+        page={+pageNumber}
+        onChange={handleChange}
+      />
+    </div>
+  );
 };
 
 export default Leaderboard;

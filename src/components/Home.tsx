@@ -12,10 +12,10 @@ import Accordion from "@mui/material/Accordion";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import AccordionSummary from "@mui/material/AccordionSummary";
 
-import { QuestStatus, QuestsDays } from "../types/types";
+import { Quest, QuestStatus, QuestsDays } from "../types/types";
 import { aggregateQuestsByDate } from "../utils/utils";
 
-const Home = (pros: any) => {
+const Home = (pros: { quests: Quest[] }) => {
   const isMobile = window?.innerWidth <= 500;
 
   const navigate = useNavigate();

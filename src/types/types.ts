@@ -11,7 +11,7 @@ export enum QuestType {
   IMAGE = "IMAGE",
 }
 
-export type Quest = {
+export interface Quest {
   id: string;
   name: string;
   type: QuestType;
@@ -20,7 +20,7 @@ export type Quest = {
   date: string;
   totalAc: number;
   category: string;
-};
+}
 
 export interface QuestsDays {
   date: string;
@@ -40,17 +40,17 @@ export interface UserInfoProps {
   userInfo: UserInfo;
 }
 
-export type LeaderboardRowDayQuest = {
+export interface LeaderboardRowDayQuest {
   id: string;
   name: string;
   status: QuestStatus;
-};
+}
 
-export type LeaderboardRowDay = {
+export interface LeaderboardRowDay {
   date: string;
   total: number;
   quests: LeaderboardRowDayQuest[];
-};
+}
 
 export interface LeaderboardRow {
   rank: number;
@@ -66,34 +66,34 @@ export enum QuestSubmissionContentType {
   IMAGE = "IMAGE",
 }
 
-export type QuestSubmissionText = {
+export interface QuestSubmissionText {
   type: QuestSubmissionContentType.TEXT;
   text: string;
-};
+}
 
-export type QuestSubmissionVideo = {
+export interface QuestSubmissionVideo {
   type: QuestSubmissionContentType.VIDEO;
   url: string;
-};
+}
 
-export type QuestSubmissionImage = {
+export interface QuestSubmissionImage {
   type: QuestSubmissionContentType.IMAGE;
   url: string;
-};
+}
 
 export type QuestSubmissionContent =
   | QuestSubmissionText
   | QuestSubmissionVideo
   | QuestSubmissionImage;
 
-export type QuestSubmission = {
+export interface QuestSubmission {
   id: string;
   uploadTime: string;
   status: QuestStatus;
   content: QuestSubmissionContent;
-};
+}
 
-export type QuestWithSubmissions = {
+export interface QuestWithSubmissions {
   quest: Quest;
   submissions: QuestSubmission[];
-};
+}

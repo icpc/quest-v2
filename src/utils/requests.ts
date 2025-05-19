@@ -125,7 +125,9 @@ export const login = async (user: any) => {
   }
 };
 
-function submissionStatus(validated_submission: any) {
+function submissionStatus(
+  validated_submission: ValidatedSubmissionsResponse | undefined,
+) {
   if (!validated_submission) return QuestStatus.NOTATTEMPTED;
   if (!validated_submission.validation) return QuestStatus.PENDING;
   if (validated_submission.success) return QuestStatus.CORRECT;

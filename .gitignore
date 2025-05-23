@@ -32,3 +32,5 @@ pb_data
 pb_public
 pb_hooks
 
+# debug sql queries
+debug*.sql

@@ -12,6 +12,7 @@ import AccordionDetails from "@mui/material/AccordionDetails";
 import AccordionSummary from "@mui/material/AccordionSummary";
 
 import { Quest, QuestStatus, QuestsDays } from "../types/types";
+import { formatDate } from "../utils/human-readable-date";
 import { aggregateQuestsByDate } from "../utils/utils";
 
 const Home = (pros: { quests: Quest[] }) => {
@@ -26,8 +27,7 @@ const Home = (pros: { quests: Quest[] }) => {
     const questsDaysRev = [...questsDays];
     return questsDaysRev.map((questDay, index) => {
       const expanded = index === 0;
-      const date = new Date(questDay.date);
-      const dateFormated = date.toLocaleDateString("en-US", {
+      const dateFormated = formatDate(questDay.date, {
         weekday: "long",
         month: "long",
         day: "numeric",

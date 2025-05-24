@@ -7,6 +7,7 @@ import {
   QuestSubmission,
   QuestSubmissionContentType,
 } from "../types/types";
+import { formatDate } from "../utils/human-readable-date";
 
 interface ImgMediaCardProps {
   submission: QuestSubmission;
@@ -66,12 +67,12 @@ const ImgMediaCard: React.FC<ImgMediaCardProps> = ({ submission }) => {
           component="span"
           sx={{ display: "block", fontSize: 14, mb: 0.5 }}
         >
-          {Intl.DateTimeFormat("en-US", {
+          {formatDate(uploadTime, {
             month: "long",
             day: "numeric",
             hour: "numeric",
             minute: "numeric",
-          }).format(new Date(uploadTime))}
+          })}
         </Typography>
         <Typography
           gutterBottom

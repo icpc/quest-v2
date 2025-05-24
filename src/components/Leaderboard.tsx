@@ -141,8 +141,8 @@ const Row: React.FC<RowProps> = ({ row, isCurrentUser }) => {
                       </TableRow>
                     </TableHead>
                     <TableBody>
-                      {row.totalPerDay.map((day: any) =>
-                        day.quests.map((quest: any) => {
+                      {row.totalPerDay.map((day) =>
+                        day.quests.map((quest) => {
                           if (
                             !quest ||
                             quest.status.toLocaleUpperCase() ===
@@ -234,7 +234,7 @@ const Leaderboard: React.FC<LeaderboardProps> = (props) => {
               <TableHead>
                 <TableRow>
                   <StyledTableCell />
-                  {_columnsNames.map((column: string) => (
+                  {_columnsNames.map((column) => (
                     <StyledTableCell>{column}</StyledTableCell>
                   ))}
                 </TableRow>

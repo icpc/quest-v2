@@ -16,6 +16,7 @@ export enum Collections {
 	QuestsWithSubmissionStats = "quests_with_submission_stats",
 	Submissions = "submissions",
 	Users = "users",
+	ValidatedQuests = "validated_quests",
 	ValidatedSubmissions = "validated_submissions",
 	Validations = "validations",
 }
@@ -96,11 +97,12 @@ export type SuperusersRecord = {
 	verified?: boolean
 }
 
-export type LeaderboardRecord<Trank = unknown> = {
+export type LeaderboardRecord = {
 	id: string
 	name?: string
-	rank?: null | Trank
+	rank?: number
 	total_solved?: number
+	user?: RecordIdString
 }
 
 export enum QuestsTypeOptions {
@@ -155,9 +157,18 @@ export type UsersRecord = {
 	verified?: boolean
 }
 
-export type ValidatedSubmissionsRecord = {
+export type ValidatedQuestsRecord<Tstatus = unknown> = {
 	id: string
 	quest: RecordIdString
+	status?: null | Tstatus
+	submitter: RecordIdString
+	success?: boolean
+}
+
+export type ValidatedSubmissionsRecord<Tstatus = unknown> = {
+	id: string
+	quest: RecordIdString
+	status?: null | Tstatus
 	submission?: RecordIdString
 	submitter: RecordIdString
 	success?: boolean
@@ -178,12 +189,13 @@ export type ExternalauthsResponse<Texpand = unknown> = Required<ExternalauthsRec
 export type MfasResponse<Texpand = unknown> = Required<MfasRecord> & BaseSystemFields<Texpand>
 export type OtpsResponse<Texpand = unknown> = Required<OtpsRecord> & BaseSystemFields<Texpand>
 export type SuperusersResponse<Texpand = unknown> = Required<SuperusersRecord> & AuthSystemFields<Texpand>
-export type LeaderboardResponse<Trank = unknown, Texpand = unknown> = Required<LeaderboardRecord<Trank>> & BaseSystemFields<Texpand>
+export type LeaderboardResponse<Texpand = unknown> = Required<LeaderboardRecord> & BaseSystemFields<Texpand>
 export type QuestsResponse<Texpand = unknown> = Required<QuestsRecord> & BaseSystemFields<Texpand>
 export type QuestsWithSubmissionStatsResponse<Texpand = unknown> = Required<QuestsWithSubmissionStatsRecord> & BaseSystemFields<Texpand>
 export type SubmissionsResponse<Texpand = unknown> = Required<SubmissionsRecord> & BaseSystemFields<Texpand>
 export type UsersResponse<Texpand = unknown> = Required<UsersRecord> & AuthSystemFields<Texpand>
-export type ValidatedSubmissionsResponse<Texpand = unknown> = Required<ValidatedSubmissionsRecord> & BaseSystemFields<Texpand>
+export type ValidatedQuestsResponse<Tstatus = unknown, Texpand = unknown> = Required<ValidatedQuestsRecord<Tstatus>> & BaseSystemFields<Texpand>
+export type ValidatedSubmissionsResponse<Tstatus = unknown, Texpand = unknown> = Required<ValidatedSubmissionsRecord<Tstatus>> & BaseSystemFields<Texpand>
 export type ValidationsResponse<Texpand = unknown> = Required<ValidationsRecord> & BaseSystemFields<Texpand>
 
 // Types containing all Records and Responses, useful for creating typing helper functions
@@ -199,6 +211,7 @@ export type CollectionRecords = {
 	quests_with_submission_stats: QuestsWithSubmissionStatsRecord
 	submissions: SubmissionsRecord
 	users: UsersRecord
+	validated_quests: ValidatedQuestsRecord
 	validated_submissions: ValidatedSubmissionsRecord
 	validations: ValidationsRecord
 }
@@ -214,6 +227,7 @@ export type CollectionResponses = {
 	quests_with_submission_stats: QuestsWithSubmissionStatsResponse
 	submissions: SubmissionsResponse
 	users: UsersResponse
+	validated_quests: ValidatedQuestsResponse
 	validated_submissions: ValidatedSubmissionsResponse
 	validations: ValidationsResponse
 }
@@ -232,6 +246,7 @@ export type TypedPocketBase = PocketBase & {
 	collection(idOrName: 'quests_with_submission_stats'): RecordService<QuestsWithSubmissionStatsResponse>
 	collection(idOrName: 'submissions'): RecordService<SubmissionsResponse>
 	collection(idOrName: 'users'): RecordService<UsersResponse>
+	collection(idOrName: 'validated_quests'): RecordService<ValidatedQuestsResponse>
 	collection(idOrName: 'validated_submissions'): RecordService<ValidatedSubmissionsResponse>
 	collection(idOrName: 'validations'): RecordService<ValidationsResponse>
 }

@@ -851,10 +851,10 @@ migrate((app) => {
         {
           "hidden": false,
           "id": "file1542800728",
-          "maxSelect": 99,
+          "maxSelect": 1,
           "maxSize": 0,
           "mimeTypes": [],
-          "name": "attachments",
+          "name": "attachment",
           "presentable": false,
           "protected": true,
           "required": false,
@@ -1125,13 +1125,15 @@ migrate((app) => {
         },
         {
           "hidden": false,
-          "id": "json3127518743",
-          "maxSize": 1,
+          "id": "number3127518743",
+          "max": null,
+          "min": null,
           "name": "total_ac",
+          "onlyInt": false,
           "presentable": false,
           "required": false,
           "system": false,
-          "type": "json"
+          "type": "number"
         }
       ],
       "id": "pbc_3396442964",
@@ -1141,7 +1143,7 @@ migrate((app) => {
       "system": false,
       "type": "view",
       "updateRule": null,
-      "viewQuery": "SELECT\n  q.id as id,\n  q.id as quest,\n  COUNT(s.id) AS count,\n  SUM(CASE WHEN v.success THEN 1 ELSE 0 END) AS total_ac\nFROM quests AS q\nLEFT JOIN submissions AS s\n  ON s.quest = q.id\nLEFT JOIN validations AS v\n  ON v.submission = s.id\nGROUP BY\n  q.id;\n",
+      "viewQuery": "SELECT\n  q.id as id,\n  q.id as quest,\n  COUNT(s.id) AS count,\n  COUNT(v.id) AS total_ac\nFROM quests AS q\nLEFT JOIN submissions AS s\n  ON s.quest = q.id\nLEFT JOIN validations AS v\n  ON v.submission = s.id\n  AND v.success = TRUE\nGROUP BY\n  q.id;\n",
       "viewRule": "@request.auth.id != \"\""
     },
     {
@@ -1166,7 +1168,7 @@ migrate((app) => {
           "cascadeDelete": false,
           "collectionId": "pbc_2945261690",
           "hidden": false,
-          "id": "_clone_ifYj",
+          "id": "_clone_l501",
           "maxSelect": 1,
           "minSelect": 0,
           "name": "quest",
@@ -1192,7 +1194,7 @@ migrate((app) => {
           "cascadeDelete": false,
           "collectionId": "_pb_users_auth_",
           "hidden": false,
-          "id": "_clone_L4oy",
+          "id": "_clone_HPtF",
           "maxSelect": 1,
           "minSelect": 0,
           "name": "submitter",
@@ -1216,12 +1218,22 @@ migrate((app) => {
         },
         {
           "hidden": false,
-          "id": "_clone_3Ptg",
+          "id": "_clone_dwKQ",
           "name": "success",
           "presentable": false,
           "required": false,
           "system": false,
           "type": "bool"
+        },
+        {
+          "hidden": false,
+          "id": "json2063623452",
+          "maxSize": 1,
+          "name": "status",
+          "presentable": false,
+          "required": false,
+          "system": false,
+          "type": "json"
         }
       ],
       "id": "pbc_2400855954",
@@ -1231,7 +1243,161 @@ migrate((app) => {
       "system": false,
       "type": "view",
       "updateRule": null,
-      "viewQuery": "SELECT  \n  s.id              AS id,\n  s.quest           AS quest,\n  s.id              AS submission,\n  s.submitter       AS submitter,\n  v.id              AS validation,\n  v.success         AS success\nFROM submissions AS s\nLEFT JOIN validations AS v\n  ON v.submission = s.id\nGROUP BY s.id, v.success;",
+      "viewQuery": "SELECT s.id AS id,\n    s.quest AS quest,\n    s.id AS submission,\n    s.submitter AS submitter,\n    v.id AS validation,\n    v.success AS success,\n    (\n        CASE\n            WHEN v.success = TRUE THEN 'CORRECT'\n            WHEN v.success = FALSE THEN 'WRONG'\n            ELSE 'PENDING'\n        END\n    ) as status\nFROM submissions AS s\n    LEFT JOIN validations AS v ON v.submission = s.id\nGROUP BY s.id;",
+      "viewRule": "@request.auth.id != \"\""
+    },
+    {
+      "createRule": null,
+      "deleteRule": null,
+      "fields": [
+        {
+          "autogeneratePattern": "",
+          "hidden": false,
+          "id": "text3208210256",
+          "max": 0,
+          "min": 0,
+          "name": "id",
+          "pattern": "^[a-z0-9]+$",
+          "presentable": false,
+          "primaryKey": true,
+          "required": true,
+          "system": true,
+          "type": "text"
+        },
+        {
+          "cascadeDelete": false,
+          "collectionId": "_pb_users_auth_",
+          "hidden": false,
+          "id": "relation2375276105",
+          "maxSelect": 1,
+          "minSelect": 0,
+          "name": "user",
+          "presentable": false,
+          "required": false,
+          "system": false,
+          "type": "relation"
+        },
+        {
+          "autogeneratePattern": "",
+          "hidden": false,
+          "id": "_clone_lCD3",
+          "max": 255,
+          "min": 0,
+          "name": "name",
+          "pattern": "",
+          "presentable": false,
+          "primaryKey": false,
+          "required": false,
+          "system": false,
+          "type": "text"
+        },
+        {
+          "hidden": false,
+          "id": "number2631629756",
+          "max": null,
+          "min": null,
+          "name": "total_solved",
+          "onlyInt": false,
+          "presentable": false,
+          "required": false,
+          "system": false,
+          "type": "number"
+        },
+        {
+          "hidden": false,
+          "id": "number2289690853",
+          "max": null,
+          "min": null,
+          "name": "rank",
+          "onlyInt": false,
+          "presentable": false,
+          "required": false,
+          "system": false,
+          "type": "number"
+        }
+      ],
+      "id": "pbc_3780747097",
+      "indexes": [],
+      "listRule": "@request.auth.id != \"\"",
+      "name": "leaderboard",
+      "system": false,
+      "type": "view",
+      "updateRule": null,
+      "viewQuery": "SELECT \n    -- We actually rely on the fact that this id is equal to user id when we get the leaderboard position for current user --\n    u.id as id,\n    u.id as user,\n    u.name as name,\n    CAST(SUM(vq.success) AS INT) AS total_solved,\n    CAST((ROW_NUMBER() OVER(ORDER BY SUM(vq.success) DESC)) AS INT) as rank\nFROM users AS u\n    LEFT JOIN validated_quests AS vq ON vq.submitter = u.id AND vq.success = TRUE\nWHERE EXISTS (\n        SELECT 1\n        FROM json_each(u.role)\n        WHERE value = 'submitter'\n    )\nGROUP BY u.id\nORDER BY rank,\n    name ASC;",
+      "viewRule": "@request.auth.id != \"\""
+    },
+    {
+      "createRule": null,
+      "deleteRule": null,
+      "fields": [
+        {
+          "autogeneratePattern": "",
+          "hidden": false,
+          "id": "text3208210256",
+          "max": 0,
+          "min": 0,
+          "name": "id",
+          "pattern": "^[a-z0-9]+$",
+          "presentable": false,
+          "primaryKey": true,
+          "required": true,
+          "system": true,
+          "type": "text"
+        },
+        {
+          "cascadeDelete": false,
+          "collectionId": "pbc_2945261690",
+          "hidden": false,
+          "id": "_clone_7V7a",
+          "maxSelect": 1,
+          "minSelect": 0,
+          "name": "quest",
+          "presentable": false,
+          "required": true,
+          "system": false,
+          "type": "relation"
+        },
+        {
+          "cascadeDelete": false,
+          "collectionId": "_pb_users_auth_",
+          "hidden": false,
+          "id": "_clone_qtEc",
+          "maxSelect": 1,
+          "minSelect": 0,
+          "name": "submitter",
+          "presentable": false,
+          "required": true,
+          "system": false,
+          "type": "relation"
+        },
+        {
+          "hidden": false,
+          "id": "bool1862328242",
+          "name": "success",
+          "presentable": false,
+          "required": false,
+          "system": false,
+          "type": "bool"
+        },
+        {
+          "hidden": false,
+          "id": "json2063623452",
+          "maxSize": 1,
+          "name": "status",
+          "presentable": false,
+          "required": false,
+          "system": false,
+          "type": "json"
+        }
+      ],
+      "id": "pbc_363396932",
+      "indexes": [],
+      "listRule": "@request.auth.id != \"\"",
+      "name": "validated_quests",
+      "system": false,
+      "type": "view",
+      "updateRule": null,
+      "viewQuery": "SELECT (ROW_NUMBER() OVER ()) AS id,\n    s.quest as quest,\n    s.submitter as submitter,\n    CAST((SUM(v.success) > 0) AS BOOL) as success,\n    (\n        CASE\n            WHEN SUM(v.success) > 0 THEN 'CORRECT'\n            WHEN COUNT(s.id) > COUNT(v.id) THEN 'PENDING'\n            ELSE 'WRONG'\n        END\n    ) as status\nFROM submissions AS s\n    LEFT JOIN validations AS v ON v.submission = s.id\nGROUP BY s.quest,\n    s.submitter",
       "viewRule": "@request.auth.id != \"\""
     }
   ];

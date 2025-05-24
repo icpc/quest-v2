@@ -1,7 +1,7 @@
 export enum QuestStatus {
   PENDING = "PENDING",
   NOTATTEMPTED = "NOT ATTEMPTED",
-  CORRECT = "ACCEPTED",
+  CORRECT = "CORRECT",
   WRONG = "WRONG",
 }
 

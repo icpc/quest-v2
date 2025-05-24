@@ -9,6 +9,7 @@ import {
   QuestsWithSubmissionStatsResponse,
   SubmissionsRecord,
   TypedPocketBase,
+  ValidatedQuestsResponse,
   ValidatedSubmissionsResponse,
 } from "../types/pocketbase-types";
 import {
@@ -66,8 +67,8 @@ export function getUserInfo() {
       role: pbUser.role || [],
       token: pb.authStore.token,
       user: {
-        firstName: pbUser.name?.split(" ")[0] || "",
-        lastName: pbUser.name?.split(" ")[1] || "",
+        firstName: pbUser.name?.split(" ").at(0) || "",
+        lastName: pbUser.name?.split(" ").at(1) || "",
         email: pbUser.email,
       },
     };
@@ -125,20 +126,18 @@ export const login = async (user: any) => {
   }
 };
 
-function submissionStatus(
-  validated_submission: ValidatedSubmissionsResponse | undefined,
-) {
-  if (!validated_submission) return QuestStatus.NOTATTEMPTED;
-  if (!validated_submission.validation) return QuestStatus.PENDING;
-  if (validated_submission.success) return QuestStatus.CORRECT;
-  return QuestStatus.WRONG;
+type Status = "CORRECT" | "WRONG" | "PENDING";
+
+function submissionStatus(status: Status | undefined | null) {
+  if (!status) return QuestStatus.NOTATTEMPTED;
+  return status as QuestStatus;
 }
 
 export const getQuests = async (): Promise<Quest[]> => {
   try {
     if (!checkAuth()) return [];
 
-    const [quests, validated_submissions] = await Promise.all([
+    const [quests, validated_quests] = await Promise.all([
       pb
         .collection(Collections.QuestsWithSubmissionStats)
         .getFullList<
@@ -146,16 +145,18 @@ export const getQuests = async (): Promise<Quest[]> => {
         >({
           expand: "quest",
         }),
-      pb.collection(Collections.ValidatedSubmissions).getFullList({
-        filter: `submitter = '${getCurrentUserId()}'`,
-      }),
+      pb
+        .collection(Collections.ValidatedQuests)
+        .getFullList<ValidatedQuestsResponse<Status>>({
+          filter: `submitter = '${getCurrentUserId()}'`,
+        }),
     ]);
 
     const formattedQuests = quests.flatMap((q) => {
       const quest = q.expand.quest;
       if (!quest) return [];
 
-      const validated_submission = validated_submissions.find(
+      const validated_quest = validated_quests.find(
         (s) => s.quest === quest.id,
       );
 
@@ -166,7 +167,7 @@ export const getQuests = async (): Promise<Quest[]> => {
         description: quest.text,
         date: quest.date,
         category: quest.category,
-        status: submissionStatus(validated_submission),
+        status: submissionStatus(validated_quest?.status),
         totalAc: q.total_ac,
       };
     });
@@ -190,7 +191,10 @@ export const getQuestWithSubmissions = async (
       pb
         .collection(Collections.ValidatedSubmissions)
         .getFullList<
-          ValidatedSubmissionsResponse<{ submission: SubmissionsRecord }>
+          ValidatedSubmissionsResponse<
+            Status,
+            { submission: SubmissionsRecord }
+          >
         >({
           filter: `quest = "${questId}" && submitter = "${getCurrentUserId()}"`,
           expand: "submission",
@@ -231,7 +235,7 @@ export const getQuestWithSubmissions = async (
         return {
           id: submission.id,
           uploadTime: submission.created!,
-          status: submissionStatus(validated_submission),
+          status: submissionStatus(validated_submission.status),
           content: content,
         };
       },
@@ -256,29 +260,27 @@ export const getLeaderboard = async (
     const [leaderboard, currentUserRow] = await Promise.all([
       pb
         .collection(Collections.Leaderboard)
-        .getList<
-          LeaderboardResponse<number>
-        >(pageNumber, config.LEADERBOARD_PAGE_SIZE),
-      pb
-        .collection(Collections.Leaderboard)
-        .getOne<LeaderboardResponse<number>>(currentUserId),
+        .getList(pageNumber, config.LEADERBOARD_PAGE_SIZE),
+      pb.collection(Collections.Leaderboard).getOne(currentUserId),
     ]);
 
-    // If our user not in the leaderboard, we need to add them
+    // If current user not in the leaderboard, we need to add them
     if (!leaderboard.items.some((user) => user.id === currentUserId)) {
-      if (currentUserRow.rank ?? 0 < (leaderboard.items[0]?.rank ?? 0)) {
+      if (currentUserRow.rank < (leaderboard.items.at(0)?.rank ?? 0)) {
         leaderboard.items.unshift(currentUserRow);
       } else {
         leaderboard.items.push(currentUserRow);
       }
     }
 
-    const [validated_submissions, quests] = await Promise.all([
-      pb.collection(Collections.ValidatedSubmissions).getFullList({
-        filter: leaderboard.items
-          .map((item) => `submitter="${item.id}"`)
-          .join("||"),
-      }),
+    const [validated_quests, quests] = await Promise.all([
+      pb
+        .collection(Collections.ValidatedQuests)
+        .getFullList<ValidatedQuestsResponse<Status>>({
+          filter: leaderboard.items
+            .map((item) => `submitter="${item.id}"`)
+            .join("||"),
+        }),
       pb.collection(Collections.Quests).getFullList(),
     ]);
 
@@ -288,19 +290,19 @@ export const getLeaderboard = async (
       quest: QuestsRecord,
       userId: string,
     ) => {
-      const validated_submission = validated_submissions.find(
+      const validated_quest = validated_quests.find(
         (s) => s.quest === quest.id && s.submitter === userId,
       );
       return {
         id: quest.id,
         name: quest.name,
-        status: submissionStatus(validated_submission),
+        status: submissionStatus(validated_quest?.status),
       };
     };
 
-    const createLeaderboardRow = (user: LeaderboardResponse<number>) => {
+    const createLeaderboardRow = (user: LeaderboardResponse) => {
       return {
-        rank: user.rank ?? 0,
+        rank: user.rank,
         userId: user.id,
         userName: user.name,
         total: user.total_solved,

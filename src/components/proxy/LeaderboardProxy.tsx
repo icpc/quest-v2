@@ -2,6 +2,7 @@ import React from "react";
 import { useParams } from "react-router";
 
 import { LeaderboardRow } from "../../types/types";
+import { formatDate } from "../../utils/human-readable-date";
 import { getLeaderboard } from "../../utils/requests";
 import LeaderBoard from "../Leaderboard";
 
@@ -23,7 +24,9 @@ const LeaderboardProxyHelper: React.FC = () => {
           "Rank",
           "Name",
           "Total",
-          ...leaderboardResult.rows[0].totalPerDay.map((day) => day.date),
+          ...leaderboardResult.rows[0].totalPerDay.map((day) =>
+            formatDate(day.date, { month: "short", day: "numeric" }),
+          ),
         ]);
         setTotalPages(leaderboardResult.totalPages);
       }

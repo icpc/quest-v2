@@ -52,6 +52,7 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
+          context: .
           push: true
           build-args: |
             POCKETBASE_VERSION=0.28.1

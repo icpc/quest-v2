@@ -1,24 +1,15 @@
-version: "3.7"
 services:
   pocketbase:
     build:
       context: .
       args:
-        - VERSION=0.27.0
+        - POCKETBASE_VERSION=0.28.1
     container_name: pocketbase-quest
     restart: unless-stopped
-    command:
-      - --encryptionEnv
-      - ENCRYPTION
-    environment:
-      ENCRYPTION: AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
     ports:
       - "8090:8090"
     volumes:
-      - ./pb_data:/pb_data
-      - ./pb_public:/pb_public
-      - ./pb_hooks:/pb_hooks
-      - ./pb_migrations:/pb_migrations
+      - ./pocketbase/pb_data:/pb_data
     healthcheck:
       test: wget --no-verbose --tries=1 --spider http://localhost:8090/api/health || exit 1
       interval: 5s

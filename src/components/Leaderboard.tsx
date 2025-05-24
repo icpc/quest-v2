@@ -1,5 +1,3 @@
-/* eslint-disable react/jsx-key */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from "react";
 import { Link, useNavigate } from "react-router";
 
@@ -79,7 +77,7 @@ const Row: React.FC<RowProps> = ({ row, isCurrentUser }) => {
               {row.totalPerDay.reduce((acc, day) => acc + day.quests.length, 0)}
             </StyledTableCell>
             {row.totalPerDay.map((day) => (
-              <StyledTableCell>
+              <StyledTableCell key={day.date}>
                 <span>
                   {day.total} / {day.quests.length}
                 </span>
@@ -95,6 +93,7 @@ const Row: React.FC<RowProps> = ({ row, isCurrentUser }) => {
                       };
                       return (
                         <Link
+                          key={quest.id}
                           style={{
                             borderRadius: "50%",
                             padding: "2px",
@@ -235,13 +234,17 @@ const Leaderboard: React.FC<LeaderboardProps> = (props) => {
                 <TableRow>
                   <StyledTableCell />
                   {_columnsNames.map((column) => (
-                    <StyledTableCell>{column}</StyledTableCell>
+                    <StyledTableCell key={column}>{column}</StyledTableCell>
                   ))}
                 </TableRow>
               </TableHead>
               <TableBody>
                 {rows.map((row) => (
-                  <Row row={row} isCurrentUser={row.userId === userInfo?.id} />
+                  <Row
+                    key={row.userId}
+                    row={row}
+                    isCurrentUser={row.userId === userInfo?.id}
+                  />
                 ))}
               </TableBody>
             </Table>

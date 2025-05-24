@@ -4,7 +4,6 @@ import { HashRouter, Route, Routes } from "react-router";
 import { Toolbar } from "@mui/material";
 import styled from "styled-components";
 
-import Admin from "./components/Admin";
 import DrawerAppBar from "./components/Header";
 import SignIn from "./components/Login";
 import Rules from "./components/Rules";
@@ -31,7 +30,6 @@ const App = () => {
           <Route path="/quest-details/:questId" element={<QuestProxy />} />
           <Route path="/leaderboard" element={<Leaderboard />} />
           <Route path="/leaderboard/:pageNumber" element={<Leaderboard />} />
-          <Route path="/admin/submissionsTable" element={<Admin />} />
           <Route path="*" element={<SignIn />} />
         </Routes>
       </AppContainer>

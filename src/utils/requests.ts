@@ -334,25 +334,3 @@ export const getLeaderboard = async (
     return null;
   }
 };
-
-// Note: userInfo parameter is kept for compatibility but ignored
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const getQuestsSubmissions = async (status: string, userInfo?: any) => {
-  return null;
-};
-
-// Note: userInfo parameter is kept for compatibility but ignored
-export const updateQuestSubmissionStatus = async (
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  submissionId: string,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  status: string,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  email?: any, // Changed to any to address type error with UserInfo
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  questId?: string,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  userInfo?: any,
-) => {
-  return null;
-};

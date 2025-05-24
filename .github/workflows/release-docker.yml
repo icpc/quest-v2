@@ -41,7 +41,6 @@ jobs:
             type=raw,value=latest
             type=semver,pattern={{version}},value=${{ github.event.inputs.version }}
             type=schedule,pattern={{date 'YYYYMMDD'}}
-            type=sha
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v5

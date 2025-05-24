@@ -74,10 +74,15 @@ const Row: React.FC<RowProps> = ({ row, isCurrentUser }) => {
               {row.rank}
             </StyledTableCell>
             <StyledTableCell>{row.userName}</StyledTableCell>
-            <StyledTableCell>{row.total}</StyledTableCell>
+            <StyledTableCell>
+              {row.total} /{" "}
+              {row.totalPerDay.reduce((acc, day) => acc + day.quests.length, 0)}
+            </StyledTableCell>
             {row.totalPerDay.map((day) => (
               <StyledTableCell>
-                <span>{day.total}</span>
+                <span>
+                  {day.total} / {day.quests.length}
+                </span>
                 {!isMobile && (
                   <>
                     <br />

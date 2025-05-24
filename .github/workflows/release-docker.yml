@@ -6,10 +6,6 @@ on:
       version:
         description: Name of release (without 'v')
         required: true
-      branch:
-        description: Branch to build from
-        required: false
-        default: main
 
 env:
   REGISTRY: ghcr.io
@@ -25,8 +21,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.inputs.branch }}
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -52,7 +46,6 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
-          context: .
           push: true
           build-args: |
             POCKETBASE_VERSION=0.28.1

@@ -9,15 +9,15 @@ import LeaderBoard from "../Leaderboard";
 import Loader, { LoaderComponent } from "./Loader";
 
 const LeaderboardProxyHelper: React.FC = () => {
-  // page number is the first path in the URL
-  const { pageNumber } = useParams();
+  const params = useParams();
+  const pageNumber = Number(params.pageNumber ?? "1");
   const [totalPages, setTotalPages] = React.useState<number>(0);
   const [isLoadingLeaderboard, setIsLoadingLeaderboard] = React.useState(true);
   const [rows, setRows] = React.useState<LeaderboardRow[]>([]);
   const [columnsNames, setColumnsNames] = React.useState<string[]>([]);
 
   React.useEffect(() => {
-    getLeaderboard(Number(pageNumber) - 1).then((leaderboardResult) => {
+    getLeaderboard(pageNumber - 1).then((leaderboardResult) => {
       if (leaderboardResult && leaderboardResult.rows.length > 0) {
         setRows(leaderboardResult.rows);
         setColumnsNames([

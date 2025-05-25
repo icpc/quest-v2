@@ -8,7 +8,8 @@ import QuestComponent from "../Quest";
 import Loader, { LoaderComponent } from "./Loader";
 
 const QuestProxyHelper: React.FC = () => {
-  const { questId } = useParams();
+  const params = useParams();
+  const questId = params.questId;
   const [isQuestsSubmissionsLoading, setIsQuestsSubmissionsLoading] =
     React.useState(true);
   const [questWithSubmissions, setQuestWithSubmissions] =
@@ -19,7 +20,7 @@ const QuestProxyHelper: React.FC = () => {
     if (!questId) {
       return;
     }
-    getQuestWithSubmissions(questId as string).then((response) => {
+    getQuestWithSubmissions(questId).then((response) => {
       setQuestWithSubmissions(response);
       setIsQuestsSubmissionsLoading(false);
     });

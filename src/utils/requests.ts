@@ -9,6 +9,7 @@ import {
   QuestsWithSubmissionStatsResponse,
   SubmissionsRecord,
   TypedPocketBase,
+  UsersRecord,
   ValidatedQuestsResponse,
   ValidatedSubmissionsResponse,
 } from "../types/pocketbase-types";
@@ -48,7 +49,7 @@ export function getCurrentUser() {
     return null;
   }
 
-  return pb.authStore.record;
+  return pb.authStore.record as unknown as UsersRecord;
 }
 
 /**

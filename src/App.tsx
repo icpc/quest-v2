@@ -7,6 +7,7 @@ import styled from "styled-components";
 import DrawerAppBar from "./components/Header";
 import SignIn from "./components/Login";
 import Rules from "./components/Rules";
+import ValidateSubmissions from "./components/ValidateSubmissions";
 import HomeProxy from "./components/proxy/HomeProxy";
 import Leaderboard from "./components/proxy/LeaderboardProxy";
 import QuestProxy from "./components/proxy/QuestProxy";
@@ -30,6 +31,7 @@ const App = () => {
           <Route path="/quest-details/:questId" element={<QuestProxy />} />
           <Route path="/leaderboard" element={<Leaderboard />} />
           <Route path="/leaderboard/:pageNumber" element={<Leaderboard />} />
+          <Route path="/validate" element={<ValidateSubmissions />} />
           <Route path="*" element={<SignIn />} />
         </Routes>
       </AppContainer>

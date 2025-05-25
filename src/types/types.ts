@@ -97,3 +97,21 @@ export interface QuestWithSubmissions {
   quest: Quest;
   submissions: QuestSubmission[];
 }
+
+export type Status = "CORRECT" | "WRONG" | "PENDING";
+
+export interface ValidatedSubmissionListItem {
+  id: string;
+  userId: string;
+  userName: string;
+  questId: string;
+  questName: string;
+  status: Status;
+  text?: string;
+  url?: string;
+}
+
+export interface ValidatedSubmissionsListResult {
+  items: ValidatedSubmissionListItem[];
+  totalItems: number;
+}

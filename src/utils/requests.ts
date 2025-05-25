@@ -21,6 +21,8 @@ import {
   QuestSubmissionContentType,
   QuestType,
   QuestWithSubmissions,
+  Status,
+  ValidatedSubmissionsListResult,
 } from "../types/types";
 
 import { POCKETBASE_URL } from "./env";
@@ -126,8 +128,6 @@ export const login = async (user: any) => {
     return null;
   }
 };
-
-type Status = "CORRECT" | "WRONG" | "PENDING";
 
 function submissionStatus(status: Status | undefined | null) {
   if (!status) return QuestStatus.NOTATTEMPTED;
@@ -333,5 +333,125 @@ export const getLeaderboard = async (
       logout();
     }
     return null;
+  }
+};
+
+/**
+ * Fetch validated submissions with optional filters
+ * @param filters Object with filter parameters: userId, questId, status, etc.
+ */
+export const getValidatedSubmissions = async (
+  filters: {
+    userId?: string;
+    questId?: string;
+    status?: Status;
+    page?: number;
+    perPage?: number;
+  } = {},
+): Promise<ValidatedSubmissionsListResult> => {
+  try {
+    if (!checkAuth()) return { items: [], totalItems: 0 };
+    const filterArr = [];
+    if (filters.userId) filterArr.push(`submitter = "${filters.userId}"`);
+    if (filters.questId) filterArr.push(`quest = "${filters.questId}"`);
+    if (filters.status) filterArr.push(`status = "${filters.status}"`);
+    const filter = filterArr.join(" && ");
+    const page = filters.page || 1;
+    const perPage = filters.perPage || 20;
+    const result = await pb
+      .collection(Collections.ValidatedSubmissions)
+      .getList<
+        ValidatedSubmissionsResponse<
+          Status,
+          {
+            submission: SubmissionsRecord;
+            quest: QuestsRecord;
+            submitter: UsersRecord;
+          }
+        >
+      >(page, perPage, {
+        filter: filter || undefined,
+        expand: "submission,quest,submitter",
+      });
+    // Map to only the fields needed for the page
+    const items = result.items.map((row) => {
+      let text: string | undefined = undefined;
+      let url: string | undefined = undefined;
+      const submission = row.expand?.submission;
+      if (submission) {
+        text = submission.text;
+        if (submission.attachment) {
+          url = pb.files.getURL(submission, submission.attachment);
+        }
+      }
+      return {
+        id: row.id,
+        userId: row.expand.submitter.id,
+        userName: row.expand.submitter.name!,
+        questId: row.expand.quest.id,
+        questName: row.expand.quest.name,
+        status: row.status as Status,
+        text,
+        url,
+      };
+    });
+    return { items, totalItems: result.totalItems };
+  } catch (error) {
+    console.error("Error fetching validated submissions:", error);
+    if (error instanceof Error && error.message.includes("401")) {
+      logout();
+    }
+    return { items: [], totalItems: 0 };
+  }
+};
+
+/**
+ * Accept or deny a validated submission by creating a new record in the validations collection
+ * @param submissionId The ID of the submission (not validated_submission)
+ * @param success true to accept, false to deny
+ */
+export const setValidatedSubmissionStatus = async (
+  submissionId: string,
+  success: boolean,
+) => {
+  try {
+    if (!checkAuth()) return false;
+    await pb.collection(Collections.Validations).create({
+      submission: submissionId,
+      success,
+    });
+    return true;
+  } catch (error) {
+    console.error("Error creating validation record:", error);
+    if (error instanceof Error && error.message.includes("401")) {
+      logout();
+    }
+    return false;
+  }
+};
+
+/**
+ * Fetch all users and quests for filter dropdowns
+ */
+export const getUsersAndQuestsForFilters = async (): Promise<{
+  users: { id: string; name: string }[];
+  quests: { id: string; name: string }[];
+}> => {
+  try {
+    const [users, quests] = await Promise.all([
+      pb
+        .collection(Collections.Users)
+        .getFullList<UsersRecord>({ fields: "id,name" }),
+      pb
+        .collection(Collections.Quests)
+        .getFullList<QuestsRecord>({ fields: "id,name" }),
+    ]);
+    return {
+      users: users.map((u) => ({ id: u.id, name: u.name || "(no name)" })),
+      quests: quests.map((q) => ({ id: q.id, name: q.name })),
+    };
+  } catch (error) {
+    console.error("Error fetching users/quests:", error);
+    return { users: [], quests: [] };
   }
 };

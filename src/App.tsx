@@ -1,15 +1,17 @@
 import React from "react";
-import { HashRouter, Routes, Route } from "react-router-dom";
+import { HashRouter, Route, Routes } from "react-router";
+
+import { Toolbar } from "@mui/material";
+import styled from "styled-components";
+
+import DrawerAppBar from "./components/Header";
 import SignIn from "./components/Login";
-import QuestProxy from "./components/proxy/QuestProxy";
+import Rules from "./components/Rules";
+import ValidateSubmissions from "./components/ValidateSubmissions";
 import HomeProxy from "./components/proxy/HomeProxy";
 import Leaderboard from "./components/proxy/LeaderboardProxy";
-import DrawerAppBar from "./components/Header";
-import { Toolbar } from "@mui/material";
-import Admin from "./components/Admin";
-import styled from "styled-components";
+import QuestProxy from "./components/proxy/QuestProxy";
 import config from "./config";
-import Rules from "./components/Rules";
 
 const AppContainer = styled.div`
   background-color: ${config.BACKGROUND_COLOR};
@@ -26,19 +28,10 @@ const App = () => {
           <Route path="/login" element={<SignIn />} />
           <Route path="/home" element={<HomeProxy />} />
           <Route path="/rules" element={<Rules />} />
-          <Route
-            path="/quest-details/:questId"
-              element={<QuestProxy />}
-          />
+          <Route path="/quest-details/:questId" element={<QuestProxy />} />
           <Route path="/leaderboard" element={<Leaderboard />} />
-          <Route
-            path="/leaderboard/:pageNumber"
-            element={<Leaderboard />}
-          />
-          <Route
-            path="/admin/submissionsTable"
-            element={<Admin />}
-          />
+          <Route path="/leaderboard/:pageNumber" element={<Leaderboard />} />
+          <Route path="/validate" element={<ValidateSubmissions />} />
           <Route path="*" element={<SignIn />} />
         </Routes>
       </AppContainer>

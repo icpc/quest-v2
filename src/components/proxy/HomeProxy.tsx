@@ -1,21 +1,21 @@
 import React from "react";
-import Home from "../Home";
-import { getQuests } from "../../utils/requests";
-import Loader, { LoaderComponent } from "./Loader";
-import { UserInfoProps } from "../../types/types";
 
-const HomeProxyHelper: React.FC<UserInfoProps> = ({ userInfo }) => {
-  const [quests, setQuests] = React.useState([]);
+import { Quest } from "../../types/types";
+import { getQuests } from "../../utils/requests";
+import Home from "../Home";
+
+import Loader, { LoaderComponent } from "./Loader";
+
+const HomeProxyHelper: React.FC = () => {
+  const [quests, setQuests] = React.useState<Quest[]>([]);
   const [isQuestsLoading, setIsQuestsLoading] = React.useState(true);
 
   React.useEffect(() => {
-    if (userInfo) {
-      getQuests(userInfo).then((response) => {
-        setQuests(response?.quests);
-        setIsQuestsLoading(false);
-      });
-    }
-  }, [userInfo]);
+    getQuests().then((response) => {
+      setQuests(response);
+      setIsQuestsLoading(false);
+    });
+  }, []);
 
   if (isQuestsLoading) {
     return <LoaderComponent />;
@@ -44,7 +44,7 @@ const HomeProxyHelper: React.FC<UserInfoProps> = ({ userInfo }) => {
       </div>
     );
   }
-  return <Home userInfo={userInfo} quests={quests} />;
+  return <Home quests={quests} />;
 };
 
 const HomeProxy = () => {

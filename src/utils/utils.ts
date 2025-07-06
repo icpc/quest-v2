@@ -1,25 +1,23 @@
-import {Quest, QuestsDays} from "../types/types";
+interface WithDate {
+  date: string;
+}
 
-export const aggregateQuestsByDate = (quests: Quest[]): QuestsDays[] => {
-    if (!quests) return [] as QuestsDays[];
-    const questsDaysDic: any = {};
-    quests.forEach((quest: Quest) => {
-        const date = quest?.date?.split("T")[0];
-        if (!questsDaysDic[date]) {
-            questsDaysDic[date] = [];
-        }
-        questsDaysDic[date].push({
-            id: quest.id,
-            name: quest.name,
-            type: quest.type,
-            description: quest.description,
-            status: quest.status,
-            totalAc: quest?.totalAc,
-            category: quest?.category,
-        });
-    });
-    return Object.keys(questsDaysDic).map((key) => ({
-        date: key,
-        detailsQuests: questsDaysDic[key],
-    }));
+export const aggregateQuestsByDate = <T extends WithDate>(quests: T[]) => {
+  if (!quests) return [];
+
+  return Object.entries(
+    quests.reduce(
+      (acc, quest) => {
+        const date = quest.date.split("T")[0];
+        return {
+          ...acc,
+          [date]: [...(acc[date] || []), quest],
+        };
+      },
+      {} as Record<string, T[]>,
+    ),
+  ).map(([date, detailsQuests]) => ({
+    date,
+    detailsQuests,
+  }));
 };

@@ -4,39 +4,26 @@
   "private": true,
   "type": "module",
   "dependencies": {
-    "@emotion/react": "^11.11.1",
-    "@emotion/styled": "^11.11.0",
-    "@material-ui/core": "^4.12.4",
-    "@material-ui/icons": "^4.11.3",
-    "@mui/icons-material": "^5.15.15",
-    "@mui/material": "^5.14.14",
-    "@testing-library/jest-dom": "^5.17.0",
-    "@testing-library/react": "^13.4.0",
-    "@testing-library/user-event": "^13.5.0",
-    "@types/jest": "^27.5.2",
-    "@types/node": "^16.18.59",
-    "@types/react-router-dom": "^5.3.3",
-    "env-cmd": "^10.1.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-router-dom": "^6.17.0",
-    "react-scripts": "5.0.1",
-    "react-spinners": "^0.13.8",
-    "source-map-loader": "^5.0.0",
-    "web-vitals": "^2.1.4",
-    "styled-components": "^6.1.12"
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@mui/icons-material": "^7.1.0",
+    "@mui/material": "^7.1.0",
+    "pocketbase": "^0.26.0",
+    "pocketbase-typegen": "^1.3.1",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "react-router": "^7.6.0",
+    "react-spinners": "^0.17.0",
+    "styled-components": "^6.1.18"
   },
   "scripts": {
     "predeploy": "pnpm run build",
     "deploy": "gh-pages -d build",
     "start": "vite",
-    "build": "tsc -b && vite build"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
+    "build": "tsc -b && vite build",
+    "pocketbase": "cd pocketbase && pocketbase serve --dev --migrationsDir=./pb_migrations",
+    "pocketbase:migration": "cd pocketbase && pocketbase migrate collections --migrationsDir=./pb_migrations",
+    "pocketbase:typegen": "cd pocketbase && pocketbase-typegen --db ./pb_data/data.db --out ../src/types/pocketbase-types.ts"
   },
   "browserslist": {
     "production": [
@@ -51,11 +38,25 @@
     ]
   },
   "devDependencies": {
-    "@types/react": "^18.3.3",
-    "@types/react-dom": "^18.3.0",
-    "@vitejs/plugin-react": "^4.3.1",
-    "gh-pages": "^6.1.1",
-    "typescript": "^4.9.5",
-    "vite": "^5.3.4"
+    "@eslint/css": "^0.8.1",
+    "@eslint/js": "^9.27.0",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
+    "@trivago/prettier-plugin-sort-imports": "^5.2.2",
+    "@types/jest": "^29.5.14",
+    "@types/node": "^22.15.18",
+    "@types/react": "^19.1.4",
+    "@types/react-dom": "^19.1.5",
+    "@vitejs/plugin-react": "^4.4.1",
+    "eslint": "^9.27.0",
+    "eslint-config-prettier": "^10.1.5",
+    "eslint-plugin-react": "^7.37.5",
+    "gh-pages": "^6.3.0",
+    "globals": "^16.1.0",
+    "prettier": "^3.5.3",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.32.1",
+    "vite": "^6.3.5"
   }
 }

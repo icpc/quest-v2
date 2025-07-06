@@ -1,85 +1,117 @@
 export enum QuestStatus {
-    PENDING = "PENDING",
-    NOTATTEMPTED = "NOT ATTEMPTED",
-    CORRECT = "ACCEPTED",
-    WRONG = "WRONG",
-}
-
-export interface Quest {
-    id: number;
-    name: string;
-    type: string;
-    description: string;
-    status: string;
-    date: string;
-    totalAc: string;
-    category: string;
-}
-
-export interface QuestsDays {
-    date: string;
-    detailsQuests: Quest[];
-}
-
-
-export interface UserInfo {
-    user?: {
-        email: string;
-        firstName: string;
-        lastName: string;
-    };
-    token: string;
-}
-
-export interface UserInfoProps {
-    userInfo: UserInfo;
-}
-
-export interface LeaderboardPerson {
-    rank: number;
-    firstName: string;
-    lastName: string;
-    email: string;
-    total: string;
-    totalPerDay: {
-        date: string;
-        total: string;
-        quests: {
-            id: string;
-            name: string;
-            status: string;
-        }[];
-    }[];
-}
-
-export interface ILeaderboard {
-    result: LeaderboardPerson[];
-    totalUsers: number;
-    curUser: LeaderboardPerson;
+  PENDING = "PENDING",
+  NOTATTEMPTED = "NOT ATTEMPTED",
+  CORRECT = "CORRECT",
+  WRONG = "WRONG",
 }
 
 export enum QuestType {
-    VIDEO = "VIDEO",
-    TEXT = "TEXT",
-    IMAGE = "IMAGE",
+  VIDEO = "VIDEO",
+  TEXT = "TEXT",
+  IMAGE = "IMAGE",
 }
+
+export interface Quest {
+  id: string;
+  name: string;
+  type: QuestType;
+  description: string;
+  status: QuestStatus;
+  date: string;
+  totalAc: number;
+  category: string;
+}
+
+export interface QuestsDays {
+  date: string;
+  detailsQuests: Quest[];
+}
+
+export interface UserInfo {
+  user?: {
+    email: string;
+    firstName: string;
+    lastName: string;
+  };
+  token: string;
+}
+
+export interface UserInfoProps {
+  userInfo: UserInfo;
+}
+
+export interface LeaderboardRowDayQuest {
+  id: string;
+  name: string;
+  status: QuestStatus;
+}
+
+export interface LeaderboardRowDay {
+  date: string;
+  total: number;
+  quests: LeaderboardRowDayQuest[];
+}
+
+export interface LeaderboardRow {
+  rank: number;
+  userId: string;
+  userName: string;
+  total: number;
+  totalPerDay: LeaderboardRowDay[];
+}
+
+export enum QuestSubmissionContentType {
+  VIDEO = "VIDEO",
+  TEXT = "TEXT",
+  IMAGE = "IMAGE",
+}
+
+export interface QuestSubmissionText {
+  type: QuestSubmissionContentType.TEXT;
+  text: string;
+}
+
+export interface QuestSubmissionVideo {
+  type: QuestSubmissionContentType.VIDEO;
+  url: string;
+}
+
+export interface QuestSubmissionImage {
+  type: QuestSubmissionContentType.IMAGE;
+  url: string;
+}
+
+export type QuestSubmissionContent =
+  | QuestSubmissionText
+  | QuestSubmissionVideo
+  | QuestSubmissionImage;
 
 export interface QuestSubmission {
-    id: number;
-    answer: string;
-    uploadTime: string;
-    status: string;
-    submissionType: string;
+  id: string;
+  uploadTime: string;
+  status: QuestStatus;
+  content: QuestSubmissionContent;
 }
 
-export interface QuestSubmissions {
-    id: number;
-    questName: string;
-    questDate: string;
-    questType: string;
-    questDescription: string;
-    questStatus: string;
-    questAcceptSubmissions: boolean;
-    questCategory: string;
-    submissions: QuestSubmission[];
+export interface QuestWithSubmissions {
+  quest: Quest;
+  submissions: QuestSubmission[];
+}
+
+export type Status = "CORRECT" | "WRONG" | "PENDING";
+
+export interface ValidatedSubmissionListItem {
+  id: string;
+  userId: string;
+  userName: string;
+  questId: string;
+  questName: string;
+  status: Status;
+  text?: string;
+  url?: string;
+}
+
+export interface ValidatedSubmissionsListResult {
+  items: ValidatedSubmissionListItem[];
+  totalItems: number;
 }

@@ -1,11 +1,9 @@
-name: Build and Push Docker image to GHCR
+name: Build and Push Nightly Docker image to GHCR
 
 on:
-  workflow_dispatch:
-    inputs:
-      version:
-        description: Name of release (without 'v')
-        required: true
+  push:
+    branches:
+      - pocketbase-backend
 
 env:
   REGISTRY: ghcr.io
@@ -38,9 +36,9 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
-            type=raw,value=latest
-            type=semver,pattern={{version}},value=${{ github.event.inputs.version }}
-            type=schedule,pattern={{date 'YYYYMMDD'}}
+            type=raw,value=nightly
+            type=raw,value=nightly-{{date 'YYYYMMDD-HHmmss'}}
+            type=sha,prefix={{branch}}-
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v5

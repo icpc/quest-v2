@@ -1,9 +1,9 @@
-const config: Record<string, any> = {};
-
-config.BACKGROUND_COLOR = "#f8fbfd";
-config.DRAWER_TITLE = "ICPC Quest";
-config.DRAWER_WIDTH_MOBILE = 240;
-
-config.LOGIN_EXPIRED_TIME = 10000000000;
+const config = {
+  BACKGROUND_COLOR: "#f8fbfd",
+  DRAWER_TITLE: "ICPC Quest",
+  DRAWER_WIDTH_MOBILE: 240,
+  LOGIN_EXPIRED_TIME: 10000000000,
+  LEADERBOARD_PAGE_SIZE: 10,
+};
 
 export default config;

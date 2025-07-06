@@ -1,6 +1,11 @@
 import * as React from "react";
+import { useNavigate } from "react-router";
+
+import AccountCircle from "@mui/icons-material/AccountCircle";
+import MenuIcon from "@mui/icons-material/Menu";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import Drawer from "@mui/material/Drawer";
 import IconButton from "@mui/material/IconButton";
@@ -8,28 +13,14 @@ import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
-import MenuItem from "@mui/material/MenuItem";
-import Menu from "@mui/material/Menu";
-import MenuIcon from "@material-ui/icons/Menu";
-import { AccountCircle } from "@material-ui/icons";
-import logo from "../assets/logo.svg";
-import { useNavigate } from "react-router-dom";
-import {
-  localStorageGetItemWithExpiry,
-  localStorageRemoveItem,
-} from "../utils/helper";
-import config from "../config";
 
-interface Props {
-  /**
-   * Injected by the documentation to work in an iframe.
-   * You won't need it on your project.
-   */
-  window?: () => Window;
-}
+import logo from "../assets/logo.svg";
+import config from "../config";
+import { getUserInfo, logout } from "../utils/requests";
 
 const pages = {
   HOME: "/home",
@@ -37,12 +28,10 @@ const pages = {
   RULES: "/rules",
 };
 
-export default function DrawerAppBar(props: Props) {
+export default function DrawerAppBar() {
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const [userInfo, setUserInfo] = React.useState(
-    localStorageGetItemWithExpiry("userInfo")
-  );
+  const userInfo = getUserInfo();
 
   const navigate = useNavigate();
 
@@ -51,9 +40,7 @@ export default function DrawerAppBar(props: Props) {
   };
 
   const handleClose = React.useCallback(() => {
-    localStorageRemoveItem("isAuthenticated");
-    localStorageRemoveItem("userInfo");
-    setUserInfo({});
+    logout();
     navigate("/login");
   }, [navigate]);
 
@@ -62,14 +49,6 @@ export default function DrawerAppBar(props: Props) {
   };
 
   const IconProfile = React.useCallback(() => {
-    if (!userInfo?.user?.email) {
-      // get user info from local storage
-      const user = localStorageGetItemWithExpiry("userInfo");
-      if (!user || !user?.user?.email) {
-        return null;
-      }
-      setUserInfo(user);
-    }
     return (
       <div>
         <IconButton

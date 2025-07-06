@@ -11,6 +11,9 @@
 # production
 /build
 
+# typescript
+/lib
+
 # misc
 .DS_Store
 .env.local
@@ -23,3 +26,10 @@ yarn-debug.log*
 yarn-error.log*
 
 .idea/
+
+# pocketbase
+pb_data
+pb_public
+
+# debug sql queries
+debug*.sql

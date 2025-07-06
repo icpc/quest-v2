@@ -1,45 +1,45 @@
-import React, {ComponentType} from "react";
-import {checkUserAuthentication, localStorageGetItemWithExpiry} from "../../utils/helper";
-import {useNavigate} from "react-router-dom";
-import styled from "styled-components";
-import {ClipLoader} from "react-spinners";
+import React, { ComponentType } from "react";
+import { useNavigate } from "react-router";
+import { ClipLoader } from "react-spinners";
+
+import { UserInfo } from "../../types/types";
+import { checkAuth, getUserInfo } from "../../utils/requests";
 
 interface LoaderProps {
-    component: ComponentType<any>;
+  component: ComponentType<{ userInfo: UserInfo }>;
 }
 
-const LoaderComponentWrapper = styled.div`
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-`;
-
-
 export const LoaderComponent = () => {
-    return (
-        <LoaderComponentWrapper>
-            <ClipLoader color={"#123abc"} size={150}/>
-        </LoaderComponentWrapper>
-    );
+  return (
+    <div
+      style={{
+        position: "fixed",
+        top: "50%",
+        left: "50%",
+        transform: "translate(-50%, -50%)",
+      }}
+    >
+      <ClipLoader color={"#123abc"} size={150} />
+    </div>
+  );
 };
 
-export const Loader: React.FC<LoaderProps> = ({component: Component}) => {
-    const isAuthenticated = checkUserAuthentication();
-    const userInfo = React.useMemo(() => localStorageGetItemWithExpiry("userInfo") || "{}", []);
-    const navigate = useNavigate();
+export const Loader: React.FC<LoaderProps> = ({ component: Component }) => {
+  const isAuthenticated = checkAuth();
+  const userInfo = getUserInfo();
+  const navigate = useNavigate();
 
-    React.useEffect(() => {
-        if (!isAuthenticated) {
-            navigate("/login");
-        }
-    }, [isAuthenticated, navigate]);
-
-    if (!userInfo) {
-        return null;
+  React.useEffect(() => {
+    if (!isAuthenticated) {
+      navigate("/login");
     }
+  }, [isAuthenticated, navigate]);
 
-    return <Component userInfo={userInfo}/>
+  if (!userInfo) {
+    return null;
+  }
+
+  return <Component userInfo={userInfo} />;
 };
 
 export default Loader;

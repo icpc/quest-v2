@@ -1,48 +1,52 @@
 import React from "react";
-import Quest from "../Quest";
-import {useParams} from "react-router-dom";
-import {getQuestSubmissions} from "../../utils/requests";
-import {UserInfoProps, QuestSubmissions} from "../../types/types";
-import Loader, {LoaderComponent} from "./Loader";
+import { useParams } from "react-router";
 
-const QuestProxyHelper: React.FC<UserInfoProps> = ({userInfo}) => {
-    const {questId} = useParams();
-    const [isQuestsSubmissionsLoading, setIsQuestsSubmissionsLoading] =
-        React.useState(true);
-    const [questSubmissions, setQuestSubmissions] =
-        React.useState<QuestSubmissions | null>({} as QuestSubmissions);
+import { QuestWithSubmissions } from "../../types/types";
+import { getQuestWithSubmissions } from "../../utils/requests";
+import QuestComponent from "../Quest";
 
-    React.useEffect(() => {
-        if (userInfo) {
-            getQuestSubmissions(questId, userInfo).then((response) => {
-                if (response) {
-                    setQuestSubmissions(response);
-                    setIsQuestsSubmissionsLoading(false);
-                } else {
-                    setQuestSubmissions(null);
-                    setIsQuestsSubmissionsLoading(false);
-                }
-            });
-        }
-    }, [questId, userInfo]);
+import Loader, { LoaderComponent } from "./Loader";
 
-    if (isQuestsSubmissionsLoading) {
-        return <LoaderComponent />
+const QuestProxyHelper: React.FC = () => {
+  const params = useParams();
+  const questId = params.questId;
+  const [isQuestsSubmissionsLoading, setIsQuestsSubmissionsLoading] =
+    React.useState(true);
+  const [questWithSubmissions, setQuestWithSubmissions] =
+    React.useState<QuestWithSubmissions | null>(null);
+
+  const loadQuests = React.useCallback(() => {
+    setIsQuestsSubmissionsLoading(true);
+    if (!questId) {
+      return;
     }
-    if (!questSubmissions || !questSubmissions.id) {
-        return <div>This quest not found</div>;
-    }
-    return (
-        <Quest
-            userInfo={userInfo}
-            questSubmissions={questSubmissions}
-            questId={questId}
-        />
-    );
+    getQuestWithSubmissions(questId).then((response) => {
+      setQuestWithSubmissions(response);
+      setIsQuestsSubmissionsLoading(false);
+    });
+  }, [questId]);
+
+  React.useEffect(() => {
+    loadQuests();
+  }, [loadQuests]);
+
+  if (isQuestsSubmissionsLoading) {
+    return <LoaderComponent />;
+  }
+  if (!questWithSubmissions) {
+    return <div>This quest not found</div>;
+  }
+  return (
+    <QuestComponent
+      quest={questWithSubmissions.quest}
+      submissions={questWithSubmissions.submissions}
+      onSubmit={loadQuests}
+    />
+  );
 };
 
 const QuestProxy = () => {
-    return <Loader component={QuestProxyHelper}/>;
+  return <Loader component={QuestProxyHelper} />;
 };
 
 export default QuestProxy;

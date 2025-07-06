@@ -1,20 +1,16 @@
 import * as React from "react";
+import { useNavigate } from "react-router";
+
+import { Link } from "@mui/material";
+import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
+import Container from "@mui/material/Container";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
-import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import Container from "@mui/material/Container";
-import { Link } from "@mui/material";
-import { createTheme, styled, ThemeProvider } from "@mui/material/styles";
-import {
-  checkUserAuthentication,
-  localStorageRemoveItem,
-  localStorageSetItemWithExpiry,
-} from "../utils/helper";
-import { useNavigate } from "react-router-dom";
-import { login } from "../utils/requests";
-import config from "../config";
+import { ThemeProvider, createTheme, styled } from "@mui/material/styles";
+
+import { checkAuth, login } from "../utils/requests";
 
 const defaultTheme = createTheme();
 
@@ -27,7 +23,7 @@ const LoginFormWrapper = styled(Box)(({ theme }) => ({
 
 export default function SignIn() {
   const navigate = useNavigate();
-  const isAuthenticated = checkUserAuthentication();
+  const isAuthenticated = checkAuth();
   const [isLoginLoading, setIsLoginLoading] = React.useState(false);
 
   React.useEffect(() => {
@@ -44,21 +40,8 @@ export default function SignIn() {
     const password = data.get("password");
     const newLogin = await login({ email, password });
     if (newLogin !== null) {
-      localStorageSetItemWithExpiry(
-        "isAuthenticated",
-        "true",
-        config.LOGIN_EXPIRED_TIME
-      );
-      localStorageSetItemWithExpiry(
-        "userInfo",
-        newLogin,
-        config.LOGIN_EXPIRED_TIME
-      );
       navigate("/home");
     } else {
-      // why remove? idk
-      localStorageRemoveItem("isAuthenticated");
-      localStorageRemoveItem("userInfo");
       alert("Invalid credentials please fill the form to get your password");
     }
     setIsLoginLoading(false);
@@ -113,8 +96,8 @@ export default function SignIn() {
               target="_blank"
               rel="noreferrer"
             >
-              Don't use your ICPC.global password! Fill this form with your icpc
-              email to receive dedicated Quest password.
+              Don&apos;t use your ICPC.global password! Fill this form with your
+              icpc email to receive dedicated Quest password.
             </Link>
           </Box>
         </LoginFormWrapper>

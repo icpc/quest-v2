@@ -13,8 +13,9 @@ fi
 
 # Create superuser
 echo "Creating/updating superuser..."
-/usr/local/bin/pocketbase superuser upsert "$POCKETBASE_ADMIN_EMAIL" "$POCKETBASE_ADMIN_PASSWORD"
+/usr/local/bin/pocketbase superuser upsert --dir=/pb_data "$POCKETBASE_ADMIN_EMAIL" "$POCKETBASE_ADMIN_PASSWORD"
 
 # Start PocketBase server
 echo "Starting PocketBase server..."
 exec /usr/local/bin/pocketbase serve --http=0.0.0.0:8090 --dir=/pb_data --publicDir=/pb_public --hooksDir=/pb_hooks --migrationsDir=/pb_migrations --encryptionEnv ENCRYPTION_KEY="$POCKETBASE_ENCRYPTION_KEY" --encryptionEnv ENCRYPTION
+

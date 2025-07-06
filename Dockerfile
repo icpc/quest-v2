@@ -25,7 +25,10 @@ COPY --from=downloader /pocketbase /usr/local/bin/pocketbase
 COPY --from=builder /app/build /pb_public
 COPY pocketbase/pb_hooks /pb_hooks
 COPY pocketbase/pb_migrations /pb_migrations
+COPY entrypoint.sh /entrypoint.sh
+
+RUN chmod +x /entrypoint.sh
 
 EXPOSE 8090
 
-ENTRYPOINT ["/usr/local/bin/pocketbase", "serve", "--http=0.0.0.0:8090", "--dir=/pb_data", "--publicDir=/pb_public", "--hooksDir=/pb_hooks", "--migrationsDir=/pb_migrations"]
+ENTRYPOINT ["/entrypoint.sh"]

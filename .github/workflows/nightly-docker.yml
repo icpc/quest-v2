@@ -3,7 +3,7 @@ name: Build and Push Nightly Docker image to GHCR
 on:
   push:
     branches:
-      - pocketbase-backend
+      - main
 
 env:
   REGISTRY: ghcr.io

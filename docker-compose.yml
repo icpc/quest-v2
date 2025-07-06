@@ -1,15 +1,16 @@
 services:
-  pocketbase:
-    build:
-      context: .
-      args:
-        - POCKETBASE_VERSION=0.28.1
-    container_name: pocketbase-quest
+  quest:
+    image: ghcr.io/icpc/quest-v2:latest
+    container_name: quest
     restart: unless-stopped
+    environment:
+      ENCRYPTION: ""
+      POCKETBASE_ADMIN_EMAIL: ""
+      POCKETBASE_ADMIN_PASSWORD: ""
     ports:
       - "8090:8090"
     volumes:
-      - ./pocketbase/pb_data:/pb_data
+      - ./pb_data:/pb_data
     healthcheck:
       test: wget --no-verbose --tries=1 --spider http://localhost:8090/api/health || exit 1
       interval: 5s

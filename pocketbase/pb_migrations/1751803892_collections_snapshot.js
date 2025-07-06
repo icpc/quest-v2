@@ -1168,7 +1168,7 @@ migrate((app) => {
           "cascadeDelete": false,
           "collectionId": "pbc_2945261690",
           "hidden": false,
-          "id": "_clone_uZAD",
+          "id": "_clone_8iq7",
           "maxSelect": 1,
           "minSelect": 0,
           "name": "quest",
@@ -1194,7 +1194,7 @@ migrate((app) => {
           "cascadeDelete": false,
           "collectionId": "_pb_users_auth_",
           "hidden": false,
-          "id": "_clone_qs1X",
+          "id": "_clone_QCBF",
           "maxSelect": 1,
           "minSelect": 0,
           "name": "submitter",
@@ -1218,7 +1218,7 @@ migrate((app) => {
         },
         {
           "hidden": false,
-          "id": "_clone_0uhf",
+          "id": "_clone_1QKQ",
           "name": "success",
           "presentable": false,
           "required": false,
@@ -1280,7 +1280,7 @@ migrate((app) => {
         {
           "autogeneratePattern": "",
           "hidden": false,
-          "id": "_clone_r6Kq",
+          "id": "_clone_8BUZ",
           "max": 255,
           "min": 0,
           "name": "name",
@@ -1323,7 +1323,7 @@ migrate((app) => {
       "system": false,
       "type": "view",
       "updateRule": null,
-      "viewQuery": "SELECT \n    -- We actually rely on the fact that this id is equal to user id when we get the leaderboard position for current user --\n    u.id as id,\n    u.id as user,\n    u.name as name,\n    CAST(SUM(vq.success) AS INT) AS total_solved,\n    CAST((ROW_NUMBER() OVER(ORDER BY SUM(vq.success) DESC)) AS INT) as rank\nFROM users AS u\n    LEFT JOIN validated_quests AS vq ON vq.submitter = u.id AND vq.success = TRUE\nWHERE EXISTS (\n        SELECT 1\n        FROM json_each(u.role)\n        WHERE value = 'submitter'\n    )\nGROUP BY u.id\nORDER BY rank,\n    name ASC;",
+      "viewQuery": "SELECT \n    -- We actually rely on the fact that this id is equal to user id when we get the leaderboard position for current user --\n    u.id as id,\n    u.id as user,\n    u.name as name,\n    CAST(SUM(vq.success) AS INT) AS total_solved,\n    CAST((ROW_NUMBER() OVER(ORDER BY SUM(vq.success) DESC)) AS INT) as rank\nFROM users AS u\n    LEFT JOIN validated_quests AS vq ON vq.submitter = u.id AND vq.success\nWHERE EXISTS (\n        SELECT 1\n        FROM json_each(u.role)\n        WHERE value = 'submitter'\n    )\nGROUP BY u.id\nORDER BY rank,\n    name ASC;",
       "viewRule": "@request.auth.id != \"\""
     },
     {
@@ -1348,7 +1348,7 @@ migrate((app) => {
           "cascadeDelete": false,
           "collectionId": "pbc_2945261690",
           "hidden": false,
-          "id": "_clone_HHIy",
+          "id": "_clone_fT32",
           "maxSelect": 1,
           "minSelect": 0,
           "name": "quest",
@@ -1361,7 +1361,7 @@ migrate((app) => {
           "cascadeDelete": false,
           "collectionId": "_pb_users_auth_",
           "hidden": false,
-          "id": "_clone_Lw67",
+          "id": "_clone_wjXG",
           "maxSelect": 1,
           "minSelect": 0,
           "name": "submitter",
@@ -1397,7 +1397,7 @@ migrate((app) => {
       "system": false,
       "type": "view",
       "updateRule": null,
-      "viewQuery": "SELECT (ROW_NUMBER() OVER ()) AS id,\n    s.quest as quest,\n    s.submitter as submitter,\n    CAST((SUM(v.success) > 0) AS BOOL) as success,\n    (\n        CASE\n            WHEN SUM(v.success) > 0 THEN 'CORRECT'\n            WHEN COUNT(s.id) > COUNT(v.id) THEN 'PENDING'\n            ELSE 'WRONG'\n        END\n    ) as status\nFROM submissions AS s\n    LEFT JOIN validations AS v ON v.submission = s.id\nGROUP BY s.quest,\n    s.submitter",
+      "viewQuery": "SELECT \n    (ROW_NUMBER() OVER ()) AS id,\n    s.quest as quest,\n    s.submitter as submitter,\n    CAST((SUM(v.success) > 0) AS BOOL) as success,\n    (\n        CASE\n            WHEN SUM(v.success) > 0 THEN 'CORRECT'\n            WHEN COUNT(s.id) > COUNT(v.id) THEN 'PENDING'\n            ELSE 'WRONG'\n        END\n    ) as status\nFROM submissions AS s\n    LEFT JOIN validations AS v ON v.submission = s.id\nGROUP BY s.quest,\n    s.submitter",
       "viewRule": "@request.auth.id != \"\""
     }
   ];

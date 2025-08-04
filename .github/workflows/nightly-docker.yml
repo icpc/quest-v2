@@ -10,7 +10,7 @@ env:
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
-  build-and-push:
+  build-and-push-main:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -48,3 +48,42 @@ jobs:
             POCKETBASE_VERSION=0.28.4
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+
+  build-and-push-auth:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata (labels, tags) for Auth Docker
+        id: meta-auth
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/auth
+          tags: |
+            type=raw,value=nightly
+            type=raw,value=nightly-{{date 'YYYYMMDD-HHmmss'}}
+            type=sha,prefix={{branch}}-
+
+      - name: Build and push Auth Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./auth
+          file: ./auth/Dockerfile
+          push: true
+          tags: ${{ steps.meta-auth.outputs.tags }}
+          labels: ${{ steps.meta-auth.outputs.labels }}

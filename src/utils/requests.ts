@@ -129,6 +129,19 @@ export const login = async (user: any) => {
   }
 };
 
+export const loginOIDC = async () => {
+  try {
+    await pb.collection(Collections.Users).authWithOAuth2({ provider: "oidc" });
+
+    const userInfo = getUserInfo();
+
+    return userInfo;
+  } catch (error) {
+    console.error("Error:", error);
+    return null;
+  }
+};
+
 function submissionStatus(status: Status | undefined | null) {
   if (!status) return QuestStatus.NOTATTEMPTED;
   return status as QuestStatus;

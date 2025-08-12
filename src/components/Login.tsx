@@ -10,7 +10,7 @@ import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import { ThemeProvider, createTheme, styled } from "@mui/material/styles";
 
-import { checkAuth, login } from "../utils/requests";
+import { checkAuth, login, loginOIDC } from "../utils/requests";
 
 const defaultTheme = createTheme();
 
@@ -101,6 +101,9 @@ export default function SignIn() {
             </Link>
           </Box>
         </LoginFormWrapper>
+        <Button variant="outlined" fullWidth onClick={loginOIDC}>
+          Login with icpc.global
+        </Button>
       </Container>
     </ThemeProvider>
   );

@@ -17,5 +17,5 @@ echo "Creating/updating superuser..."
 
 # Start PocketBase server
 echo "Starting PocketBase server..."
-exec /usr/local/bin/pocketbase serve --http=0.0.0.0:8090 --dir=/pb_data --publicDir=/pb_public --hooksDir=/pb_hooks --migrationsDir=/pb_migrations --encryptionEnv ENCRYPTION
+exec /usr/local/bin/pocketbase serve --dev --http=0.0.0.0:8090 --dir=/pb_data --publicDir=/pb_public --hooksDir=/pb_hooks --migrationsDir=/pb_migrations --encryptionEnv ENCRYPTION
 

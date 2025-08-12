@@ -101,7 +101,15 @@ export default function SignIn() {
             </Link>
           </Box>
         </LoginFormWrapper>
-        <Button variant="outlined" fullWidth onClick={loginOIDC}>
+        <Button
+          variant="outlined"
+          fullWidth
+          onClick={() =>
+            loginOIDC().then(() => {
+              navigate("/home");
+            })
+          }
+        >
           Login with icpc.global
         </Button>
       </Container>

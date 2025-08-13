@@ -278,11 +278,17 @@ export const getLeaderboard = async (
       pb
         .collection(Collections.Leaderboard)
         .getList(pageNumber, config.LEADERBOARD_PAGE_SIZE),
-      pb.collection(Collections.Leaderboard).getOne(currentUserId),
+      pb
+        .collection(Collections.Leaderboard)
+        .getOne(currentUserId)
+        .catch(() => undefined),
     ]);
 
     // If current user not in the leaderboard, we need to add them
-    if (!leaderboard.items.some((user) => user.id === currentUserId)) {
+    if (
+      currentUserRow &&
+      !leaderboard.items.some((user) => user.id === currentUserId)
+    ) {
       if (currentUserRow.rank < (leaderboard.items.at(0)?.rank ?? 0)) {
         leaderboard.items.unshift(currentUserRow);
       } else {

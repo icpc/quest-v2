@@ -131,7 +131,10 @@ export const login = async (user: any) => {
 
 export const loginOIDC = async () => {
   try {
-    await pb.collection(Collections.Users).authWithOAuth2({ provider: "oidc" });
+    await pb.collection(Collections.Users).authWithOAuth2({
+      provider: "oidc",
+      createData: { role: ["submitter"] },
+    });
 
     const userInfo = getUserInfo();
 

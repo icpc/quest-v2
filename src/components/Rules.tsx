@@ -9,7 +9,7 @@ const Rules = () => {
     >
       <h1>Rules</h1>
       <p>
-        Every day between February 28 and March 2 visit{" "}
+        Every day between August 31 and September 4 visit{" "}
         <a href="https://news.icpc.global/quest">
           https://news.icpc.global/quest
         </a>{" "}
@@ -34,15 +34,14 @@ const Rules = () => {
         </ul>
       </p>
       <p>
-        Top 10 Quest participants will receive prizes / gifts from JetBrains and
-        Pinely.
+        Every day, top 10 participants will receive daily souvenirs! Solve as many quests as possible to compete for the grand Quest prizes!
       </p>
       <br />
       <p>The winners will be notified via email address.</p>
       <br />
       <p>
         Contact email address:{" "}
-        <a href="mailto:euchelp@icpc.global">euchelp@icpc.global</a>{" "}
+        <a href="mailto:live+quest@icpc.global">live+quest@icpc.global</a>{" "}
       </p>
     </div>
   );

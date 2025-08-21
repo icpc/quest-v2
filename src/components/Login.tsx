@@ -55,51 +55,6 @@ export default function SignIn() {
           <Typography component="h1" variant="h5">
             Sign in
           </Typography>
-          <Box
-            component="form"
-            onSubmit={handleSubmit}
-            noValidate
-            sx={{ mt: 1 }}
-          >
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="email"
-              label="Email Address"
-              name="email"
-              autoComplete="email"
-              autoFocus
-            />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              name="password"
-              label="Password"
-              type="password"
-              id="password"
-              autoComplete="current-password"
-            />
-
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-              disabled={isLoginLoading}
-            >
-              Sign In
-            </Button>
-            <Link
-              href="https://forms.gle/JNpJNyKYP7o14AR66"
-              target="_blank"
-              rel="noreferrer"
-            >
-              Don&apos;t use your ICPC.global password! Fill this form with your
-              icpc email to receive dedicated Quest password.
-            </Link>
-          </Box>
         </LoginFormWrapper>
         <Button
           variant="outlined"

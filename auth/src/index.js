@@ -21,11 +21,11 @@ const AUTH_CALLBACK = `https://${AUTH_DOMAIN}/loggedin`;
 
 const bearer = (token) => ({ headers: { Authorization: `Bearer ${token}` } });
 
-const issueIdToken = ({ aud, email, name, signingKey }) => {
+const issueIdToken = ({ aud, sub, email, name, signingKey }) => {
   const now = Math.floor(Date.now() / 1000);
   const payload = {
     iss: `https://${COGNITO_DOMAIN}`,
-    sub: crypto.randomBytes(16).toString("hex"),
+    sub,
     aud,
     name,
     email,
@@ -149,11 +149,8 @@ app.post("/token/:contestId", async (req, res) => {
     }
 
     const tokens = await exchangeCodeForTokens(code);
-    const {
-      userName: email,
-      firstName,
-      lastName,
-    } = await getIcpcPerson(tokens.id_token);
+    const { sub, email } = jwt.decode(tokens.id_token);
+    const { firstName, lastName } = await getIcpcPerson(tokens.id_token);
     const part = await getIcpcParticipation(contestId, tokens.id_token);
 
     if (!part.teamMember && !part.staffMember) {
@@ -162,6 +159,7 @@ app.post("/token/:contestId", async (req, res) => {
 
     const newIdToken = issueIdToken({
       aud: client_id,
+      sub,
       email,
       name: `${firstName} ${lastName}`,
       signingKey: client_secret,

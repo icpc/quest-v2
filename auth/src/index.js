@@ -1,79 +1,199 @@
 import axios from "axios";
-import bodyParser from "body-parser";
+import crypto from "crypto";
 import express from "express";
+import jwt from "jsonwebtoken";
 import process from "node:process";
-import querystring from "querystring";
+import querystring from "node:querystring";
 
 const app = express();
 const PORT = 3000;
 
-// Load from environment
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+
 const COGNITO_DOMAIN = process.env.COGNITO_DOMAIN;
-const CLIENT_ID = process.env.COGNITO_CLIENT_ID;
-const REDIRECT_URI = process.env.REDIRECT_URI;
+const COGNITO_CLIENT_ID = process.env.COGNITO_CLIENT_ID;
+const AUTH_DOMAIN = process.env.AUTH_DOMAIN;
+const QUESTS_DOMAIN = process.env.QUESTS_DOMAIN;
 
-// Parse form data and query params
-app.use(bodyParser.urlencoded({ extended: false }));
+const PATH_PB_REDIRECT = "/api/oauth2-redirect";
+const AUTH_CALLBACK = `https://${AUTH_DOMAIN}/loggedin`;
 
-// 1. Redirect users to Cognito login, passing contestId as state
-//    Usage: GET /?contestId=1234
-app.get("/", (req, res) => {
-  const contestId = req.query.contestId;
-  if (!contestId) {
-    return res.status(400).send("Missing contestId parameter");
-  }
+const bearer = (token) => ({ headers: { Authorization: `Bearer ${token}` } });
 
-  const loginUrl =
-    `https://${COGNITO_DOMAIN}/login?client_id=${CLIENT_ID}` +
-    `&response_type=code&scope=email+openid+phone` +
-    `&redirect_uri=${encodeURIComponent(REDIRECT_URI)}` +
-    `&state=${encodeURIComponent(contestId)}`;
+const issueIdToken = ({
+  aud,
+  email,
+  name,
+  given_name,
+  family_name,
+  signingKey,
+}) => {
+  const now = Math.floor(Date.now() / 1000);
+  return jwt.sign(
+    {
+      iss: `https://${AUTH_DOMAIN}`,
+      // Ensure `sub` is always a string to satisfy consumers expecting string claims
+      sub: crypto.randomUUID(),
+      aud,
+      exp: now + 3600,
+      iat: now,
+      email,
+      ...(name ? { name } : {}),
+      ...(given_name ? { given_name } : {}),
+      ...(family_name ? { family_name } : {}),
+    },
+    signingKey,
+    { algorithm: "HS256", header: { typ: "JWT", alg: "HS256" } },
+  );
+};
 
-  console.log("Redirecting to login:", loginUrl);
-  res.redirect(loginUrl);
-});
+const exchangeCodeForTokens = async (code) => {
+  let tokenUrl = new URL("/oauth2/token", `https://${COGNITO_DOMAIN}`);
+  const tokenResponse = await axios.post(
+    tokenUrl.toString(),
+    querystring.stringify({
+      grant_type: "authorization_code",
+      client_id: COGNITO_CLIENT_ID,
+      code,
+      redirect_uri: AUTH_CALLBACK,
+    }),
+    { headers: { "Content-Type": "application/x-www-form-urlencoded" } },
+  );
+  return tokenResponse.data;
+};
 
-// 2. Callback endpoint matching your REDIRECT_URI (e.g. /loggedin)
-//    Retrieves code and state (contestId), then fetches participations
-app.get("/loggedin", async (req, res) => {
-  const { code, state: contestId } = req.query;
-  if (!code) {
-    return res.status(400).send("Authorization code missing");
-  }
-  if (!contestId) {
-    return res.status(400).send("Missing state parameter (contestId)");
-  }
+const getIcpcPerson = async (accessToken) => {
+  const url = new URL("/api/person/info/basic", "https://icpc.global");
+  const { data } = await axios.get(url.toString(), bearer(accessToken));
+  return data;
+};
 
+const getIcpcParticipation = async (contestId, accessToken) => {
+  const encodedId = encodeURIComponent(String(contestId));
+  const url = new URL(
+    `/api/contest/participant/participation/contest/${encodedId}`,
+    "https://icpc.global",
+  );
+  const { data } = await axios.get(url.toString(), bearer(accessToken));
+  return data;
+};
+
+function parseAndValidateRedirectUri(redirectUri) {
   try {
-    // Exchange code for tokens
-    const tokenResponse = await axios.post(
-      `https://${COGNITO_DOMAIN}/oauth2/token`,
-      querystring.stringify({
-        grant_type: "authorization_code",
-        client_id: CLIENT_ID,
-        code,
-        redirect_uri: REDIRECT_URI,
-      }),
-      { headers: { "Content-Type": "application/x-www-form-urlencoded" } },
-    );
+    const u = new URL(redirectUri);
+    if (u.pathname !== PATH_PB_REDIRECT) return null;
 
-    const accessToken = tokenResponse.data.id_token;
+    const domain = String(QUESTS_DOMAIN || "").toLowerCase();
+    const host = u.hostname.toLowerCase();
+    const suffix = `.${domain}`;
+    if (!domain || !host.endsWith(suffix)) return null;
 
-    // Fetch participations for the given contestId
-    const apiResponse = await axios.get(
-      `https://icpc.global/api/person/info/participations/${contestId}`,
-      { headers: { Authorization: `Bearer ${accessToken}` } },
-    );
+    const before = host.slice(0, -suffix.length);
+    if (!before) return null;
 
-    console.log("Participations API response data:", apiResponse.data);
-    // Display JSON in browser
-    res.json(apiResponse.data);
-  } catch (err) {
-    console.error("Error:", err.response ? err.response.data : err.message);
-    return res
-      .status(err.response?.status || 500)
-      .send(`Error: ${err.response?.data?.error_description || err.message}`);
+    // Require a simple quest name: letters, digits, dash, underscore only
+    if (!/^[a-z0-9_-]+$/.test(before)) return null;
+
+    return { questName: before };
+  } catch {
+    return null;
+  }
+}
+
+app.get("/", (req, res) => {
+  try {
+    const { state: pocketbaseState, redirect_uri } = req.query;
+
+    if (!pocketbaseState || !redirect_uri) {
+      return res.status(400).json({ error: "Missing parameters" });
+    }
+
+    const { questName } = parseAndValidateRedirectUri(String(redirect_uri));
+
+    const state = JSON.stringify({ pocketbaseState, questName });
+
+    const loginUrl = new URL("/login", `https://${COGNITO_DOMAIN}`);
+    loginUrl.searchParams.set("client_id", COGNITO_CLIENT_ID);
+    loginUrl.searchParams.set("response_type", "code");
+    loginUrl.searchParams.set("scope", "email openid");
+    loginUrl.searchParams.set("redirect_uri", AUTH_CALLBACK);
+    loginUrl.searchParams.set("state", state);
+
+    res.redirect(loginUrl.toString());
+  } catch (error) {
+    console.error("Error in /", error);
+    res.status(400).json({ error: "Invalid request" });
   }
 });
 
-app.listen(PORT, () => console.log(`Server listening on port ${PORT}`));
+app.get("/loggedin", async (req, res) => {
+  try {
+    const { code, state } = req.query;
+
+    if (!code || !state) {
+      return res.status(400).json({ error: "Missing parameters" });
+    }
+
+    const { questName, pocketbaseState } = JSON.parse(state);
+
+    const questHost = `${questName}.${QUESTS_DOMAIN}`;
+    const questRedirectUrl = new URL(PATH_PB_REDIRECT, `https://${questHost}`);
+    questRedirectUrl.searchParams.set("code", code);
+    questRedirectUrl.searchParams.set("state", pocketbaseState);
+
+    res.redirect(questRedirectUrl.toString());
+  } catch (error) {
+    console.error("Error in /loggedin", error);
+    res.status(400).json({ error: "Invalid request" });
+  }
+});
+
+app.post("/token/:contestId", async (req, res) => {
+  try {
+    const { client_id, client_secret, code } = req.body;
+    const { contestId } = req.params;
+
+    if (!client_id || !client_secret || !code || !contestId) {
+      return res.status(400).json({ error: "Missing parameters" });
+    }
+
+    const tokens = await exchangeCodeForTokens(code);
+    const { userName, firstName, lastName } = await getIcpcPerson(
+      tokens.id_token,
+    );
+    const part = await getIcpcParticipation(contestId, tokens.id_token);
+
+    if (!part.teamMember && !part.staffMember) {
+      return res.status(200).json({ error: "forbidden" });
+    }
+
+    const newIdToken = issueIdToken({
+      aud: client_id,
+      email: userName,
+      name: [firstName, lastName].join(" "),
+      given_name: firstName,
+      family_name: lastName,
+      signingKey: client_secret,
+    });
+
+    const dummyToken = crypto.randomBytes(32).toString("hex");
+    res.json({
+      access_token: dummyToken,
+      refresh_token: dummyToken,
+      id_token: newIdToken,
+      token_type: "Bearer",
+      expires_in: 3600,
+      scope: "openid email profile",
+    });
+  } catch (error) {
+    console.error("Error in /token/:contestId", error);
+    res.status(400).json({ error: "Invalid request" });
+  }
+});
+
+app.get("/health", (req, res) => {
+  res.json({ status: "ok", timestamp: new Date().toISOString() });
+});
+
+app.listen(PORT, () => console.log(`OAuth Provider listening on port ${PORT}`));

@@ -27,13 +27,12 @@ const issueIdToken = ({ aud, email, name, signingKey }) => {
     iss: `https://${COGNITO_DOMAIN}`,
     sub: crypto.randomBytes(16).toString("hex"),
     aud,
-    "cognito:username": name,
+    name,
     email,
     email_verified: true,
     exp: now + 3600, // 1 hour expiration
     iat: now,
   };
-  console.log("Issuing ID Token with payload:", payload);
   return jwt.sign(payload, signingKey, {
     algorithm: "HS256",
     header: { typ: "JWT", alg: "HS256" },
@@ -58,7 +57,6 @@ const exchangeCodeForTokens = async (code) => {
 const getIcpcPerson = async (accessToken) => {
   const url = new URL("/api/person/info/basic", "https://icpc.global");
   const response = await axios.get(url.toString(), bearer(accessToken));
-  console.log("ICPC Person Data:", response.data);
   return response.data;
 };
 
@@ -68,7 +66,6 @@ const getIcpcParticipation = async (contestId, accessToken) => {
     "https://icpc.global",
   );
   const response = await axios.get(url.toString(), bearer(accessToken));
-  console.log("ICPC Participation Data:", response.data);
   return response.data;
 };
 

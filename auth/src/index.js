@@ -21,13 +21,13 @@ const AUTH_CALLBACK = `https://${AUTH_DOMAIN}/loggedin`;
 
 const bearer = (token) => ({ headers: { Authorization: `Bearer ${token}` } });
 
-const issueIdToken = ({ aud, email, username, signingKey }) => {
+const issueIdToken = ({ aud, email, name, signingKey }) => {
   const now = Math.floor(Date.now() / 1000);
   const payload = {
     iss: `https://${COGNITO_DOMAIN}`,
     sub: crypto.randomBytes(16).toString("hex"),
     aud,
-    username,
+    "cognito:username": name,
     email,
     email_verified: true,
     exp: now + 3600, // 1 hour expiration
@@ -166,7 +166,7 @@ app.post("/token/:contestId", async (req, res) => {
     const newIdToken = issueIdToken({
       aud: client_id,
       email,
-      username: `${firstName} ${lastName}`,
+      name: `${firstName} ${lastName}`,
       signingKey: client_secret,
     });
 

@@ -65,18 +65,19 @@ const exchangeCodeForTokens = async (code) => {
 
 const getIcpcPerson = async (accessToken) => {
   const url = new URL("/api/person/info/basic", "https://icpc.global");
-  const { data } = await axios.get(url.toString(), bearer(accessToken));
-  return data;
+  const response = await axios.get(url.toString(), bearer(accessToken));
+  console.log("ICPC Person Data:", response.data);
+  return response.data;
 };
 
 const getIcpcParticipation = async (contestId, accessToken) => {
-  const encodedId = encodeURIComponent(String(contestId));
   const url = new URL(
-    `/api/contest/participant/participation/contest/${encodedId}`,
+    `/api/contest/participant/participation/contest/${contestId}`,
     "https://icpc.global",
   );
-  const { data } = await axios.get(url.toString(), bearer(accessToken));
-  return data;
+  const response = await axios.get(url.toString(), bearer(accessToken));
+  console.log("ICPC Participation Data:", response.data);
+  return response.data;
 };
 
 function parseAndValidateRedirectUri(redirectUri) {

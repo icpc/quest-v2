@@ -21,31 +21,23 @@ const AUTH_CALLBACK = `https://${AUTH_DOMAIN}/loggedin`;
 
 const bearer = (token) => ({ headers: { Authorization: `Bearer ${token}` } });
 
-const issueIdToken = ({
-  aud,
-  email,
-  name,
-  given_name,
-  family_name,
-  signingKey,
-}) => {
+const issueIdToken = ({ aud, email, username, signingKey }) => {
   const now = Math.floor(Date.now() / 1000);
-  return jwt.sign(
-    {
-      iss: `https://${AUTH_DOMAIN}`,
-      // Ensure `sub` is always a string to satisfy consumers expecting string claims
-      sub: crypto.randomUUID(),
-      aud,
-      exp: now + 3600,
-      iat: now,
-      email,
-      ...(name ? { name } : {}),
-      ...(given_name ? { given_name } : {}),
-      ...(family_name ? { family_name } : {}),
-    },
-    signingKey,
-    { algorithm: "HS256", header: { typ: "JWT", alg: "HS256" } },
-  );
+  const payload = {
+    iss: `https://${COGNITO_DOMAIN}`,
+    sub: crypto.randomBytes(16).toString("hex"),
+    aud,
+    username,
+    email,
+    email_verified: true,
+    exp: now + 3600, // 1 hour expiration
+    iat: now,
+  };
+  console.log("Issuing ID Token with payload:", payload);
+  return jwt.sign(payload, signingKey, {
+    algorithm: "HS256",
+    header: { typ: "JWT", alg: "HS256" },
+  });
 };
 
 const exchangeCodeForTokens = async (code) => {
@@ -160,9 +152,11 @@ app.post("/token/:contestId", async (req, res) => {
     }
 
     const tokens = await exchangeCodeForTokens(code);
-    const { userName, firstName, lastName } = await getIcpcPerson(
-      tokens.id_token,
-    );
+    const {
+      userName: email,
+      firstName,
+      lastName,
+    } = await getIcpcPerson(tokens.id_token);
     const part = await getIcpcParticipation(contestId, tokens.id_token);
 
     if (!part.teamMember && !part.staffMember) {
@@ -171,10 +165,8 @@ app.post("/token/:contestId", async (req, res) => {
 
     const newIdToken = issueIdToken({
       aud: client_id,
-      email: userName,
-      name: [firstName, lastName].join(" "),
-      given_name: firstName,
-      family_name: lastName,
+      email,
+      username: `${firstName} ${lastName}`,
       signingKey: client_secret,
     });
 

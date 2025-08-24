@@ -111,6 +111,7 @@ export enum QuestsTypeOptions {
 	"IMAGE" = "IMAGE",
 }
 export type QuestsRecord = {
+	can_submit?: boolean
 	category: string
 	created?: IsoDateString
 	date: string
@@ -119,6 +120,7 @@ export type QuestsRecord = {
 	text: HTMLString
 	type: QuestsTypeOptions
 	updated?: IsoDateString
+	visible?: boolean
 }
 
 export type QuestsWithSubmissionStatsRecord = {
@@ -138,20 +140,16 @@ export type SubmissionsRecord = {
 	updated?: IsoDateString
 }
 
-export enum UsersRoleOptions {
-	"submitter" = "submitter",
-	"manager" = "manager",
-	"validator" = "validator",
-}
 export type UsersRecord = {
 	avatar?: string
+	can_submit?: boolean
+	can_validate?: boolean
 	created?: IsoDateString
 	email: string
 	emailVisibility?: boolean
 	id: string
 	name?: string
 	password: string
-	role?: UsersRoleOptions[]
 	tokenKey: string
 	updated?: IsoDateString
 	verified?: boolean

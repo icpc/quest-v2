@@ -67,7 +67,6 @@ export function getUserInfo() {
       id: pbUser.id,
       email: pbUser.email,
       name: pbUser.name || "",
-      role: pbUser.role || [],
       token: pb.authStore.token,
       user: {
         firstName: pbUser.name?.split(" ").at(0) || "",
@@ -133,7 +132,7 @@ export const loginOIDC = async () => {
   try {
     await pb.collection(Collections.Users).authWithOAuth2({
       provider: "oidc",
-      createData: { role: ["submitter"] },
+      createData: { can_submit: true },
     });
 
     const userInfo = getUserInfo();

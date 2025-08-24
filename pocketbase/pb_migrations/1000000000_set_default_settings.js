@@ -8,9 +8,5 @@ migrate(
     const settings = app.settings();
     settings.meta.hideControls = true;         
     app.save(settings);
-  },
-
-  (app) => {
-    return;
   }
 );

@@ -20,7 +20,6 @@ migrate((app) => {
     "required": false,
     "system": false,
   }));
-  users.fields.removeById("select1466534506")
   users.createRule = "@request.context = \"oauth2\" && @request.auth.can_validate = false"
 
   app.save(users);
@@ -54,4 +53,8 @@ migrate((app) => {
   const leaderboard = app.findCollectionByNameOrId("pbc_3780747097");
   leaderboard.viewQuery = "SELECT \n    u.id as id,\n    u.id as user,\n    u.name as name,\n    CAST(SUM(vq.success) AS INT) AS total_solved,\n    CAST((ROW_NUMBER() OVER(ORDER BY SUM(vq.success) DESC)) AS INT) as rank\nFROM users AS u\n    LEFT JOIN validated_quests AS vq ON vq.submitter = u.id AND vq.success\nWHERE u.can_validate\nGROUP BY u.id\nORDER BY rank,\n    name ASC;";
   app.save(leaderboard);
+
+  // 6. Remove roles field from users collection
+  users.fields.removeById("select1466534506");  
+  app.save(users);
 });

@@ -20,7 +20,7 @@ migrate((app) => {
     "required": false,
     "system": false,
   }));
-  users.createRule = "@request.context = \"oauth2\" && @request.auth.can_validate = false"
+  users.createRule = "@request.context = \"oauth2\" && can_validate = false"
 
   app.save(users);
 

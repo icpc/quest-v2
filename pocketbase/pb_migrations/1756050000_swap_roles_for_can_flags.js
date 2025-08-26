@@ -51,7 +51,7 @@ migrate((app) => {
 
   // 5. Update leaderboard view SQL
   const leaderboard = app.findCollectionByNameOrId("pbc_3780747097");
-  leaderboard.viewQuery = "SELECT \n    u.id as id,\n    u.id as user,\n    u.name as name,\n    CAST(SUM(vq.success) AS INT) AS total_solved,\n    CAST((ROW_NUMBER() OVER(ORDER BY SUM(vq.success) DESC)) AS INT) as rank\nFROM users AS u\n    LEFT JOIN validated_quests AS vq ON vq.submitter = u.id AND vq.success\nWHERE u.can_validate\nGROUP BY u.id\nORDER BY rank,\n    name ASC;";
+  leaderboard.viewQuery = "SELECT \n    u.id as id,\n    u.id as user,\n    u.name as name,\n    CAST(SUM(vq.success) AS INT) AS total_solved,\n    CAST((ROW_NUMBER() OVER(ORDER BY SUM(vq.success) DESC)) AS INT) as rank\nFROM users AS u\n    LEFT JOIN validated_quests AS vq ON vq.submitter = u.id AND vq.success\nWHERE u.can_submit\nGROUP BY u.id\nORDER BY rank,\n    name ASC;";
   app.save(leaderboard);
 
   // 6. Remove roles field from users collection

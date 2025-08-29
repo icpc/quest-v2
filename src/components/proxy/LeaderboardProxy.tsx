@@ -17,7 +17,7 @@ const LeaderboardProxyHelper: React.FC = () => {
   const [columnsNames, setColumnsNames] = React.useState<string[]>([]);
 
   React.useEffect(() => {
-    getLeaderboard(pageNumber - 1).then((leaderboardResult) => {
+    getLeaderboard(pageNumber).then((leaderboardResult) => {
       if (leaderboardResult && leaderboardResult.rows.length > 0) {
         setRows(leaderboardResult.rows);
         setColumnsNames([

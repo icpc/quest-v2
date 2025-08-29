@@ -42,10 +42,10 @@ migrate((app) => {
 
   // 4. Update validations collection rules
   const validations = app.findCollectionByNameOrId("pbc_3910611636");
-  validations.createRule = "submission.submitter.can_validate = true";
-  validations.deleteRule = "submission.submitter.can_validate = true";
+  validations.createRule = "@request.auth.can_validate = true";
+  validations.deleteRule = "@request.auth.can_validate = true";
   validations.listRule = "@request.auth.can_validate = true\n||\nsubmission.submitter.id = @request.auth.id";
-  validations.updateRule = "submission.submitter.can_validate = true";
+  validations.updateRule = "@request.auth.can_validate = true";
   validations.viewRule = "@request.auth.can_validate = true\n||\nsubmission.submitter.id = @request.auth.id";
   app.save(validations);
 

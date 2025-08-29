@@ -24,15 +24,16 @@ const App = () => {
         <DrawerAppBar />
         <Toolbar />
         <Routes>
-          <Route index path="/" element={<SignIn />} />
-          <Route path="/login" element={<SignIn />} />
+          <Route index path="/" element={<SignIn mode="sso" />} />
+          <Route path="/login" element={<SignIn mode="sso" />} />
+          <Route path="/login/password" element={<SignIn mode="password" />} />
           <Route path="/home" element={<HomeProxy />} />
           <Route path="/rules" element={<Rules />} />
           <Route path="/quest-details/:questId" element={<QuestProxy />} />
           <Route path="/leaderboard" element={<Leaderboard />} />
           <Route path="/leaderboard/:pageNumber" element={<Leaderboard />} />
           <Route path="/validate" element={<ValidateSubmissions />} />
-          <Route path="*" element={<SignIn />} />
+          <Route path="*" element={<SignIn mode="sso" />} />
         </Routes>
       </AppContainer>
     </HashRouter>

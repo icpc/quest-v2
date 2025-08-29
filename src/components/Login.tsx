@@ -5,10 +5,11 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
 import CssBaseline from "@mui/material/CssBaseline";
+import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import { ThemeProvider, createTheme, styled } from "@mui/material/styles";
 
-import { checkAuth, loginOIDC } from "../utils/requests";
+import { checkAuth, login, loginOIDC } from "../utils/requests";
 
 const defaultTheme = createTheme();
 
@@ -19,9 +20,15 @@ const LoginFormWrapper = styled(Box)(({ theme }) => ({
   alignItems: "center",
 }));
 
-export default function SignIn() {
+type LoginMode = "sso" | "password";
+
+export default function SignIn({ mode = "sso" }: { mode?: LoginMode }) {
   const navigate = useNavigate();
   const isAuthenticated = checkAuth();
+  const [email, setEmail] = React.useState("");
+  const [password, setPassword] = React.useState("");
+  const [submitting, setSubmitting] = React.useState(false);
+  const [error, setError] = React.useState<string | null>(null);
 
   React.useEffect(() => {
     if (isAuthenticated) {
@@ -38,17 +45,67 @@ export default function SignIn() {
             Sign in
           </Typography>
         </LoginFormWrapper>
-        <Button
-          variant="outlined"
-          fullWidth
-          onClick={() =>
-            loginOIDC().then(() => {
-              navigate("/home");
-            })
-          }
-        >
-          Login with icpc.global
-        </Button>
+        {mode === "sso" ? (
+          <Button
+            variant="outlined"
+            fullWidth
+            onClick={() =>
+              loginOIDC().then(() => {
+                navigate("/home");
+              })
+            }
+          >
+            Login with icpc.global
+          </Button>
+        ) : (
+          <form
+            onSubmit={async (e) => {
+              e.preventDefault();
+              setError(null);
+              setSubmitting(true);
+              const user = await login({ email, password });
+              setSubmitting(false);
+              if (user) {
+                navigate("/home");
+              } else {
+                setError("Invalid email or password");
+              }
+            }}
+          >
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+              <TextField
+                label="Email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                fullWidth
+                autoFocus
+              />
+              <TextField
+                label="Password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                fullWidth
+              />
+              {error ? (
+                <Typography color="error" variant="body2">
+                  {error}
+                </Typography>
+              ) : null}
+              <Button
+                type="submit"
+                variant="contained"
+                fullWidth
+                disabled={submitting}
+              >
+                {submitting ? "Signing in..." : "Sign in"}
+              </Button>
+            </Box>
+          </form>
+        )}
       </Container>
     </ThemeProvider>
   );

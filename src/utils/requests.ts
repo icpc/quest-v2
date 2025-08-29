@@ -387,16 +387,18 @@ export const getValidatedSubmissions = async (
         filter: filter || undefined,
         expand: "submission,quest,submitter",
       });
-    // Map to only the fields needed for the page
+
+    const fileToken = await pb.files.getToken();
     const items = result.items.map((row) => {
-      console.log(row);
       let text: string | undefined = undefined;
       let url: string | undefined = undefined;
       const submission = row.expand?.submission;
       if (submission) {
         text = submission.text;
         if (submission.attachment) {
-          url = pb.files.getURL(submission, submission.attachment);
+          url = pb.files.getURL(submission, submission.attachment, {
+            token: fileToken,
+          });
         }
       }
       return {
@@ -420,21 +422,27 @@ export const getValidatedSubmissions = async (
   }
 };
 
-/**
- * Accept or deny a validated submission by creating a new record in the validations collection
- * @param submissionId The ID of the submission (not validated_submission)
- * @param success true to accept, false to deny
- */
 export const setValidatedSubmissionStatus = async (
   submissionId: string,
-  success: boolean,
+  success: boolean | "clear",
 ) => {
   try {
-    if (!checkAuth()) return false;
-    await pb.collection(Collections.Validations).create({
-      submission: submissionId,
-      success,
-    });
+    // Remove the previous status
+    await pb
+      .collection(Collections.Validations)
+      .getFirstListItem(`submission = "${submissionId}"`)
+      .then(
+        (validation) =>
+          pb.collection(Collections.Validations).delete(validation.id),
+        () => null,
+      );
+
+    if (success !== "clear") {
+      await pb.collection(Collections.Validations).create({
+        submission: submissionId,
+        success,
+      });
+    }
     return true;
   } catch (error) {
     console.error("Error creating validation record:", error);

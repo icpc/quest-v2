@@ -8,6 +8,7 @@ import {
   Container,
   Link,
   Paper,
+  Stack,
   Table,
   TableBody,
   TableCell,
@@ -38,7 +39,7 @@ const ValidateSubmissions: React.FC = () => {
     status?: Status;
     page: number;
     perPage: number;
-  }>({ page: 1, perPage: 50 });
+  }>({ page: 1, perPage: 50, status: "PENDING" });
 
   const navigate = useNavigate();
 
@@ -68,7 +69,10 @@ const ValidateSubmissions: React.FC = () => {
     }));
   };
 
-  const handleDecision = async (submissionId: string, success: boolean) => {
+  const handleDecision = async (
+    submissionId: string,
+    success: boolean | "clear",
+  ) => {
     setLoading(true);
     await setValidatedSubmissionStatus(submissionId, success);
     setFilters((prev) => ({ ...prev })); // trigger refresh
@@ -95,7 +99,6 @@ const ValidateSubmissions: React.FC = () => {
           <Table size="small">
             <TableHead>
               <TableRow>
-                <TableCell>ID</TableCell>
                 <TableCell>User</TableCell>
                 <TableCell>Task</TableCell>
                 <TableCell>Status</TableCell>
@@ -115,7 +118,6 @@ const ValidateSubmissions: React.FC = () => {
                         : undefined
                   }
                 >
-                  <TableCell>{row.id}</TableCell>
                   <TableCell>{row.userName}</TableCell>
                   <TableCell>
                     <Link
@@ -127,28 +129,52 @@ const ValidateSubmissions: React.FC = () => {
                     </Link>
                   </TableCell>
                   <TableCell>{row.status}</TableCell>
-                  <TableCell>{/* TODO: Render text or attachment */}</TableCell>
                   <TableCell>
-                    <Button
-                      variant="contained"
-                      color="success"
-                      size="small"
-                      disabled={row.status === "CORRECT"}
-                      onClick={() => handleDecision(row.id, true)}
-                      sx={{ mr: 1 }}
-                    >
-                      Accept
-                    </Button>
-                    <Button
-                      variant="contained"
-                      color="error"
-                      size="small"
-                      disabled={row.status === "WRONG"}
-                      onClick={() => handleDecision(row.id, false)}
-                    >
-                      Deny
-                    </Button>
+                    <Stack>
+                      <div>{row.text}</div>
+                      {row.url ? (
+                        <a href={row.url} target="_blank">
+                          Attachment
+                        </a>
+                      ) : (
+                        <div />
+                      )}
+                    </Stack>
                   </TableCell>
+                  {row.status === "PENDING" ? (
+                    <TableCell>
+                      <Stack gap={1}>
+                        <Button
+                          variant="contained"
+                          color="success"
+                          size="small"
+                          onClick={() => handleDecision(row.id, true)}
+                        >
+                          Accept
+                        </Button>
+                        <Button
+                          variant="contained"
+                          color="error"
+                          size="small"
+                          onClick={() => handleDecision(row.id, false)}
+                        >
+                          Deny
+                        </Button>
+                      </Stack>
+                    </TableCell>
+                  ) : (
+                    <TableCell>
+                      <Button
+                        variant="contained"
+                        color="success"
+                        size="small"
+                        onClick={() => handleDecision(row.id, "clear")}
+                        sx={{ mr: 1 }}
+                      >
+                        Clear
+                      </Button>
+                    </TableCell>
+                  )}
                 </TableRow>
               ))}
             </TableBody>

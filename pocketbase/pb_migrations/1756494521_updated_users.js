@@ -5,8 +5,9 @@ migrate((app) => {
   // update collection data
   unmarshal({
     "deleteRule": null,
-    "listRule": null,
-    "updateRule": null
+    "listRule": "@request.auth.can_validate = true",
+    "updateRule": null,
+    "viewRule": "@request.auth.can_validate = true  \n||\nid = @request.auth.id"
   }, collection)
 
   return app.save(collection)
@@ -17,7 +18,8 @@ migrate((app) => {
   unmarshal({
     "deleteRule": "id = @request.auth.id",
     "listRule": "id = @request.auth.id",
-    "updateRule": "id = @request.auth.id"
+    "updateRule": "id = @request.auth.id",
+    "viewRule": "id = @request.auth.id"
   }, collection)
 
   return app.save(collection)

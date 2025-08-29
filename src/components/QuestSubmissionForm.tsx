@@ -2,7 +2,7 @@ import React, { useCallback, useState } from "react";
 
 import { Box, Button, TextField, Typography } from "@mui/material";
 
-import { Quest, QuestType } from "../types/types";
+import { Quest, QuestStatus, QuestType } from "../types/types";
 import { submitTask } from "../utils/requests";
 
 // TODO: Rewrite this completely to use React Hook Form for better form handling
@@ -77,6 +77,10 @@ const QuestSubmissionForm: React.FC<QuestSubmissionFormProps> = ({
     },
     [quest.id, text, file, onSubmit],
   );
+
+  if (quest.status === QuestStatus.CORRECT) {
+    return null;
+  }
 
   return (
     <Box

@@ -151,8 +151,6 @@ function submissionStatus(status: Status | undefined | null) {
 
 export const getQuests = async (): Promise<Quest[]> => {
   try {
-    if (!checkAuth()) return [];
-
     const [quests, validated_quests] = await Promise.all([
       pb
         .collection(Collections.QuestsWithSubmissionStats)
@@ -357,10 +355,6 @@ export const getLeaderboard = async (
   }
 };
 
-/**
- * Fetch validated submissions with optional filters
- * @param filters Object with filter parameters: userId, questId, status, etc.
- */
 export const getValidatedSubmissions = async (
   filters: {
     userId?: string;
@@ -371,7 +365,6 @@ export const getValidatedSubmissions = async (
   } = {},
 ): Promise<ValidatedSubmissionsListResult> => {
   try {
-    if (!checkAuth()) return { items: [], totalItems: 0 };
     const filterArr = [];
     if (filters.userId) filterArr.push(`submitter = "${filters.userId}"`);
     if (filters.questId) filterArr.push(`quest = "${filters.questId}"`);
@@ -396,6 +389,7 @@ export const getValidatedSubmissions = async (
       });
     // Map to only the fields needed for the page
     const items = result.items.map((row) => {
+      console.log(row);
       let text: string | undefined = undefined;
       let url: string | undefined = undefined;
       const submission = row.expand?.submission;

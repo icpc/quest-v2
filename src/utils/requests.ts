@@ -408,6 +408,7 @@ export const getValidatedSubmissions = async (
         questId: row.expand.quest.id,
         questName: row.expand.quest.name,
         status: row.status as Status,
+        createdAt: submission?.created,
         text,
         url,
       };

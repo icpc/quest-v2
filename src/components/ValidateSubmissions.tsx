@@ -20,6 +20,7 @@ import {
 } from "@mui/material";
 
 import { ValidatedSubmissionsListResult } from "../types/types";
+import { downloadLeaderboardCsv } from "../utils/downloadLeaderboardCsv";
 import {
   getValidatedSubmissions,
   setValidatedSubmissionStatus,
@@ -81,9 +82,19 @@ const ValidateSubmissions: React.FC = () => {
 
   return (
     <Container maxWidth="lg" sx={{ mt: 4 }}>
-      <Typography variant="h4" gutterBottom>
-        Validate Submissions
-      </Typography>
+      <Box
+        display="flex"
+        alignItems="center"
+        justifyContent="space-between"
+        mb={2}
+      >
+        <Typography variant="h4" gutterBottom>
+          Validate Submissions
+        </Typography>
+        <Button variant="outlined" onClick={() => downloadLeaderboardCsv()}>
+          Download Leaderboard CSV
+        </Button>
+      </Box>
       <SubmissionFilters filters={filters} setFilters={setFilters} />
       {loading ? (
         <Box
@@ -102,6 +113,7 @@ const ValidateSubmissions: React.FC = () => {
                 <TableCell>User</TableCell>
                 <TableCell>Task</TableCell>
                 <TableCell>Status</TableCell>
+                <TableCell>Submitted At</TableCell>
                 <TableCell>Text/Attachment</TableCell>
                 <TableCell>Actions</TableCell>
               </TableRow>
@@ -130,10 +142,15 @@ const ValidateSubmissions: React.FC = () => {
                   </TableCell>
                   <TableCell>{row.status}</TableCell>
                   <TableCell>
+                    {row.createdAt
+                      ? new Date(row.createdAt).toLocaleString()
+                      : "—"}
+                  </TableCell>
+                  <TableCell>
                     <Stack>
                       <div>{row.text}</div>
                       {row.url ? (
-                        <a href={row.url} target="_blank">
+                        <a href={row.url} target="_blank" rel="noreferrer">
                           Attachment
                         </a>
                       ) : (

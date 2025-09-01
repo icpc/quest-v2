@@ -107,6 +107,7 @@ export interface ValidatedSubmissionListItem {
   questId: string;
   questName: string;
   status: Status;
+  createdAt?: string;
   text?: string;
   url?: string;
 }

@@ -9,8 +9,8 @@
         "build": "cp -r src dist"
     },
     "dependencies": {
+        "body-parser": "^2.2.1",
         "axios": "^1.12.0",
-        "body-parser": "^2.2.0",
         "express": "^5.1.0",
         "jsonwebtoken": "^9.0.2"
     }

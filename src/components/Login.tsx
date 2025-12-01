@@ -9,7 +9,8 @@ import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import { ThemeProvider, createTheme, styled } from "@mui/material/styles";
 
-import { checkAuth, login, loginOIDC } from "../utils/requests";
+import { SettingsAuthOptions } from "../types/pocketbase-types";
+import { checkAuth, getSettings, login, loginOIDC } from "../utils/requests";
 
 const defaultTheme = createTheme();
 
@@ -20,21 +21,30 @@ const LoginFormWrapper = styled(Box)(({ theme }) => ({
   alignItems: "center",
 }));
 
-type LoginMode = "sso" | "password";
-
-export default function SignIn({ mode = "sso" }: { mode?: LoginMode }) {
+export default function SignIn({ mode }: { mode?: SettingsAuthOptions }) {
   const navigate = useNavigate();
   const isAuthenticated = checkAuth();
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [submitting, setSubmitting] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
+  const [auth, setAuth] = React.useState<SettingsAuthOptions>(
+    SettingsAuthOptions.PASSWORD,
+  );
 
   React.useEffect(() => {
     if (isAuthenticated) {
       navigate("/home");
     }
   }, [isAuthenticated, navigate]);
+
+  React.useEffect(() => {
+    if (mode) {
+      setAuth(mode);
+      return;
+    }
+    getSettings().then((s) => setAuth(s.auth));
+  }, [mode]);
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -45,7 +55,7 @@ export default function SignIn({ mode = "sso" }: { mode?: LoginMode }) {
             Sign in
           </Typography>
         </LoginFormWrapper>
-        {mode === "sso" ? (
+        {auth === SettingsAuthOptions.OIDC ? (
           <Button
             variant="outlined"
             fullWidth

@@ -18,9 +18,8 @@ import MenuItem from "@mui/material/MenuItem";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 
-import logo from "../assets/logo.svg";
 import config from "../config";
-import { getUserInfo, logout } from "../utils/requests";
+import { getSettings, getUserInfo, logout } from "../utils/requests";
 
 const pages = {
   HOME: "/home",
@@ -31,6 +30,8 @@ const pages = {
 export default function DrawerAppBar() {
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [appName, setAppName] = React.useState<string | null>(null);
+  const [appLogo, setAppLogo] = React.useState<string | null>(null);
   const userInfo = getUserInfo();
 
   const navigate = useNavigate();
@@ -47,6 +48,13 @@ export default function DrawerAppBar() {
   const handleDrawerToggle = () => {
     setMobileOpen((prevState) => !prevState);
   };
+
+  React.useEffect(() => {
+    getSettings().then((s) => {
+      setAppName(s.name);
+      setAppLogo(s.logo);
+    });
+  }, []);
 
   const IconProfile = React.useCallback(() => {
     return (
@@ -87,7 +95,7 @@ export default function DrawerAppBar() {
     return (
       <Box sx={{ textAlign: "center" }}>
         <Typography variant="h6" sx={{ my: 2 }}>
-          {config.DRAWER_TITLE}
+          {appName}
         </Typography>
 
         <List>
@@ -107,7 +115,7 @@ export default function DrawerAppBar() {
         </List>
       </Box>
     );
-  }, [pages, navigate, userInfo]);
+  }, [pages, navigate, userInfo, appName]);
 
   const container =
     window !== undefined ? () => window.document.body : undefined;
@@ -136,7 +144,7 @@ export default function DrawerAppBar() {
             align="center"
             onClick={() => navigate("/home")}
           >
-            <img src={logo} alt="ICPC logo" height="38" />
+            {appLogo ? <img src={appLogo} alt="Logo" height="38" /> : null}
           </Typography>
 
           <Box sx={{ display: { xs: "none", sm: "flex" } }}>

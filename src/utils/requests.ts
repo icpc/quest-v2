@@ -1,12 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import PocketBase from "pocketbase";
 
+import defaultLogo from "../assets/logo.svg";
 import config from "../config";
 import {
   Collections,
   LeaderboardResponse,
   QuestsRecord,
   QuestsWithSubmissionStatsResponse,
+  SettingsAuthOptions,
+  SettingsResponse,
   SubmissionsRecord,
   TypedPocketBase,
   UsersRecord,
@@ -98,6 +101,39 @@ function appendSubmissionPrefix(questId: string, file?: File) {
 
 export const logout = () => {
   pb.authStore.clear();
+};
+
+export const getSettings = async () => {
+  const FALLBACK_SETTINGS = {
+    auth: SettingsAuthOptions.PASSWORD,
+    logo: defaultLogo,
+    name: "ICPC Quest",
+    rules: null,
+  } as const;
+  try {
+    const record = await pb
+      .collection(Collections.Settings)
+      .getFirstListItem<SettingsResponse>("");
+
+    const logo = record.logo?.trim()
+      ? pb.files.getURL(record, record.logo)
+      : FALLBACK_SETTINGS.logo;
+    const auth = Object.values(SettingsAuthOptions).includes(
+      record.auth as SettingsAuthOptions,
+    )
+      ? record.auth
+      : FALLBACK_SETTINGS.auth;
+
+    return {
+      auth,
+      logo,
+      name: record.name?.trim() || FALLBACK_SETTINGS.name,
+      rules: record.rules ?? FALLBACK_SETTINGS.rules,
+    };
+  } catch (error) {
+    console.error("Error fetching settings:", error);
+    return { ...FALLBACK_SETTINGS };
+  }
 };
 
 export type TaskSubmission = { text: string; file?: File };

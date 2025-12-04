@@ -1,0 +1,29 @@
+{
+  "name": "Quest Dev",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": "..",
+    "args": {
+      "NODE_VERSION": "22",
+      "POCKETBASE_VERSION": "0.28.4"
+    }
+  },
+  "remoteUser": "node",
+  "features": {
+    "ghcr.io/devcontainers/features/git:1": {},
+    "ghcr.io/devcontainers/features/github-cli:1": {}
+  },
+  "forwardPorts": [5173, 8090],
+  "portsAttributes": {
+    "5173": { "label": "Vite Dev Server" },
+    "8090": { "label": "PocketBase" }
+  },
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "editor.formatOnSave": true
+      },
+      "extensions": ["esbenp.prettier-vscode", "dbaeumer.vscode-eslint"]
+    }
+  }
+}

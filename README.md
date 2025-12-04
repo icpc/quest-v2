@@ -5,6 +5,7 @@ This repository contains the frontend for the ICPC Quest project along with scri
 ## Table of Contents
 
 - [Installation](#installation)
+- [Dev Container](#dev-container)
 - [Running the Frontend Locally](#running-the-frontend-locally)
 - [Building the Frontend](#building-the-frontend)
 - [Pocketbase Backend](#pocketbase-backend)
@@ -27,6 +28,18 @@ This repository contains the frontend for the ICPC Quest project along with scri
    - Download the latest release from the [Pocketbase website](https://pocketbase.io/).
    - Unpack the downloaded archive.
    - Make sure it's invokable as `pocketbase`.
+
+## Dev Container
+
+This repo ships a Dev Container that includes Node.js (via `typescript-node`), pnpm (through `corepack`), and the PocketBase CLI (v0.26.3) preinstalled.
+
+1. Install the VS Code Dev Containers extension (or a compatible client like GitHub Codespaces).
+2. Open the repository in VS Code and choose **Reopen in Container**.
+3. After the container builds, dependencies are installed automatically via `pnpm install`.
+4. To work as usual inside the container:
+   - Frontend: `pnpm start`
+   - PocketBase: `pnpm run pocketbase` (data persists in `pocketbase/pb_data`)
+   - Types: `pnpm run pocketbase:typegen`
 
 ## Running the Frontend Locally
 

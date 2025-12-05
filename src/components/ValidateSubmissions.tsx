@@ -21,6 +21,7 @@ import {
 
 import { ValidatedSubmissionsListResult } from "../types/types";
 import { downloadLeaderboardCsv } from "../utils/downloadLeaderboardCsv";
+import { downloadSubmissionsCsv } from "../utils/downloadSubmissionsCsv";
 import {
   getValidatedSubmissions,
   setValidatedSubmissionStatus,
@@ -91,9 +92,14 @@ const ValidateSubmissions: React.FC = () => {
         <Typography variant="h4" gutterBottom>
           Validate Submissions
         </Typography>
-        <Button variant="outlined" onClick={() => downloadLeaderboardCsv()}>
-          Download Leaderboard CSV
-        </Button>
+        <Stack direction="row" spacing={1}>
+          <Button variant="outlined" onClick={() => downloadSubmissionsCsv()}>
+            Download Submissions CSV
+          </Button>
+          <Button variant="outlined" onClick={() => downloadLeaderboardCsv()}>
+            Download Leaderboard CSV
+          </Button>
+        </Stack>
       </Box>
       <SubmissionFilters filters={filters} setFilters={setFilters} />
       {loading ? (

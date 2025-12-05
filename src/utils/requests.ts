@@ -83,6 +83,19 @@ function getCurrentUserId() {
   return pb.authStore.record?.id;
 }
 
+function getCurrentUserName() {
+  return pb.authStore.record?.name || "undefinedUser";
+}
+
+function appendSubmissionPrefix(questId: string, file?: File) {
+  if (!file) return undefined;
+  const newName = `${questId}_${getCurrentUserName()}_${file.name}`;
+  return new File([file], newName, {
+    type: file.type,
+    lastModified: file.lastModified,
+  });
+}
+
 export const logout = () => {
   pb.authStore.clear();
 };
@@ -97,11 +110,12 @@ export const submitTask = async (
     if (!questId || !checkAuth()) {
       return false;
     }
+    const attachment = appendSubmissionPrefix(questId, submission.file);
     await pb.collection(Collections.Submissions).create({
       quest: questId,
       submitter: getCurrentUserId(),
       text: submission.text,
-      attachment: submission.file,
+      attachment,
     });
     return true;
   } catch (error) {

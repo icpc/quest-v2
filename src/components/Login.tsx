@@ -73,7 +73,7 @@ export default function SignIn({
             if (user) {
               navigate("/home");
             } else {
-              setError("Invalid email or password");
+              setError("Incorrect email or password");
             }
           }}
         >

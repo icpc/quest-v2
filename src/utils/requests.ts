@@ -107,26 +107,20 @@ export const getSettings = async () => {
   const FALLBACK_SETTINGS = {
     auth: SettingsAuthOptions.PASSWORD,
     logo: defaultLogo,
-    name: "ICPC Quest",
+    /* TODO: Use the name in the title and description */
+    name: "Quest",
     rules: null,
-  } as const;
+  };
   try {
     const record = await pb
       .collection(Collections.Settings)
       .getFirstListItem<SettingsResponse>("");
 
-    const logo = record.logo?.trim()
-      ? pb.files.getURL(record, record.logo)
-      : FALLBACK_SETTINGS.logo;
-    const auth = Object.values(SettingsAuthOptions).includes(
-      record.auth as SettingsAuthOptions,
-    )
-      ? record.auth
-      : FALLBACK_SETTINGS.auth;
-
     return {
-      auth,
-      logo,
+      auth: record.auth || FALLBACK_SETTINGS.auth,
+      logo: record.logo?.trim()
+        ? pb.files.getURL(record, record.logo)
+        : FALLBACK_SETTINGS.logo,
       name: record.name?.trim() || FALLBACK_SETTINGS.name,
       rules: record.rules ?? FALLBACK_SETTINGS.rules,
     };

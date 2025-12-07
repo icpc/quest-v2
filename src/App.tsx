@@ -12,7 +12,7 @@ import HomeProxy from "./components/proxy/HomeProxy";
 import Leaderboard from "./components/proxy/LeaderboardProxy";
 import QuestProxy from "./components/proxy/QuestProxy";
 import config from "./config";
-import { SettingsAuthOptions } from "./types/pocketbase-types";
+import { WebsiteSettingsAuthOptions } from "./types/pocketbase-types";
 
 const AppContainer = styled.div`
   background-color: ${config.BACKGROUND_COLOR};
@@ -29,11 +29,11 @@ const App = () => {
           <Route path="/login" element={<SignIn />} />
           <Route
             path="/login/sso"
-            element={<SignIn mode={SettingsAuthOptions.OIDC} />}
+            element={<SignIn mode={WebsiteSettingsAuthOptions.OIDC} />}
           />
           <Route
             path="/login/password"
-            element={<SignIn mode={SettingsAuthOptions.PASSWORD} />}
+            element={<SignIn mode={WebsiteSettingsAuthOptions.PASSWORD} />}
           />
           <Route path="/home" element={<HomeProxy />} />
           <Route path="/rules" element={<Rules />} />

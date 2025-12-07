@@ -7,18 +7,27 @@ import Container from "@mui/material/Container";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 
-import { SettingsAuthOptions } from "../types/pocketbase-types";
-import { checkAuth, getSettings, login, loginOIDC } from "../utils/requests";
+import { WebsiteSettingsAuthOptions } from "../types/pocketbase-types";
+import {
+  checkAuth,
+  getWebsiteSettings,
+  login,
+  loginOIDC,
+} from "../utils/requests";
 
-export default function SignIn({ mode }: { mode?: SettingsAuthOptions }) {
+export default function SignIn({
+  mode,
+}: {
+  mode?: WebsiteSettingsAuthOptions;
+}) {
   const navigate = useNavigate();
   const isAuthenticated = checkAuth();
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [submitting, setSubmitting] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
-  const [auth, setAuth] = React.useState<SettingsAuthOptions>(
-    SettingsAuthOptions.PASSWORD,
+  const [auth, setAuth] = React.useState<WebsiteSettingsAuthOptions>(
+    WebsiteSettingsAuthOptions.PASSWORD,
   );
 
   React.useEffect(() => {
@@ -32,7 +41,7 @@ export default function SignIn({ mode }: { mode?: SettingsAuthOptions }) {
       setAuth(mode);
       return;
     }
-    getSettings().then((s) => setAuth(s.auth));
+    getWebsiteSettings().then((s) => setAuth(s.auth));
   }, [mode]);
 
   return (
@@ -40,7 +49,7 @@ export default function SignIn({ mode }: { mode?: SettingsAuthOptions }) {
       <Typography variant="h4" sx={{ paddingBottom: 2 }}>
         Sign in
       </Typography>
-      {auth === SettingsAuthOptions.OIDC ? (
+      {auth === WebsiteSettingsAuthOptions.OIDC ? (
         <Button
           variant="outlined"
           fullWidth
@@ -52,7 +61,8 @@ export default function SignIn({ mode }: { mode?: SettingsAuthOptions }) {
         >
           Login with icpc.global
         </Button>
-      ) : (
+      ) : null}
+      {auth == WebsiteSettingsAuthOptions.PASSWORD ? (
         <form
           onSubmit={async (e) => {
             e.preventDefault();
@@ -100,7 +110,7 @@ export default function SignIn({ mode }: { mode?: SettingsAuthOptions }) {
             </Button>
           </Box>
         </form>
-      )}
+      ) : null}
     </Container>
   );
 }

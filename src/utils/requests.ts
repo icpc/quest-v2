@@ -8,13 +8,13 @@ import {
   LeaderboardResponse,
   QuestsRecord,
   QuestsWithSubmissionStatsResponse,
-  SettingsAuthOptions,
-  SettingsResponse,
   SubmissionsRecord,
   TypedPocketBase,
   UsersRecord,
   ValidatedQuestsResponse,
   ValidatedSubmissionsResponse,
+  WebsiteSettingsAuthOptions,
+  WebsiteSettingsResponse,
 } from "../types/pocketbase-types";
 import {
   LeaderboardRow,
@@ -103,9 +103,9 @@ export const logout = () => {
   pb.authStore.clear();
 };
 
-export const getSettings = async () => {
+export const getWebsiteSettings = async () => {
   const FALLBACK_SETTINGS = {
-    auth: SettingsAuthOptions.PASSWORD,
+    auth: WebsiteSettingsAuthOptions.PASSWORD,
     logo: defaultLogo,
     /* TODO: Use the name in the title and description */
     name: "Quest",
@@ -113,8 +113,8 @@ export const getSettings = async () => {
   };
   try {
     const record = await pb
-      .collection(Collections.Settings)
-      .getFirstListItem<SettingsResponse>("");
+      .collection(Collections.WebsiteSettings)
+      .getFirstListItem<WebsiteSettingsResponse>("");
 
     return {
       auth: record.auth || FALLBACK_SETTINGS.auth,

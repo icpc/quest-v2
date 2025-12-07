@@ -18,7 +18,7 @@ import MenuItem from "@mui/material/MenuItem";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 
-import { getSettings, getUserInfo, logout } from "../utils/requests";
+import { getUserInfo, getWebsiteSettings, logout } from "../utils/requests";
 
 const pages = {
   HOME: "/home",
@@ -48,7 +48,7 @@ export default function DrawerAppBar() {
   };
 
   React.useEffect(() => {
-    getSettings().then((s) => {
+    getWebsiteSettings().then((s) => {
       setAppLogo(s.logo);
     });
   }, []);

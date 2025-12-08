@@ -9,24 +9,15 @@ migrate((app) => {
   const settings = app.settings();
   settings.meta.hideControls = true;
 
-  /* TODO: Parse the string into a boolean */
   const S3_ENABLED = $os.getenv("S3_ENABLED").toLowerCase().trim();
   if (S3_ENABLED == "true" || S3_ENABLED == "1") {
-    try {
-      const newS3Settings = {
-        ...settings.s3,
-        enabled: true,
-        endpoint: $os.getenv("S3_ENDPOINT"),
-        bucket: $os.getenv("S3_BUCKET"),
-        region: $os.getenv("S3_REGION"),
-        accessKey: $os.getenv("S3_ACCESS_KEY"),
-        secret: $os.getenv("S3_SECRET"),
-      };
-      newS3Settings.validate();
-      settings.s3 = newS3Settings;
-    } catch (err) {
-      console.log(err);
-    }
+    settings.s3.enabled = true;
+    settings.s3.endpoint = $os.getenv("S3_ENDPOINT");
+    settings.s3.bucket = $os.getenv("S3_BUCKET");
+    settings.s3.region = $os.getenv("S3_REGION");
+    settings.s3.accessKey = $os.getenv("S3_ACCESS_KEY");
+    settings.s3.secret = $os.getenv("S3_SECRET");
   }
+  
   app.save(settings);
 });

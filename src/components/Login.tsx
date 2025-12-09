@@ -26,9 +26,9 @@ export default function SignIn({
   const [password, setPassword] = React.useState("");
   const [submitting, setSubmitting] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
-  const [auth, setAuth] = React.useState<WebsiteSettingsAuthOptions>(
-    WebsiteSettingsAuthOptions.PASSWORD,
-  );
+  const [authOptions, setAuthOptions] = React.useState<
+    WebsiteSettingsAuthOptions[]
+  >([]);
 
   React.useEffect(() => {
     if (isAuthenticated) {
@@ -38,79 +38,82 @@ export default function SignIn({
 
   React.useEffect(() => {
     if (mode) {
-      setAuth(mode);
+      setAuthOptions([mode]);
       return;
     }
-    getWebsiteSettings().then((s) => setAuth(s.auth));
+    getWebsiteSettings().then((s) => setAuthOptions(s.auth));
   }, [mode]);
 
   return (
     <Container component="main" maxWidth="xs" sx={{ padding: 8 }}>
-      <Typography variant="h4" sx={{ paddingBottom: 2 }}>
-        Sign in
-      </Typography>
-      {auth === WebsiteSettingsAuthOptions.OIDC ? (
-        <Button
-          variant="outlined"
-          fullWidth
-          onClick={() =>
-            loginOIDC().then(() => {
-              navigate("/home");
-            })
-          }
-        >
-          Login with icpc.global
-        </Button>
-      ) : null}
-      {auth == WebsiteSettingsAuthOptions.PASSWORD ? (
-        <form
-          onSubmit={async (e) => {
-            e.preventDefault();
-            setError(null);
-            setSubmitting(true);
-            const user = await login({ email, password });
-            setSubmitting(false);
-            if (user) {
-              navigate("/home");
-            } else {
-              setError("Incorrect email or password");
+      <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+        <Typography variant="h4">Sign in</Typography>
+        {authOptions.includes(WebsiteSettingsAuthOptions.PASSWORD) ? (
+          <form
+            onSubmit={async (e) => {
+              e.preventDefault();
+              setError(null);
+              setSubmitting(true);
+              const user = await login({ email, password });
+              setSubmitting(false);
+              if (user) {
+                navigate("/home");
+              } else {
+                setError("Incorrect email or password");
+              }
+            }}
+          >
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+              <TextField
+                label="Email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                fullWidth
+                autoFocus
+              />
+              <TextField
+                label="Password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                fullWidth
+              />
+              {error ? (
+                <Typography color="error" variant="body2">
+                  {error}
+                </Typography>
+              ) : null}
+              <Button
+                type="submit"
+                variant="contained"
+                fullWidth
+                disabled={submitting}
+              >
+                {submitting ? "Signing in..." : "Sign in"}
+              </Button>
+            </Box>
+          </form>
+        ) : null}
+        {authOptions.includes(WebsiteSettingsAuthOptions.OIDC) ? (
+          <Button
+            variant="contained"
+            fullWidth
+            sx={{
+              backgroundColor: "rgb(0, 67, 147)",
+            }}
+            onClick={() =>
+              loginOIDC().then(() => {
+                navigate("/home");
+              })
             }
-          }}
-        >
-          <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-            <TextField
-              label="Email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              fullWidth
-              autoFocus
-            />
-            <TextField
-              label="Password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              fullWidth
-            />
-            {error ? (
-              <Typography color="error" variant="body2">
-                {error}
-              </Typography>
-            ) : null}
-            <Button
-              type="submit"
-              variant="contained"
-              fullWidth
-              disabled={submitting}
-            >
-              {submitting ? "Signing in..." : "Sign in"}
-            </Button>
-          </Box>
-        </form>
-      ) : null}
+          >
+            Login with icpc.global
+          </Button>
+        ) : null}
+      </Box>
     </Container>
   );
 }

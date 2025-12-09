@@ -105,7 +105,7 @@ export const logout = () => {
 
 export const getWebsiteSettings = async () => {
   const FALLBACK_SETTINGS = {
-    auth: WebsiteSettingsAuthOptions.PASSWORD,
+    auth: [WebsiteSettingsAuthOptions.PASSWORD],
     logo: defaultLogo,
     /* TODO: Use the name in the title and description */
     name: "Quest",
@@ -117,7 +117,10 @@ export const getWebsiteSettings = async () => {
       .getFirstListItem<WebsiteSettingsResponse>("");
 
     return {
-      auth: record.auth || FALLBACK_SETTINGS.auth,
+      auth:
+        record.auth && record.auth.length > 0
+          ? record.auth
+          : FALLBACK_SETTINGS.auth,
       logo: record.logo?.trim()
         ? pb.files.getURL(record, record.logo)
         : FALLBACK_SETTINGS.logo,

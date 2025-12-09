@@ -189,7 +189,7 @@ export enum WebsiteSettingsAuthOptions {
 	"OIDC" = "OIDC",
 }
 export type WebsiteSettingsRecord = {
-	auth?: WebsiteSettingsAuthOptions
+	auth?: WebsiteSettingsAuthOptions[]
 	created: IsoAutoDateString
 	id: string
 	logo?: FileNameString

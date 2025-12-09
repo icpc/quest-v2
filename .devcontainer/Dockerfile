@@ -1,5 +1,5 @@
-ARG NODE_VERSION=22
-ARG POCKETBASE_VERSION=0.28.4
+ARG NODE_VERSION
+ARG POCKETBASE_VERSION
 
 FROM mcr.microsoft.com/devcontainers/typescript-node:${NODE_VERSION}
 
@@ -8,7 +8,7 @@ RUN apt-get update \
   && rm -rf /var/lib/apt/lists/*
 
 RUN set -euo pipefail; \
-  PB_VERSION="${POCKETBASE_VERSION:-0.28.4}"; \
+  PB_VERSION="${POCKETBASE_VERSION}"; \
   if [ -z "${PB_VERSION}" ]; then echo "POCKETBASE_VERSION build arg is required" >&2; exit 1; fi; \
   ARCH="$(uname -m)"; \
   case "${ARCH}" in \

@@ -2,13 +2,12 @@
   "name": "Quest Dev",
   "build": {
     "dockerfile": "Dockerfile",
-    "context": "..",
-    "args": {
-      "NODE_VERSION": "22",
-      "POCKETBASE_VERSION": "0.28.4"
-    }
+    "context": ".."
   },
-  "remoteUser": "node",
+  "mounts": [
+    "source=profile,target=/root,type=volume",
+    "target=/root/.vscode-server,type=volume"
+  ],
   "features": {
     "ghcr.io/devcontainers/features/git:1": {},
     "ghcr.io/devcontainers/features/github-cli:1": {}
@@ -23,7 +22,11 @@
       "settings": {
         "editor.formatOnSave": true
       },
-      "extensions": ["esbenp.prettier-vscode", "dbaeumer.vscode-eslint"]
+      "extensions": [
+        "esbenp.prettier-vscode",
+        "dbaeumer.vscode-eslint",
+        "mutantdino.resourcemonitor"
+      ]
     }
   }
 }

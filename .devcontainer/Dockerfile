@@ -1,10 +1,12 @@
-ARG NODE_VERSION
-ARG POCKETBASE_VERSION
+ARG NODE_VERSION=22
+ARG POCKETBASE_VERSION=0.34.2
 
 FROM mcr.microsoft.com/devcontainers/typescript-node:${NODE_VERSION}
 
+ARG POCKETBASE_VERSION
+
 RUN apt-get update \
-  && apt-get install -y --no-install-recommends wget unzip ca-certificates \
+  && apt-get install -y --no-install-recommends wget unzip ca-certificates sqlite3 libsqlite3-dev \
   && rm -rf /var/lib/apt/lists/*
 
 RUN set -euo pipefail; \

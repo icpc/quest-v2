@@ -14,6 +14,7 @@ const FALLBACK_SETTINGS: WebsiteSettingsData = {
   auth: [WebsiteSettingsAuthOptions.PASSWORD],
   logo: defaultLogo,
   name: "Quest",
+  rules: "Please add the rules to the settings in order to display them here.",
 };
 
 export const useWebsiteSettings = () => {

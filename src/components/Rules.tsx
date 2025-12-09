@@ -1,5 +1,7 @@
 import React from "react";
 
+import { Container } from "@mui/material";
+
 import { useWebsiteSettings } from "../hooks/useWebsiteSettings";
 
 const Rules = () => {
@@ -7,20 +9,12 @@ const Rules = () => {
   const rulesHtml = settings.rules;
 
   return (
-    <div
-      style={{
-        margin: "10%",
-      }}
-    >
+    <Container>
       <h1>Rules</h1>
       {rulesHtml ? (
         <div dangerouslySetInnerHTML={{ __html: rulesHtml }} />
-      ) : (
-        <>
-          <p>Please add the rules to the settings in order to display them</p>
-        </>
-      )}
-    </div>
+      ) : null}
+    </Container>
   );
 };
 

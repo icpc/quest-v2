@@ -18,7 +18,8 @@ import MenuItem from "@mui/material/MenuItem";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 
-import { getUserInfo, getWebsiteSettings, logout } from "../utils/requests";
+import { useWebsiteSettings } from "../hooks/useWebsiteSettings";
+import { getUserInfo, logout } from "../utils/requests";
 
 const pages = {
   HOME: "/home",
@@ -29,10 +30,19 @@ const pages = {
 export default function DrawerAppBar() {
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const [appLogo, setAppLogo] = React.useState<string | null>(null);
+  const { settings } = useWebsiteSettings();
   const userInfo = getUserInfo();
 
   const navigate = useNavigate();
+
+  React.useEffect(() => {
+    if (typeof document === "undefined") return;
+    document.title = settings.name;
+    const metaDescription = document.querySelector('meta[name="description"]');
+    if (metaDescription) {
+      metaDescription.setAttribute("content", settings.name);
+    }
+  }, [settings.name]);
 
   const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -46,12 +56,6 @@ export default function DrawerAppBar() {
   const handleDrawerToggle = () => {
     setMobileOpen((prevState) => !prevState);
   };
-
-  React.useEffect(() => {
-    getWebsiteSettings().then((s) => {
-      setAppLogo(s.logo);
-    });
-  }, []);
 
   const IconProfile = React.useCallback(() => {
     return (
@@ -115,7 +119,9 @@ export default function DrawerAppBar() {
             align="center"
             onClick={() => navigate("/home")}
           >
-            {appLogo ? <img src={appLogo} alt="Logo" height="38" /> : null}
+            {settings.logo ? (
+              <img src={settings.logo} alt="Logo" height="38" />
+            ) : null}
           </Typography>
           <Box sx={{ display: { xs: "none", sm: "flex" } }}>
             {Object.entries(pages).map(([name, url]) => (

@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import PocketBase from "pocketbase";
 
-import defaultLogo from "../assets/logo.svg";
 import config from "../config";
 import {
   Collections,
@@ -30,6 +29,13 @@ import {
 
 import { POCKETBASE_URL } from "./env";
 import { aggregateQuestsByDate } from "./utils";
+
+export type WebsiteSettingsData = {
+  auth: WebsiteSettingsAuthOptions[];
+  logo?: string;
+  name: string;
+  rules?: string;
+};
 
 // Create a singleton instance with the environment variable
 const pb = new PocketBase(POCKETBASE_URL) as TypedPocketBase;
@@ -103,35 +109,26 @@ export const logout = () => {
   pb.authStore.clear();
 };
 
-export const getWebsiteSettings = async () => {
-  const FALLBACK_SETTINGS = {
-    auth: [WebsiteSettingsAuthOptions.PASSWORD],
-    logo: defaultLogo,
-    /* TODO: Use the name in the title and description */
-    name: "Quest",
-    rules: null,
-  };
-  try {
-    const record = await pb
-      .collection(Collections.WebsiteSettings)
-      .getFirstListItem<WebsiteSettingsResponse>("");
+export const getWebsiteSettings =
+  async (): Promise<WebsiteSettingsData | null> => {
+    try {
+      const record = await pb
+        .collection(Collections.WebsiteSettings)
+        .getFirstListItem<WebsiteSettingsResponse>("");
 
-    return {
-      auth:
-        record.auth && record.auth.length > 0
-          ? record.auth
-          : FALLBACK_SETTINGS.auth,
-      logo: record.logo?.trim()
-        ? pb.files.getURL(record, record.logo)
-        : FALLBACK_SETTINGS.logo,
-      name: record.name?.trim() || FALLBACK_SETTINGS.name,
-      rules: record.rules ?? FALLBACK_SETTINGS.rules,
-    };
-  } catch (error) {
-    console.error("Error fetching settings:", error);
-    return { ...FALLBACK_SETTINGS };
-  }
-};
+      return {
+        auth: record.auth,
+        logo: record.logo?.trim()
+          ? pb.files.getURL(record, record.logo)
+          : undefined,
+        name: record.name,
+        rules: record.rules,
+      };
+    } catch (error) {
+      console.error("Error fetching settings:", error);
+      return null;
+    }
+  };
 
 export type TaskSubmission = { text: string; file?: File };
 

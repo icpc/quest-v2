@@ -7,13 +7,9 @@ import Container from "@mui/material/Container";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 
+import { useWebsiteSettings } from "../hooks/useWebsiteSettings";
 import { WebsiteSettingsAuthOptions } from "../types/pocketbase-types";
-import {
-  checkAuth,
-  getWebsiteSettings,
-  login,
-  loginOIDC,
-} from "../utils/requests";
+import { checkAuth, login, loginOIDC } from "../utils/requests";
 
 export default function SignIn({
   mode,
@@ -26,9 +22,7 @@ export default function SignIn({
   const [password, setPassword] = React.useState("");
   const [submitting, setSubmitting] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
-  const [authOptions, setAuthOptions] = React.useState<
-    WebsiteSettingsAuthOptions[]
-  >([]);
+  const { settings } = useWebsiteSettings();
 
   React.useEffect(() => {
     if (isAuthenticated) {
@@ -36,13 +30,9 @@ export default function SignIn({
     }
   }, [isAuthenticated, navigate]);
 
-  React.useEffect(() => {
-    if (mode) {
-      setAuthOptions([mode]);
-      return;
-    }
-    getWebsiteSettings().then((s) => setAuthOptions(s.auth));
-  }, [mode]);
+  const authOptions = React.useMemo(() => {
+    return mode ? [mode] : settings.auth;
+  }, [mode, settings.auth]);
 
   return (
     <Container component="main" maxWidth="xs" sx={{ padding: 8 }}>

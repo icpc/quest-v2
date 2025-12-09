@@ -1,13 +1,10 @@
 import React from "react";
 
-import { getWebsiteSettings } from "../utils/requests";
+import { useWebsiteSettings } from "../hooks/useWebsiteSettings";
 
 const Rules = () => {
-  const [rulesHtml, setRulesHtml] = React.useState<string | null>(null);
-
-  React.useEffect(() => {
-    getWebsiteSettings().then((s) => setRulesHtml(s.rules || ""));
-  }, []);
+  const { settings } = useWebsiteSettings();
+  const rulesHtml = settings.rules;
 
   return (
     <div

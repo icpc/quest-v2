@@ -12,6 +12,7 @@ import HomeProxy from "./components/proxy/HomeProxy";
 import Leaderboard from "./components/proxy/LeaderboardProxy";
 import QuestProxy from "./components/proxy/QuestProxy";
 import config from "./config";
+import { WebsiteSettingsAuthOptions } from "./types/pocketbase-types";
 
 const AppContainer = styled.div`
   background-color: ${config.BACKGROUND_COLOR};
@@ -24,20 +25,29 @@ const App = () => {
         <DrawerAppBar />
         <Toolbar />
         <Routes>
-          <Route index path="/" element={<SignIn mode="sso" />} />
-          <Route path="/login" element={<SignIn mode="sso" />} />
-          <Route path="/login/password" element={<SignIn mode="password" />} />
+          <Route index path="/" element={<SignIn />} />
+          <Route path="/login" element={<SignIn />} />
+          <Route
+            path="/login/sso"
+            element={<SignIn mode={WebsiteSettingsAuthOptions.OIDC} />}
+          />
+          <Route
+            path="/login/password"
+            element={<SignIn mode={WebsiteSettingsAuthOptions.PASSWORD} />}
+          />
           <Route path="/home" element={<HomeProxy />} />
           <Route path="/rules" element={<Rules />} />
           <Route path="/quest-details/:questId" element={<QuestProxy />} />
           <Route path="/leaderboard" element={<Leaderboard />} />
           <Route path="/leaderboard/:pageNumber" element={<Leaderboard />} />
           <Route path="/validate" element={<ValidateSubmissions />} />
-          <Route path="*" element={<SignIn mode="sso" />} />
+          <Route path="*" element={<SignIn />} />
         </Routes>
       </AppContainer>
     </HashRouter>
   );
 };
+
+// LoginDefault removed: SignIn self-resolves default mode from settings.
 
 export default App;

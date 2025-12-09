@@ -18,9 +18,7 @@ import MenuItem from "@mui/material/MenuItem";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 
-import logo from "../assets/logo.svg";
-import config from "../config";
-import { getUserInfo, logout } from "../utils/requests";
+import { getUserInfo, getWebsiteSettings, logout } from "../utils/requests";
 
 const pages = {
   HOME: "/home",
@@ -31,6 +29,7 @@ const pages = {
 export default function DrawerAppBar() {
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [appLogo, setAppLogo] = React.useState<string | null>(null);
   const userInfo = getUserInfo();
 
   const navigate = useNavigate();
@@ -47,6 +46,12 @@ export default function DrawerAppBar() {
   const handleDrawerToggle = () => {
     setMobileOpen((prevState) => !prevState);
   };
+
+  React.useEffect(() => {
+    getWebsiteSettings().then((s) => {
+      setAppLogo(s.logo);
+    });
+  }, []);
 
   const IconProfile = React.useCallback(() => {
     return (
@@ -77,37 +82,11 @@ export default function DrawerAppBar() {
           onClose={() => setAnchorEl(null)}
         >
           <MenuItem disabled>{userInfo?.user?.email}</MenuItem>
-          <MenuItem onClick={handleClose}>LogOut</MenuItem>
+          <MenuItem onClick={handleClose}>Log out</MenuItem>
         </Menu>
       </div>
     );
   }, [anchorEl, handleClose, userInfo]);
-
-  const drawer = React.useMemo(() => {
-    return (
-      <Box sx={{ textAlign: "center" }}>
-        <Typography variant="h6" sx={{ my: 2 }}>
-          {config.DRAWER_TITLE}
-        </Typography>
-
-        <List>
-          {Object.entries(pages).map(([name, url]) => (
-            <ListItem key={name} disablePadding>
-              <ListItemButton
-                sx={{ textAlign: "center" }}
-                onClick={() => {
-                  navigate(url);
-                  handleDrawerToggle();
-                }}
-              >
-                <ListItemText primary={name} />
-              </ListItemButton>
-            </ListItem>
-          ))}
-        </List>
-      </Box>
-    );
-  }, [pages, navigate, userInfo]);
 
   const container =
     window !== undefined ? () => window.document.body : undefined;
@@ -136,9 +115,8 @@ export default function DrawerAppBar() {
             align="center"
             onClick={() => navigate("/home")}
           >
-            <img src={logo} alt="ICPC logo" height="38" />
+            {appLogo ? <img src={appLogo} alt="Logo" height="38" /> : null}
           </Typography>
-
           <Box sx={{ display: { xs: "none", sm: "flex" } }}>
             {Object.entries(pages).map(([name, url]) => (
               <Button
@@ -165,13 +143,25 @@ export default function DrawerAppBar() {
           }}
           sx={{
             display: { xs: "block", sm: "none" },
-            "& .MuiDrawer-paper": {
-              boxSizing: "border-box",
-              width: config.DRAWER_WIDTH_MOBILE,
-            },
           }}
         >
-          {drawer}
+          <Box>
+            <List>
+              {Object.entries(pages).map(([name, url]) => (
+                <ListItem key={name} disablePadding>
+                  <ListItemButton
+                    sx={{ textAlign: "center" }}
+                    onClick={() => {
+                      navigate(url);
+                      handleDrawerToggle();
+                    }}
+                  >
+                    <ListItemText primary={name} />
+                  </ListItemButton>
+                </ListItem>
+              ))}
+            </List>
+          </Box>
         </Drawer>
       </nav>
     </Box>

@@ -14,6 +14,7 @@ export enum Collections {
 	Leaderboard = "leaderboard",
 	Quests = "quests",
 	QuestsWithSubmissionStats = "quests_with_submission_stats",
+	WebsiteSettings = "website_settings",
 	Submissions = "submissions",
 	Users = "users",
 	ValidatedQuests = "validated_quests",
@@ -130,6 +131,20 @@ export type QuestsWithSubmissionStatsRecord = {
 	total_ac?: number
 }
 
+export enum WebsiteSettingsAuthOptions {
+	"PASSWORD" = "PASSWORD",
+	"OIDC" = "OIDC",
+}
+export type WebsiteSettingsRecord = {
+	auth?: WebsiteSettingsAuthOptions
+	created?: IsoDateString
+	id: string
+	logo?: string
+	name?: string
+	rules?: HTMLString
+	updated?: IsoDateString
+}
+
 export type SubmissionsRecord = {
 	attachment?: string
 	created?: IsoDateString
@@ -190,6 +205,7 @@ export type SuperusersResponse<Texpand = unknown> = Required<SuperusersRecord> &
 export type LeaderboardResponse<Texpand = unknown> = Required<LeaderboardRecord> & BaseSystemFields<Texpand>
 export type QuestsResponse<Texpand = unknown> = Required<QuestsRecord> & BaseSystemFields<Texpand>
 export type QuestsWithSubmissionStatsResponse<Texpand = unknown> = Required<QuestsWithSubmissionStatsRecord> & BaseSystemFields<Texpand>
+export type WebsiteSettingsResponse<Texpand = unknown> = Required<WebsiteSettingsRecord> & BaseSystemFields<Texpand>
 export type SubmissionsResponse<Texpand = unknown> = Required<SubmissionsRecord> & BaseSystemFields<Texpand>
 export type UsersResponse<Texpand = unknown> = Required<UsersRecord> & AuthSystemFields<Texpand>
 export type ValidatedQuestsResponse<Tstatus = unknown, Texpand = unknown> = Required<ValidatedQuestsRecord<Tstatus>> & BaseSystemFields<Texpand>
@@ -207,6 +223,7 @@ export type CollectionRecords = {
 	leaderboard: LeaderboardRecord
 	quests: QuestsRecord
 	quests_with_submission_stats: QuestsWithSubmissionStatsRecord
+	website_settings: WebsiteSettingsRecord
 	submissions: SubmissionsRecord
 	users: UsersRecord
 	validated_quests: ValidatedQuestsRecord
@@ -223,6 +240,7 @@ export type CollectionResponses = {
 	leaderboard: LeaderboardResponse
 	quests: QuestsResponse
 	quests_with_submission_stats: QuestsWithSubmissionStatsResponse
+	website_settings: WebsiteSettingsResponse
 	submissions: SubmissionsResponse
 	users: UsersResponse
 	validated_quests: ValidatedQuestsResponse
@@ -242,6 +260,7 @@ export type TypedPocketBase = PocketBase & {
 	collection(idOrName: 'leaderboard'): RecordService<LeaderboardResponse>
 	collection(idOrName: 'quests'): RecordService<QuestsResponse>
 	collection(idOrName: 'quests_with_submission_stats'): RecordService<QuestsWithSubmissionStatsResponse>
+	collection(idOrName: 'website_settings'): RecordService<WebsiteSettingsResponse>
 	collection(idOrName: 'submissions'): RecordService<SubmissionsResponse>
 	collection(idOrName: 'users'): RecordService<UsersResponse>
 	collection(idOrName: 'validated_quests'): RecordService<ValidatedQuestsResponse>

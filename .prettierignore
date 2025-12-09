@@ -1,2 +1,4 @@
-/pocketbase/*
+pb_data
+pb_migrations
+pb_public
 pocketbase-types.ts

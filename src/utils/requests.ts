@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import PocketBase from "pocketbase";
 
+import defaultLogo from "../assets/logo.svg";
 import config from "../config";
 import {
   Collections,
@@ -12,6 +13,8 @@ import {
   UsersRecord,
   ValidatedQuestsResponse,
   ValidatedSubmissionsResponse,
+  WebsiteSettingsAuthOptions,
+  WebsiteSettingsResponse,
 } from "../types/pocketbase-types";
 import {
   LeaderboardRow,
@@ -98,6 +101,33 @@ function appendSubmissionPrefix(questId: string, file?: File) {
 
 export const logout = () => {
   pb.authStore.clear();
+};
+
+export const getWebsiteSettings = async () => {
+  const FALLBACK_SETTINGS = {
+    auth: WebsiteSettingsAuthOptions.PASSWORD,
+    logo: defaultLogo,
+    /* TODO: Use the name in the title and description */
+    name: "Quest",
+    rules: null,
+  };
+  try {
+    const record = await pb
+      .collection(Collections.WebsiteSettings)
+      .getFirstListItem<WebsiteSettingsResponse>("");
+
+    return {
+      auth: record.auth || FALLBACK_SETTINGS.auth,
+      logo: record.logo?.trim()
+        ? pb.files.getURL(record, record.logo)
+        : FALLBACK_SETTINGS.logo,
+      name: record.name?.trim() || FALLBACK_SETTINGS.name,
+      rules: record.rules ?? FALLBACK_SETTINGS.rules,
+    };
+  } catch (error) {
+    console.error("Error fetching settings:", error);
+    return { ...FALLBACK_SETTINGS };
+  }
 };
 
 export type TaskSubmission = { text: string; file?: File };

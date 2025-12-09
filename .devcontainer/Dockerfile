@@ -1,28 +1,41 @@
-ARG NODE_VERSION=22
+# .devcontainer/Dockerfile
+
+ARG NODE_VERSION=20
 ARG POCKETBASE_VERSION=0.34.2
 
-FROM mcr.microsoft.com/devcontainers/typescript-node:${NODE_VERSION}
+FROM node:${NODE_VERSION}-bullseye
 
-ARG POCKETBASE_VERSION
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
-RUN apt-get update \
-  && apt-get install -y --no-install-recommends wget unzip ca-certificates sqlite3 libsqlite3-dev \
+# --- system deps (sqlite for typegen, wget/unzip for PB) ---
+RUN set -eux \
+  && apt-get update \
+  && apt-get install -y --no-install-recommends \
+       wget \
+       unzip \
+       ca-certificates \
+       sqlite3 \
+       libsqlite3-dev \
   && rm -rf /var/lib/apt/lists/*
 
-RUN set -euo pipefail; \
-  PB_VERSION="${POCKETBASE_VERSION}"; \
-  if [ -z "${PB_VERSION}" ]; then echo "POCKETBASE_VERSION build arg is required" >&2; exit 1; fi; \
-  ARCH="$(uname -m)"; \
-  case "${ARCH}" in \
-  x86_64) PB_ARCH="amd64" ;; \
-  aarch64|arm64) PB_ARCH="arm64" ;; \
-  *) echo "Unsupported architecture: ${ARCH}" && exit 1 ;; \
-  esac; \
-  PB_ZIP="pocketbase_${PB_VERSION}_linux_${PB_ARCH}.zip"; \
-  PB_URL="https://github.com/pocketbase/pocketbase/releases/download/v${PB_VERSION}/${PB_ZIP}"; \
-  wget -q "${PB_URL}" -O "/tmp/${PB_ZIP}"; \
-  unzip "/tmp/${PB_ZIP}" -d /usr/local/bin; \
-  rm "/tmp/${PB_ZIP}"; \
-  chmod +x /usr/local/bin/pocketbase
+# --- pnpm via corepack ---
+RUN corepack enable pnpm
 
-RUN corepack enable
+# --- bake PocketBase into the image, auto-detect arch ---
+ARG POCKETBASE_VERSION
+RUN set -eux \
+  && arch="$(uname -m)" \
+  && case "${arch}" in \
+       x86_64)        pb_arch="amd64" ;; \
+       aarch64|arm64) pb_arch="arm64" ;; \
+       *) echo "Unsupported architecture: ${arch}" >&2; exit 1 ;; \
+     esac \
+  && pb_zip="pocketbase_${POCKETBASE_VERSION}_linux_${pb_arch}.zip" \
+  && pb_url="https://github.com/pocketbase/pocketbase/releases/download/v${POCKETBASE_VERSION}/${pb_zip}" \
+  && echo "Downloading ${pb_url}" \
+  && wget -q "${pb_url}" -O /tmp/pocketbase.zip \
+  && unzip -q /tmp/pocketbase.zip -d /usr/local/bin \
+  && rm /tmp/pocketbase.zip \
+  && chmod +x /usr/local/bin/pocketbase
+
+WORKDIR /workspaces/quest-v2

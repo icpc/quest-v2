@@ -47,7 +47,7 @@ jobs:
         with:
           push: true
           build-args: |
-            POCKETBASE_VERSION=0.28.4
+            POCKETBASE_VERSION=0.34.2
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 

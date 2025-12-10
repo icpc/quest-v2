@@ -39,14 +39,6 @@ const QuestSubmissionForm: React.FC<QuestSubmissionFormProps> = ({
           return;
         }
         if (
-          quest.type === QuestType.VIDEO &&
-          event.target.files[0].size > 100000000
-        ) {
-          setSubmitTaskStatus("File size should be less than 100MB");
-          event.target.value = "";
-          return;
-        }
-        if (
           quest.type === QuestType.IMAGE &&
           fileType.split("/")[0] !== "image"
         ) {
@@ -154,11 +146,9 @@ const QuestSubmissionForm: React.FC<QuestSubmissionFormProps> = ({
       </Box>
       <div
         style={{
-          color: [
-            "File type not supported",
-            "Error submitting task",
-            "File size should be less than 100MB",
-          ].includes(submitTaskStatus)
+          color: ["File type not supported", "Error submitting task"].includes(
+            submitTaskStatus,
+          )
             ? "red"
             : "black",
         }}

@@ -77,6 +77,7 @@ export function getUserInfo() {
       email: pbUser.email,
       name: pbUser.name || "",
       token: pb.authStore.token,
+      canValidate: pbUser.can_validate,
       user: {
         firstName: pbUser.name?.split(" ").at(0) || "",
         lastName: pbUser.name?.split(" ").at(1) || "",

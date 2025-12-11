@@ -21,17 +21,23 @@ import Typography from "@mui/material/Typography";
 import { useWebsiteSettings } from "../hooks/useWebsiteSettings";
 import { getUserInfo, logout } from "../utils/requests";
 
-const pages = {
-  HOME: "/home",
-  LEADERBOARD: "/leaderboard/1",
-  RULES: "/rules",
-};
-
 export default function DrawerAppBar() {
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const { settings } = useWebsiteSettings();
   const userInfo = getUserInfo();
+
+  const navPages = React.useMemo(() => {
+    const pageEntries = [
+      ["HOME", "/home"],
+      ["LEADERBOARD", "/leaderboard"],
+      ["RULES", "/rules"],
+    ];
+    if (userInfo?.canValidate) {
+      pageEntries.push(["ADMIN", "/validate"]);
+    }
+    return pageEntries;
+  }, [userInfo?.canValidate]);
 
   const navigate = useNavigate();
 
@@ -124,7 +130,7 @@ export default function DrawerAppBar() {
             ) : null}
           </Typography>
           <Box sx={{ display: { xs: "none", sm: "flex" } }}>
-            {Object.entries(pages).map(([name, url]) => (
+            {navPages.map(([name, url]) => (
               <Button
                 key={name}
                 sx={{ color: "#fff" }}
@@ -153,7 +159,7 @@ export default function DrawerAppBar() {
         >
           <Box>
             <List>
-              {Object.entries(pages).map(([name, url]) => (
+              {navPages.map(([name, url]) => (
                 <ListItem key={name} disablePadding>
                   <ListItemButton
                     sx={{ textAlign: "center" }}

@@ -28,6 +28,10 @@ export interface QuestsDays {
 }
 
 export interface UserInfo {
+  id: string;
+  email: string;
+  name: string;
+  canValidate?: boolean;
   user?: {
     email: string;
     firstName: string;

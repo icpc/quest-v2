@@ -94,6 +94,13 @@ export default function SignIn({
             sx={{
               backgroundColor: "rgb(0, 67, 147)",
             }}
+            startIcon={
+              <img
+                src="/icpc.ico"
+                alt="ICPC"
+                style={{ width: 20, height: 20 }}
+              />
+            }
             onClick={() =>
               loginOIDC().then(() => {
                 navigate("/home");

@@ -6,6 +6,7 @@ import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
+import { grey } from "@mui/material/colors";
 
 import { useWebsiteSettings } from "../hooks/useWebsiteSettings";
 import { WebsiteSettingsAuthOptions } from "../types/pocketbase-types";
@@ -92,7 +93,8 @@ export default function SignIn({
             variant="contained"
             fullWidth
             sx={{
-              backgroundColor: "rgb(0, 67, 147)",
+              backgroundColor: grey[900],
+              ":hover": { backgroundColor: grey[800] },
             }}
             startIcon={
               <img

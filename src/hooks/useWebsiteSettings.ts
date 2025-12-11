@@ -40,7 +40,7 @@ export const useWebsiteSettings = () => {
         }
       })
       .catch(() => {
-        /* swallow - defaults remain */
+        setSettings(FALLBACK_SETTINGS);
       })
       .finally(() => {
         if (isMounted) {

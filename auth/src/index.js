@@ -153,10 +153,6 @@ app.post("/token/:contestId", async (req, res) => {
     const { firstName, lastName } = await getIcpcPerson(tokens.id_token);
     const part = await getIcpcParticipation(contestId, tokens.id_token);
 
-    console.log(
-        `Participation check for contest=${contestId} email=${email} firstName=${firstName} lastName=${lastName} part=${JSON.stringify(part)}`
-      );
-
     if (!part.teamMember && !part.staffMember) {
       return res.status(200).json({ error: "forbidden" });
     }

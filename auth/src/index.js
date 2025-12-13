@@ -1,35 +1,59 @@
 import axios from "axios";
 import crypto from "crypto";
 import express from "express";
+import { CompactEncrypt, compactDecrypt } from "jose";
 import jwt from "jsonwebtoken";
+import { Buffer } from "node:buffer";
 import process from "node:process";
 import querystring from "node:querystring";
 
 const app = express();
 const PORT = 3000;
 
+app.disable("x-powered-by");
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-const COGNITO_DOMAIN = process.env.COGNITO_DOMAIN;
-const COGNITO_CLIENT_ID = process.env.COGNITO_CLIENT_ID;
-const AUTH_DOMAIN = process.env.AUTH_DOMAIN;
-const QUESTS_DOMAIN = process.env.QUESTS_DOMAIN;
+const COGNITO_DOMAIN = requireEnv("COGNITO_DOMAIN");
+const COGNITO_CLIENT_ID = requireEnv("COGNITO_CLIENT_ID");
+const AUTH_DOMAIN = requireEnv("AUTH_DOMAIN");
+const QUESTS_DOMAIN = requireEnv("QUESTS_DOMAIN");
+
+const STATE_SECRET = requireBase64Env("STATE_SECRET", 32);
+const WRAP_KEY = requireBase64Env("WRAP_KEY", 32);
+
+function requireEnv(name) {
+  const value = process.env[name];
+  if (!value) {
+    throw new Error(`Missing required env var: ${name}`);
+  }
+  return value;
+}
+
+function requireBase64Env(name, expectedBytes) {
+  const buf = Buffer.from(requireEnv(name), "base64");
+  if (buf.length !== expectedBytes) {
+    throw new Error(
+      `Env var ${name} must decode to exactly ${expectedBytes} bytes (got ${buf.length})`,
+    );
+  }
+  return buf;
+}
 
 const PATH_PB_REDIRECT = "/api/oauth2-redirect";
 const AUTH_CALLBACK = `https://${AUTH_DOMAIN}/loggedin`;
 
 const bearer = (token) => ({ headers: { Authorization: `Bearer ${token}` } });
 
-const issueIdToken = ({ aud, sub, email, name, signingKey }) => {
+const issueIdToken = ({ aud, sub, email, name, signingKey, emailVerified }) => {
   const now = Math.floor(Date.now() / 1000);
   const payload = {
-    iss: `https://${COGNITO_DOMAIN}`,
+    iss: `https://${AUTH_DOMAIN}`,
     sub,
     aud,
     name,
     email,
-    email_verified: true,
+    email_verified: !!emailVerified,
     exp: now + 3600, // 1 hour expiration
     iat: now,
   };
@@ -77,6 +101,7 @@ function validateQuestName(questName) {
 function parseAndValidateRedirectUri(redirectUri) {
   try {
     const u = new URL(redirectUri);
+    if (u.protocol !== "https:") return null;
     if (u.pathname !== PATH_PB_REDIRECT) return null;
 
     const domain = String(QUESTS_DOMAIN || "").toLowerCase();
@@ -94,6 +119,42 @@ function parseAndValidateRedirectUri(redirectUri) {
   }
 }
 
+/**
+ * Signed state: prevents attacker-controlled JSON being accepted in /loggedin.
+ */
+function signState({ pocketbaseState, questName }) {
+  return jwt.sign({ pocketbaseState, questName }, STATE_SECRET, {
+    algorithm: "HS256",
+    expiresIn: "10m",
+    issuer: `https://${AUTH_DOMAIN}`,
+  });
+}
+
+function verifyState(state) {
+  return jwt.verify(state, STATE_SECRET, {
+    algorithms: ["HS256"],
+    issuer: `https://${AUTH_DOMAIN}`,
+  });
+}
+
+/**
+ * Wrap Cognito code so PocketBase never receives a redeemable Cognito code.
+ * JWE compact is URL-safe and authenticated.
+ */
+async function wrapCognitoCode(code) {
+  const plaintext = Buffer.from(JSON.stringify({ code }), "utf8");
+  return await new CompactEncrypt(plaintext)
+    .setProtectedHeader({ alg: "dir", enc: "A256GCM" })
+    .encrypt(WRAP_KEY);
+}
+
+async function unwrapCognitoCode(wrapped) {
+  const { plaintext } = await compactDecrypt(wrapped, WRAP_KEY);
+  const obj = JSON.parse(Buffer.from(plaintext).toString("utf8"));
+  if (!obj || typeof obj.code !== "string") throw new Error("bad wrapped code");
+  return obj.code;
+}
+
 app.get("/", (req, res) => {
   try {
     const { state: pocketbaseState, redirect_uri } = req.query;
@@ -102,9 +163,14 @@ app.get("/", (req, res) => {
       return res.status(400).json({ error: "Missing parameters" });
     }
 
-    const { questName } = parseAndValidateRedirectUri(String(redirect_uri));
+    const parsed = parseAndValidateRedirectUri(String(redirect_uri));
+    if (!parsed) {
+      return res.status(400).json({ error: "Invalid redirect_uri" });
+    }
 
-    const state = JSON.stringify({ pocketbaseState, questName });
+    const { questName } = parsed;
+
+    const state = signState({ pocketbaseState, questName });
 
     const loginUrl = new URL("/login", `https://${COGNITO_DOMAIN}`);
     loginUrl.searchParams.set("client_id", COGNITO_CLIENT_ID);
@@ -115,7 +181,7 @@ app.get("/", (req, res) => {
 
     res.redirect(loginUrl.toString());
   } catch (error) {
-    console.error("Error in /", error);
+    console.error("Error in /", error?.message || error);
     res.status(400).json({ error: "Invalid request" });
   }
 });
@@ -128,7 +194,14 @@ app.get("/loggedin", async (req, res) => {
       return res.status(400).json({ error: "Missing parameters" });
     }
 
-    const { questName, pocketbaseState } = JSON.parse(state);
+    let decoded;
+    try {
+      decoded = verifyState(String(state));
+    } catch {
+      return res.status(400).json({ error: "Invalid state" });
+    }
+
+    const { questName, pocketbaseState } = decoded;
 
     if (!validateQuestName(questName)) {
       return res
@@ -136,29 +209,49 @@ app.get("/loggedin", async (req, res) => {
         .json({ error: `Invalid quest name: ${questName}` });
     }
 
+    const wrappedCode = await wrapCognitoCode(String(code));
+
     const questHost = `${questName}.${QUESTS_DOMAIN}`;
     const questRedirectUrl = new URL(PATH_PB_REDIRECT, `https://${questHost}`);
-    questRedirectUrl.searchParams.set("code", code);
+    questRedirectUrl.searchParams.set("code", wrappedCode);
     questRedirectUrl.searchParams.set("state", pocketbaseState);
 
     res.redirect(questRedirectUrl.toString());
   } catch (error) {
-    console.error("Error in /loggedin", error);
+    console.error("Error in /loggedin", error?.message || error);
     res.status(400).json({ error: "Invalid request" });
   }
 });
 
 app.post("/token/:contestId", async (req, res) => {
   try {
-    const { client_id, client_secret, code } = req.body;
     const contestIds = req.params.contestId.split(",");
 
-    if (!client_id || !client_secret || !code || contestIds.length === 0) {
+    if (!contestIds.length || contestIds.length > 20) {
+      return res.status(400).json({ error: "Invalid contestIds" });
+    }
+    if (contestIds.some((id) => !/^\d+$/.test(id))) {
+      return res.status(400).json({ error: "Invalid contestId format" });
+    }
+
+    const { client_id, client_secret, code } = req.body;
+
+    if (!client_id || !client_secret || !code) {
       return res.status(400).json({ error: "Missing parameters" });
     }
 
-    const tokens = await exchangeCodeForTokens(code);
-    const { sub, email } = jwt.decode(tokens.id_token);
+    const cognitoCode = await unwrapCognitoCode(String(code));
+
+    const tokens = await exchangeCodeForTokens(cognitoCode);
+    if (!tokens?.id_token) {
+      return res.status(400).json({ error: "Upstream exchange failed" });
+    }
+
+    const claims = jwt.decode(tokens.id_token) || {};
+    const sub = claims.sub;
+    const email = claims.email;
+    const emailVerified = claims.email_verified;
+
     const { firstName, lastName } = await getIcpcPerson(tokens.id_token);
     let allowed = false;
 
@@ -172,7 +265,7 @@ app.post("/token/:contestId", async (req, res) => {
         part,
       });
 
-      if (part.teamMember || part.staffMember) {
+      if (part?.teamMember || part?.staffMember) {
         allowed = true;
         break;
       }
@@ -187,6 +280,7 @@ app.post("/token/:contestId", async (req, res) => {
       sub,
       email,
       name: `${firstName} ${lastName}`,
+      emailVerified,
       signingKey: client_secret,
     });
 
@@ -200,7 +294,7 @@ app.post("/token/:contestId", async (req, res) => {
       scope: "openid email profile",
     });
   } catch (error) {
-    console.error("Error in /token/:contestId", error);
+    console.error("Error in /token/:contestId", error?.message || error);
     res.status(400).json({ error: "Invalid request" });
   }
 });

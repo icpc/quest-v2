@@ -69,6 +69,11 @@ const getIcpcParticipation = async (contestId, accessToken) => {
   return response.data;
 };
 
+function validateQuestName(questName) {
+  // Require a simple quest name: letters, digits, dash, underscore only
+  return /^[a-z0-9_-]+$/.test(questName);
+}
+
 function parseAndValidateRedirectUri(redirectUri) {
   try {
     const u = new URL(redirectUri);
@@ -81,9 +86,7 @@ function parseAndValidateRedirectUri(redirectUri) {
 
     const before = host.slice(0, -suffix.length);
     if (!before) return null;
-
-    // Require a simple quest name: letters, digits, dash, underscore only
-    if (!/^[a-z0-9_-]+$/.test(before)) return null;
+    if (!validateQuestName(before)) return null;
 
     return { questName: before };
   } catch {
@@ -127,6 +130,12 @@ app.get("/loggedin", async (req, res) => {
 
     const { questName, pocketbaseState } = JSON.parse(state);
 
+    if (!validateQuestName(questName)) {
+      return res
+        .status(400)
+        .json({ error: `Invalid quest name: ${questName}` });
+    }
+
     const questHost = `${questName}.${QUESTS_DOMAIN}`;
     const questRedirectUrl = new URL(PATH_PB_REDIRECT, `https://${questHost}`);
     questRedirectUrl.searchParams.set("code", code);
@@ -142,19 +151,35 @@ app.get("/loggedin", async (req, res) => {
 app.post("/token/:contestId", async (req, res) => {
   try {
     const { client_id, client_secret, code } = req.body;
-    const { contestId } = req.params;
+    const contestIds = req.params.contestId.split(",");
 
-    if (!client_id || !client_secret || !code || !contestId) {
+    if (!client_id || !client_secret || !code || contestIds.length === 0) {
       return res.status(400).json({ error: "Missing parameters" });
     }
 
     const tokens = await exchangeCodeForTokens(code);
     const { sub, email } = jwt.decode(tokens.id_token);
     const { firstName, lastName } = await getIcpcPerson(tokens.id_token);
-    const part = await getIcpcParticipation(contestId, tokens.id_token);
+    let allowed = false;
 
-    if (!part.teamMember && !part.staffMember) {
-      return res.status(200).json({ error: "forbidden" });
+    for (const contestId of contestIds) {
+      const part = await getIcpcParticipation(contestId, tokens.id_token);
+      console.log("Participation lookup", {
+        contestId,
+        email,
+        firstName,
+        lastName,
+        part,
+      });
+
+      if (part.teamMember || part.staffMember) {
+        allowed = true;
+        break;
+      }
+    }
+
+    if (!allowed) {
+      return res.status(403).json({ error: "forbidden" });
     }
 
     const newIdToken = issueIdToken({

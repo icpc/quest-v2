@@ -3,6 +3,7 @@ import { useNavigate } from "react-router";
 
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
+import CircularProgress from "@mui/material/CircularProgress";
 import Container from "@mui/material/Container";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
@@ -39,6 +40,11 @@ export default function SignIn({
     <Container component="main" maxWidth="xs" sx={{ padding: 8 }}>
       <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
         <Typography variant="h4">Sign in</Typography>
+        {error ? (
+          <Typography color="error" variant="body2">
+            {error}
+          </Typography>
+        ) : null}
         {authOptions.includes(WebsiteSettingsAuthOptions.PASSWORD) ? (
           <form
             onSubmit={async (e) => {
@@ -72,11 +78,6 @@ export default function SignIn({
                 required
                 fullWidth
               />
-              {error ? (
-                <Typography color="error" variant="body2">
-                  {error}
-                </Typography>
-              ) : null}
               <Button
                 type="submit"
                 variant="contained"
@@ -103,14 +104,39 @@ export default function SignIn({
                 style={{ width: 20, height: 20 }}
               />
             }
-            onClick={() =>
-              loginOIDC().then(() => {
+            disabled={submitting}
+            onClick={async () => {
+              try {
+                setError(null);
+                setSubmitting(true);
+                await loginOIDC();
+                setSubmitting(false);
                 navigate("/home");
-              })
-            }
+              } catch {
+                setError(
+                  "Single sign-on is unavailable. Please contact your administrator.",
+                );
+              }
+            }}
           >
             Login with icpc.global
           </Button>
+        ) : null}
+        {submitting ? (
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: 1,
+              justifyContent: "center",
+              mt: 2,
+            }}
+          >
+            <CircularProgress size={18} />
+            <Typography variant="body2" color="text.secondary">
+              Redirecting, hang tight...
+            </Typography>
+          </Box>
         ) : null}
       </Box>
     </Container>

@@ -50,7 +50,6 @@ interface RowProps {
 function Row({ row, isCurrentUser }: RowProps) {
   const [open, setOpen] = React.useState(false);
   const isMobile = window?.innerWidth <= 500;
-  const navigate = useNavigate();
   return (
     <React.Fragment>
       {
@@ -105,7 +104,7 @@ function Row({ row, isCurrentUser }: RowProps) {
                             height: "10px",
                           }}
                           target="_blank"
-                          to={"/quest-details/" + quest.id}
+                          to={`/quest-details/${quest.id}`}
                           title={quest.name}
                         ></Link>
                       );
@@ -149,22 +148,15 @@ function Row({ row, isCurrentUser }: RowProps) {
                           )
                             return null;
                           return (
-                            <TableRow
-                              key={row.rank}
-                              onClick={() => {
-                                navigate("/quest-details/" + quest.id);
-                                // TODO: open in new tab
-                                // window.open(
-                                //   "/quest/quest-details/" + quest.id,
-                                //   "_blank"
-                                // );
-                              }}
-                              style={{ cursor: "pointer" }}
-                            >
+                            <TableRow key={`${day.date}-${quest.id}`}>
                               <TableCell component="th" scope="row">
                                 {day.date}
                               </TableCell>
-                              <TableCell>{quest.name}</TableCell>
+                              <TableCell>
+                                <Link to={`/quest-details/${quest.id}`}>
+                                  {quest.name}
+                                </Link>
+                              </TableCell>
                               <TableCell>
                                 {quest.status === QuestStatus.CORRECT ? (
                                   <span style={{ color: "green" }}>

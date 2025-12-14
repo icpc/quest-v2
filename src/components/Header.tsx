@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import MenuIcon from "@mui/icons-material/Menu";
@@ -121,21 +121,18 @@ export default function DrawerAppBar() {
           </IconButton>
           <Typography
             variant="h6"
-            sx={{ flexGrow: 1, display: "flex", cursor: "pointer" }}
+            sx={{ flexGrow: 1, display: "flex" }}
             align="center"
-            onClick={() => navigate("/home")}
           >
-            {settings.logo ? (
-              <img src={settings.logo} alt="Logo" height="38" />
-            ) : null}
+            <Link to="/home" style={{ display: "flex", width: "100%" }}>
+              {settings.logo ? (
+                <img src={settings.logo} alt="Logo" height="38" />
+              ) : null}
+            </Link>
           </Typography>
           <Box sx={{ display: { xs: "none", sm: "flex" } }}>
             {navPages.map(([name, url]) => (
-              <Button
-                key={name}
-                sx={{ color: "#fff" }}
-                onClick={() => navigate(url)}
-              >
+              <Button key={name} sx={{ color: "#fff" }} component={Link} to={url}>
                 {name}
               </Button>
             ))}

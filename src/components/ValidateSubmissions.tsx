@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router";
+import { Link as RouterLink } from "react-router";
 
 import {
   Box,
@@ -42,8 +42,6 @@ function ValidateSubmissions() {
     page: number;
     perPage: number;
   }>({ page: 1, perPage: 50, status: "PENDING" });
-
-  const navigate = useNavigate();
 
   // Fetch submissions
   useEffect(() => {
@@ -139,8 +137,8 @@ function ValidateSubmissions() {
                   <TableCell>{row.userName}</TableCell>
                   <TableCell>
                     <Link
-                      component="button"
-                      onClick={() => navigate(`/quest-details/${row.questId}`)}
+                      component={RouterLink}
+                      to={`/quest-details/${row.questId}`}
                       underline="hover"
                     >
                       {row.questName}

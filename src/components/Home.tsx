@@ -1,5 +1,5 @@
 import React from "react";
-import { useNavigate } from "react-router";
+import { Link } from "react-router";
 
 import AccessTimeOutlinedIcon from "@mui/icons-material/AccessTimeOutlined";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
@@ -44,68 +44,71 @@ interface QuestCardProps {
 }
 
 function QuestCard({ quest }: QuestCardProps) {
-  const navigate = useNavigate();
   const backgroundColor = statusBackground[quest.status];
 
   return (
     <Grid size="auto">
-      <Card
-        sx={{
-          display: "flex",
-          width: { xs: 150, sm: 250 },
-          height: 150,
-          backgroundColor,
-          color: "white",
-          cursor: "pointer",
-        }}
-        onClick={() => navigate(`/quest-details/${quest.id}`)}
+      <Link
+        to={`/quest-details/${quest.id}`}
+        style={{ textDecoration: "none", display: "block" }}
       >
-        <CardContent sx={{ color: "white", width: "100%", p: 1 }}>
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
+        <Card
+          sx={{
+            display: "flex",
+            width: 250,
+            height: 150,
+            backgroundColor,
+            color: "white",
+            cursor: "pointer",
+          }}
+        >
+          <CardContent sx={{ color: "white", width: "100%", p: 1 }}>
             <Box
               sx={{
                 display: "flex",
-                gap: 1,
+                justifyContent: "space-between",
                 alignItems: "center",
-                fontSize: "1rem",
               }}
             >
-              <QuestStatusIconComponent status={quest.status} />
-              {quest.category}
+              <Box
+                sx={{
+                  display: "flex",
+                  gap: 1,
+                  alignItems: "center",
+                  fontSize: "1rem",
+                }}
+              >
+                <QuestStatusIconComponent status={quest.status} />
+                {quest.category}
+              </Box>
+              <Typography
+                component="span"
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                {quest.totalAc}
+              </Typography>
             </Box>
             <Typography
-              component="span"
+              variant="body2"
               sx={{
                 display: "flex",
+                justifyContent: "center",
+                width: "100%",
                 alignItems: "center",
+                overflowY: "auto",
+                height: 110,
+                fontSize: "1.5rem",
+                textAlign: "center",
               }}
             >
-              {quest.totalAc}
+              {quest.name}
             </Typography>
-          </Box>
-          <Typography
-            variant="body2"
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              width: "100%",
-              alignItems: "center",
-              overflowY: "auto",
-              height: 110,
-              fontSize: "1.5rem",
-              textAlign: "center",
-            }}
-          >
-            {quest.name}
-          </Typography>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      </Link>
     </Grid>
   );
 }

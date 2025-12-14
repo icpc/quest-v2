@@ -43,11 +43,11 @@ function SubmissionFilters({ filters, setFilters }: SubmissionFiltersProps) {
       <FormControl size="small" sx={{ minWidth: 180 }} disabled={loading}>
         <InputLabel>User</InputLabel>
         <Select
-          value={filters.userId || ""}
+          value={filters.userId}
           label="User"
           onChange={(e) => handleChange("userId", e.target.value || undefined)}
         >
-          <MenuItem value="">All</MenuItem>
+          <MenuItem value={undefined}>All</MenuItem>
           {users.map((u) => (
             <MenuItem key={u.id} value={u.id}>
               {u.name}
@@ -58,11 +58,11 @@ function SubmissionFilters({ filters, setFilters }: SubmissionFiltersProps) {
       <FormControl size="small" sx={{ minWidth: 180 }} disabled={loading}>
         <InputLabel>Task</InputLabel>
         <Select
-          value={filters.questId || ""}
+          value={filters.questId}
           label="Task"
           onChange={(e) => handleChange("questId", e.target.value || undefined)}
         >
-          <MenuItem value="">All</MenuItem>
+          <MenuItem value={undefined}>All</MenuItem>
           {quests.map((q) => (
             <MenuItem key={q.id} value={q.id}>
               {q.name}
@@ -73,11 +73,11 @@ function SubmissionFilters({ filters, setFilters }: SubmissionFiltersProps) {
       <FormControl size="small" sx={{ minWidth: 120 }}>
         <InputLabel>Status</InputLabel>
         <Select
-          value={filters.status || ""}
+          value={filters.status}
           label="Status"
           onChange={(e) => handleChange("status", e.target.value || undefined)}
         >
-          <MenuItem value="">All</MenuItem>
+          <MenuItem value={undefined}>All</MenuItem>
           {statusOptions.map((status) => (
             <MenuItem key={status} value={status}>
               {status}

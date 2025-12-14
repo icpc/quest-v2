@@ -450,7 +450,9 @@ export const getValidatedSubmissions = async (
         >
       >(page, perPage, {
         filter: filter || undefined,
-        expand: "submission,quest,submitter",
+        expand: "submission,submitter,quest",
+        fields:
+          "*,expand.submission.*,expand.submitter.*,expand.quest.id,expand.quest.name,",
       });
 
     const fileToken = await pb.files.getToken();
@@ -466,6 +468,7 @@ export const getValidatedSubmissions = async (
           });
         }
       }
+      console.log(row);
       return {
         id: row.id,
         userId: row.expand.submitter.id,

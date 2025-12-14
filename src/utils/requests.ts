@@ -21,6 +21,7 @@ import {
   QuestStatus,
   QuestSubmissionContent,
   QuestSubmissionContentType,
+  QuestSummary,
   QuestType,
   QuestWithSubmissions,
   Status,
@@ -194,16 +195,20 @@ function submissionStatus(status: Status | undefined | null) {
   return status as QuestStatus;
 }
 
-export const getQuests = async (): Promise<Quest[]> => {
+export const getQuestsWithSubmissionStats = async (): Promise<
+  QuestSummary[]
+> => {
   try {
     const [quests, validated_quests] = await Promise.all([
-      pb
-        .collection(Collections.QuestsWithSubmissionStats)
-        .getFullList<
-          QuestsWithSubmissionStatsResponse<{ quest: QuestsRecord }>
-        >({
-          expand: "quest",
-        }),
+      pb.collection(Collections.QuestsWithSubmissionStats).getFullList<
+        QuestsWithSubmissionStatsResponse<{
+          quest: Pick<QuestsRecord, "id" | "name" | "date" | "category">;
+        }>
+      >({
+        expand: "quest",
+        fields:
+          "*,expand.quest.id,expand.quest.name,expand.quest.date,expand.quest.category",
+      }),
       pb
         .collection(Collections.ValidatedQuests)
         .getFullList<ValidatedQuestsResponse<Status>>({
@@ -219,16 +224,16 @@ export const getQuests = async (): Promise<Quest[]> => {
         (s) => s.quest === quest.id,
       );
 
-      return {
-        id: quest.id,
-        name: quest.name,
-        type: quest.type as unknown as QuestType,
-        description: quest.text,
-        date: quest.date,
-        category: quest.category,
-        status: submissionStatus(validated_quest?.status),
-        totalAc: q.total_ac,
-      };
+      return [
+        {
+          id: quest.id,
+          name: quest.name,
+          date: quest.date,
+          category: quest.category,
+          status: submissionStatus(validated_quest?.status),
+          totalAc: q.total_ac ?? 0,
+        },
+      ];
     });
 
     return formattedQuests;
@@ -245,22 +250,37 @@ export const getQuestWithSubmissions = async (
   questId: string,
 ): Promise<QuestWithSubmissions | null> => {
   try {
-    const [quest, validated_submissions] = await Promise.all([
-      getQuests().then((quests) => quests.find((q) => q.id === questId)),
-      pb
-        .collection(Collections.ValidatedSubmissions)
-        .getFullList<
-          ValidatedSubmissionsResponse<
-            Status,
-            { submission: SubmissionsRecord }
-          >
-        >({
-          filter: `quest = "${questId}" && submitter = "${getCurrentUserId()}"`,
-          expand: "submission",
-        }),
-    ]);
+    const [questRecord, questStatus, validated_submissions] = await Promise.all(
+      [
+        pb.collection(Collections.Quests).getOne<QuestsRecord>(questId),
+        pb
+          .collection(Collections.ValidatedQuests)
+          .getFullList<
+            ValidatedQuestsResponse<Status>
+          >({ filter: `quest = "${questId}" && submitter = "${getCurrentUserId()}"` }),
+        pb
+          .collection(Collections.ValidatedSubmissions)
+          .getFullList<
+            ValidatedSubmissionsResponse<
+              Status,
+              { submission: SubmissionsRecord }
+            >
+          >({
+            filter: `quest = "${questId}" && submitter = "${getCurrentUserId()}"`,
+            expand: "submission",
+          }),
+      ],
+    );
 
-    if (!quest) return null;
+    const quest: Quest = {
+      id: questRecord.id,
+      name: questRecord.name,
+      type: questRecord.type as unknown as QuestType,
+      description: questRecord.text,
+      status: submissionStatus(questStatus.at(0)?.status),
+      date: questRecord.date,
+      category: questRecord.category,
+    };
 
     const fileToken = await pb.files.getToken();
     const submissions = validated_submissions.flatMap(

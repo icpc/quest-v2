@@ -1,17 +1,17 @@
 import React from "react";
 
-import { Quest } from "../../types/types";
-import { getQuests } from "../../utils/requests";
+import { QuestSummary } from "../../types/types";
+import { getQuestsWithSubmissionStats } from "../../utils/requests";
 import Home from "../Home";
 
 import Loader, { LoaderComponent } from "./Loader";
 
 const HomeProxyHelper: React.FC = () => {
-  const [quests, setQuests] = React.useState<Quest[]>([]);
+  const [quests, setQuests] = React.useState<QuestSummary[]>([]);
   const [isQuestsLoading, setIsQuestsLoading] = React.useState(true);
 
   React.useEffect(() => {
-    getQuests().then((response) => {
+    getQuestsWithSubmissionStats().then((response) => {
       setQuests(response);
       setIsQuestsLoading(false);
     });

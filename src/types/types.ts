@@ -18,13 +18,21 @@ export interface Quest {
   description: string;
   status: QuestStatus;
   date: string;
-  totalAc: number;
   category: string;
+}
+
+export interface QuestSummary {
+  id: string;
+  name: string;
+  status: QuestStatus;
+  date: string;
+  category: string;
+  totalAc: number;
 }
 
 export interface QuestsDays {
   date: string;
-  detailsQuests: Quest[];
+  detailsQuests: QuestSummary[];
 }
 
 export interface UserInfo {

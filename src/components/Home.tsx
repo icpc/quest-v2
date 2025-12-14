@@ -11,11 +11,11 @@ import Accordion from "@mui/material/Accordion";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import AccordionSummary from "@mui/material/AccordionSummary";
 
-import { Quest, QuestStatus, QuestsDays } from "../types/types";
+import { QuestSummary, QuestStatus, QuestsDays } from "../types/types";
 import { formatDate } from "../utils/human-readable-date";
 import { aggregateQuestsByDate } from "../utils/utils";
 
-const Home = (pros: { quests: Quest[] }) => {
+const Home = (pros: { quests: QuestSummary[] }) => {
   const isMobile = window?.innerWidth <= 500;
 
   const navigate = useNavigate();

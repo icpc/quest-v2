@@ -52,7 +52,7 @@ function QuestCard({ quest }: QuestCardProps) {
       <Card
         sx={{
           display: "flex",
-          width: 250,
+          width: { xs: 150, sm: 250 },
           height: 150,
           backgroundColor,
           color: "white",

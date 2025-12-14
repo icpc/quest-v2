@@ -31,7 +31,7 @@ import SubmissionFilters from "./SubmissionFilters";
 
 export type Status = "CORRECT" | "WRONG" | "PENDING";
 
-const ValidateSubmissions: React.FC = () => {
+function ValidateSubmissions() {
   const [loading, setLoading] = useState(false);
   const [submissions, setSubmissions] =
     useState<ValidatedSubmissionsListResult>({ items: [], totalItems: 0 });
@@ -215,6 +215,6 @@ const ValidateSubmissions: React.FC = () => {
       />
     </Container>
   );
-};
+}
 
 export default ValidateSubmissions;

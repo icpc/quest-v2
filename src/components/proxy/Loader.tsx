@@ -24,7 +24,7 @@ export const LoaderComponent = () => {
   );
 };
 
-export const Loader: React.FC<LoaderProps> = ({ component: Component }) => {
+export function Loader({ component: Component }: LoaderProps) {
   const isAuthenticated = checkAuth();
   const userInfo = getUserInfo();
   const navigate = useNavigate();
@@ -40,6 +40,6 @@ export const Loader: React.FC<LoaderProps> = ({ component: Component }) => {
   }
 
   return <Component userInfo={userInfo} />;
-};
+}
 
 export default Loader;

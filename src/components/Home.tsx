@@ -26,7 +26,7 @@ type QuestStatusIconProps = {
   status: QuestStatus;
 };
 
-const QuestStatusIconComponent = ({ status }: QuestStatusIconProps) => {
+function QuestStatusIconComponent({ status }: QuestStatusIconProps) {
   switch (status) {
     case QuestStatus.CORRECT:
       return <CheckCircleOutlineIcon fontSize="small" />;
@@ -37,13 +37,13 @@ const QuestStatusIconComponent = ({ status }: QuestStatusIconProps) => {
     default:
       return null;
   }
-};
+}
 
 interface QuestCardProps {
   quest: QuestSummary;
 }
 
-const QuestCard = ({ quest }: QuestCardProps) => {
+function QuestCard({ quest }: QuestCardProps) {
   const navigate = useNavigate();
   const backgroundColor = statusBackground[quest.status];
 
@@ -108,14 +108,14 @@ const QuestCard = ({ quest }: QuestCardProps) => {
       </Card>
     </Grid>
   );
-};
+}
 
 interface DayAccordionProps {
   questDay: QuestsDays;
   expanded: boolean;
 }
 
-const DayAccordion = ({ questDay, expanded }: DayAccordionProps) => {
+function DayAccordion({ questDay, expanded }: DayAccordionProps) {
   const formattedDate = formatDate(questDay.date, {
     weekday: "long",
     month: "long",
@@ -166,9 +166,13 @@ const DayAccordion = ({ questDay, expanded }: DayAccordionProps) => {
       </AccordionDetails>
     </Accordion>
   );
-};
+}
 
-const Home = ({ quests }: { quests: QuestSummary[] }) => {
+interface HomeProps {
+  quests: QuestSummary[];
+}
+
+function Home({ quests }: HomeProps) {
   const questsDays = aggregateQuestsByDate(quests);
 
   return (
@@ -182,6 +186,6 @@ const Home = ({ quests }: { quests: QuestSummary[] }) => {
       ))}
     </Box>
   );
-};
+}
 
 export default Home;

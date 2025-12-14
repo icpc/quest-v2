@@ -8,7 +8,7 @@ import LeaderBoard from "../Leaderboard";
 
 import Loader, { LoaderComponent } from "./Loader";
 
-const LeaderboardProxyHelper: React.FC = () => {
+function LeaderboardProxyHelper() {
   const params = useParams();
   const pageNumber = Number(params.pageNumber ?? "1");
   const [totalPages, setTotalPages] = React.useState<number>(0);
@@ -70,10 +70,10 @@ const LeaderboardProxyHelper: React.FC = () => {
       totalPages={totalPages}
     />
   );
-};
+}
 
-const LeaderboardProxy = () => {
+function LeaderboardProxy() {
   return <Loader component={LeaderboardProxyHelper} />;
-};
+}
 
 export default LeaderboardProxy;

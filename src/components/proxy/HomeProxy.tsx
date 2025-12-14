@@ -6,7 +6,7 @@ import Home from "../Home";
 
 import Loader, { LoaderComponent } from "./Loader";
 
-const HomeProxyHelper: React.FC = () => {
+function HomeProxyHelper() {
   const [quests, setQuests] = React.useState<QuestSummary[]>([]);
   const [isQuestsLoading, setIsQuestsLoading] = React.useState(true);
 
@@ -45,10 +45,10 @@ const HomeProxyHelper: React.FC = () => {
     );
   }
   return <Home quests={quests} />;
-};
+}
 
-const HomeProxy = () => {
+function HomeProxy() {
   return <Loader component={HomeProxyHelper} />;
-};
+}
 
 export default HomeProxy;

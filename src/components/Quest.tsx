@@ -17,11 +17,7 @@ interface QuestProps {
   onSubmit: () => void;
 }
 
-const QuestComponent: React.FC<QuestProps> = ({
-  quest,
-  submissions,
-  onSubmit,
-}) => {
+function QuestComponent({ quest, submissions, onSubmit }: QuestProps) {
   const navigate = useNavigate();
 
   return (
@@ -69,6 +65,6 @@ const QuestComponent: React.FC<QuestProps> = ({
       </Box>
     </div>
   );
-};
+}
 
 export default QuestComponent;

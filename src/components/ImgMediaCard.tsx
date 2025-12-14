@@ -12,7 +12,7 @@ import { formatDate } from "../utils/human-readable-date";
 interface ImgMediaCardProps {
   submission: QuestSubmission;
 }
-const ImgMediaCard: React.FC<ImgMediaCardProps> = ({ submission }) => {
+function ImgMediaCard({ submission }: ImgMediaCardProps) {
   const { status, content, uploadTime } = submission;
   return (
     <Card
@@ -85,5 +85,5 @@ const ImgMediaCard: React.FC<ImgMediaCardProps> = ({ submission }) => {
       </CardContent>
     </Card>
   );
-};
+}
 export default ImgMediaCard;

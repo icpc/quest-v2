@@ -20,10 +20,7 @@ interface SubmissionFiltersProps {
 
 const statusOptions: Status[] = ["CORRECT", "WRONG", "PENDING"];
 
-const SubmissionFilters: React.FC<SubmissionFiltersProps> = ({
-  filters,
-  setFilters,
-}) => {
+function SubmissionFilters({ filters, setFilters }: SubmissionFiltersProps) {
   const [users, setUsers] = useState<{ id: string; name: string }[]>([]);
   const [quests, setQuests] = useState<{ id: string; name: string }[]>([]);
   const [loading, setLoading] = useState(false);
@@ -90,6 +87,6 @@ const SubmissionFilters: React.FC<SubmissionFiltersProps> = ({
       </FormControl>
     </Box>
   );
-};
+}
 
 export default SubmissionFilters;

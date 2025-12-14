@@ -9,9 +9,7 @@ import ImgMediaCard from "./ImgMediaCard";
 interface QuestSubmissionsListProps {
   submissions: QuestSubmission[];
 }
-const QuestSubmissionsList: React.FC<QuestSubmissionsListProps> = ({
-  submissions,
-}) => {
+function QuestSubmissionsList({ submissions }: QuestSubmissionsListProps) {
   if (!submissions || submissions.length === 0) {
     return (
       <h3 style={{ fontSize: "1rem", fontWeight: 400 }}>No submissions yet</h3>
@@ -35,5 +33,5 @@ const QuestSubmissionsList: React.FC<QuestSubmissionsListProps> = ({
       </Box>
     </>
   );
-};
+}
 export default QuestSubmissionsList;

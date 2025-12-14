@@ -47,7 +47,7 @@ interface RowProps {
   isCurrentUser: boolean;
 }
 
-const Row: React.FC<RowProps> = ({ row, isCurrentUser }) => {
+function Row({ row, isCurrentUser }: RowProps) {
   const [open, setOpen] = React.useState(false);
   const isMobile = window?.innerWidth <= 500;
   const navigate = useNavigate();
@@ -192,7 +192,7 @@ const Row: React.FC<RowProps> = ({ row, isCurrentUser }) => {
       }
     </React.Fragment>
   );
-};
+}
 
 interface LeaderboardProps {
   rows: LeaderboardRow[];
@@ -201,7 +201,7 @@ interface LeaderboardProps {
   totalPages: number;
 }
 
-const Leaderboard: React.FC<LeaderboardProps> = (props) => {
+function Leaderboard(props: LeaderboardProps) {
   const { rows, _columnsNames, pageNumber, totalPages } = props;
 
   const navigate = useNavigate();
@@ -264,6 +264,6 @@ const Leaderboard: React.FC<LeaderboardProps> = (props) => {
       />
     </div>
   );
-};
+}
 
 export default Leaderboard;

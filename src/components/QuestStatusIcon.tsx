@@ -11,7 +11,7 @@ interface QuestStatusIconProps {
   status: QuestStatus;
 }
 
-const QuestStatusIcon: React.FC<QuestStatusIconProps> = ({ status }) => {
+function QuestStatusIcon({ status }: QuestStatusIconProps) {
   const isMobile = checkIsMobile();
 
   const iconProps = {
@@ -34,6 +34,6 @@ const QuestStatusIcon: React.FC<QuestStatusIconProps> = ({ status }) => {
     default:
       return null;
   }
-};
+}
 
 export default QuestStatusIcon;

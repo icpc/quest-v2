@@ -10,10 +10,7 @@ interface QuestSubmissionFormProps {
   quest: Quest;
   onSubmit: () => void;
 }
-const QuestSubmissionForm: React.FC<QuestSubmissionFormProps> = ({
-  quest,
-  onSubmit,
-}) => {
+function QuestSubmissionForm({ quest, onSubmit }: QuestSubmissionFormProps) {
   const isMobile = window?.innerWidth <= 500;
   const [text, setText] = useState("");
   const [file, setFile] = useState<File | undefined>();
@@ -157,5 +154,5 @@ const QuestSubmissionForm: React.FC<QuestSubmissionFormProps> = ({
       </div>
     </Box>
   );
-};
+}
 export default QuestSubmissionForm;

@@ -7,7 +7,7 @@ import QuestComponent from "../Quest";
 
 import Loader, { LoaderComponent } from "./Loader";
 
-const QuestProxyHelper: React.FC = () => {
+function QuestProxyHelper() {
   const params = useParams();
   const questId = params.questId;
   const [isQuestsSubmissionsLoading, setIsQuestsSubmissionsLoading] =
@@ -43,10 +43,10 @@ const QuestProxyHelper: React.FC = () => {
       onSubmit={loadQuests}
     />
   );
-};
+}
 
-const QuestProxy = () => {
+function QuestProxy() {
   return <Loader component={QuestProxyHelper} />;
-};
+}
 
 export default QuestProxy;

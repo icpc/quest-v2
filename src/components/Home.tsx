@@ -153,11 +153,7 @@ function DayAccordion({ questDay, expanded }: DayAccordionProps) {
           </Box>
         </Typography>
       </AccordionSummary>
-      <AccordionDetails
-        sx={{
-          p: 2,
-        }}
-      >
+      <AccordionDetails>
         <Grid container spacing={1}>
           {questDay.detailsQuests.map((quest) => (
             <QuestCard key={quest.id} quest={quest} />

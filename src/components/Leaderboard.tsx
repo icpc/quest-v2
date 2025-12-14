@@ -212,7 +212,6 @@ function Leaderboard(props: LeaderboardProps) {
           padding: "20px",
         }}
       >
-        <h1>Leaderboard</h1>
         <div
           style={{
             display: "flex",
@@ -245,14 +244,16 @@ function Leaderboard(props: LeaderboardProps) {
       </div>
       <Pagination
         count={totalPages}
-        style={{
+        sx={{
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          marginTop: "20px",
+          mb: "20px",
         }}
-        page={+pageNumber}
+        page={pageNumber}
         onChange={handleChange}
+        showFirstButton
+        showLastButton
       />
     </div>
   );

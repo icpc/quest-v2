@@ -16,8 +16,10 @@ export const aggregateQuestsByDate = <T extends WithDate>(quests: T[]) => {
       },
       {} as Record<string, T[]>,
     ),
-  ).map(([date, detailsQuests]) => ({
-    date,
-    detailsQuests,
-  }));
+  )
+    .sort()
+    .map(([date, detailsQuests]) => ({
+      date,
+      detailsQuests,
+    }));
 };

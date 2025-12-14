@@ -62,7 +62,7 @@ function QuestCard({ quest }: QuestCardProps) {
         <Card
           sx={{
             display: "flex",
-            width: 250,
+            width: { xs: 150, md: 250 },
             height: 150,
             backgroundColor,
             color: "white",
@@ -99,14 +99,13 @@ function QuestCard({ quest }: QuestCardProps) {
               </Typography>
             </Box>
             <Typography
-              variant="body2"
               sx={{
                 display: "flex",
                 justifyContent: "center",
                 width: "100%",
-                alignItems: "center",
-                overflowY: "auto",
                 height: 110,
+                alignItems: "center",
+                overflow: "hidden",
                 fontSize: "1.5rem",
                 textAlign: "center",
               }}

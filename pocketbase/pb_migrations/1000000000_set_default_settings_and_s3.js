@@ -18,6 +18,11 @@ migrate((app) => {
     settings.s3.accessKey = $os.getenv("S3_ACCESS_KEY");
     settings.s3.secret = $os.getenv("S3_SECRET");
   }
+
+  settings.trustedProxy.headers = ["X-Forwarded-For"];
+
+  settings.backups.cron = "0 * * * *"; // every hour
+  settings.backups.cronMaxKeep = 10;
   
   app.save(settings);
 });

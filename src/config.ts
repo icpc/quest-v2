@@ -2,7 +2,7 @@ const config = {
   BACKGROUND_COLOR: "#f8fbfd",
   DRAWER_WIDTH_MOBILE: 240,
   LOGIN_EXPIRED_TIME: 10000000000,
-  LEADERBOARD_PAGE_SIZE: 10,
+  LEADERBOARD_PAGE_SIZE: 50,
 };
 
 export default config;

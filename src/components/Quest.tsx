@@ -1,11 +1,10 @@
 import React from "react";
-import { useNavigate } from "react-router";
+import { Link } from "react-router";
 
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 
 import { Quest, QuestStatus, QuestSubmission } from "../types/types";
-import { checkIsMobile } from "../utils/responsive";
 
 import QuestStatusIcon from "./QuestStatusIcon";
 import QuestSubmissionForm from "./QuestSubmissionForm";
@@ -18,43 +17,38 @@ interface QuestProps {
 }
 
 function QuestComponent({ quest, submissions, onSubmit }: QuestProps) {
-  const navigate = useNavigate();
-
   return (
     <div>
       <Box sx={{ p: 3, maxWidth: "960px" }}>
-        <Box sx={{ display: "flex" }}>
-          <Box
-            sx={{ display: "flex", cursor: "pointer", mt: "5px" }}
-            onClick={() => navigate("/home")}
-          >
-            <ArrowBackIcon />
-          </Box>
-          <QuestStatusIcon status={quest.status} />
-          <h2
+        <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
+          <Link
+            to="/home"
             style={{
-              marginLeft:
-                quest.status !== QuestStatus.NOTATTEMPTED ? "10px" : "0px",
-              marginTop: "0px",
+              display: "flex",
+              cursor: "pointer",
+              marginRight: "10px",
             }}
           >
-            <span
-              style={{
-                fontWeight: 400,
-                color: "rgb(12, 26, 68)",
-                lineHeight: "32px",
+            <ArrowBackIcon />
+          </Link>
+          <QuestStatusIcon status={quest.status} />
+          <Box
+            sx={{
+              marginLeft:
+                quest.status !== QuestStatus.NOTATTEMPTED ? "10px" : "0px",
+              fontWeight: 400,
+              color: "rgb(12, 26, 68)",
+              lineHeight: "32px",
+            }}
+          >
+            <Typography
+              sx={{
+                fontSize: { xs: "1.5rem", sm: "2rem" },
               }}
             >
-              <span
-                style={{
-                  fontSize: checkIsMobile() ? "1.5rem" : "2rem",
-                }}
-              >
-                {quest.category + ":"}
-                <span style={{ marginLeft: "12px" }}>{quest.name}</span>
-              </span>
-            </span>
-          </h2>
+              {`${quest.category}: ${quest.name}`}
+            </Typography>
+          </Box>
         </Box>
         <div
           dangerouslySetInnerHTML={{ __html: quest.description }}

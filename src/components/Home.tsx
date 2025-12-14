@@ -6,7 +6,14 @@ import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import HighlightOffOutlinedIcon from "@mui/icons-material/HighlightOffOutlined";
 import StarBorderOutlinedIcon from "@mui/icons-material/StarBorderOutlined";
-import { Box, Card, CardContent, Grid, Typography } from "@mui/material";
+import {
+  Box,
+  Card,
+  CardContent,
+  Container,
+  Grid,
+  Typography,
+} from "@mui/material";
 import Accordion from "@mui/material/Accordion";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import AccordionSummary from "@mui/material/AccordionSummary";
@@ -175,7 +182,7 @@ function Home({ quests }: HomeProps) {
   const questsDays = aggregateQuestsByDate(quests);
 
   return (
-    <Box component="main" sx={{ p: 1 }}>
+    <Container sx={{ mt: 4 }}>
       {questsDays.map((questDay, index) => (
         <DayAccordion
           key={questDay.date}
@@ -183,7 +190,7 @@ function Home({ quests }: HomeProps) {
           expanded={index === 0}
         />
       ))}
-    </Box>
+    </Container>
   );
 }
 

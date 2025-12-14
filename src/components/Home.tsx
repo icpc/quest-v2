@@ -139,19 +139,19 @@ function DayAccordion({ questDay, expanded }: DayAccordionProps) {
           }}
         >
           {formattedDate}
-          <Box
-            sx={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: 0.5,
-              ml: 2,
-            }}
-          >
-            {Array.from({ length: numberOfCorrectTasks }).map((_, index) => (
-              <StarBorderOutlinedIcon key={index} sx={{ fontSize: "2rem" }} />
-            ))}
-          </Box>
         </Typography>
+        <Box
+          sx={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 0.5,
+            ml: 2,
+          }}
+        >
+          {Array.from({ length: numberOfCorrectTasks }).map((_, index) => (
+            <StarBorderOutlinedIcon key={index} sx={{ fontSize: "2rem" }} />
+          ))}
+        </Box>
       </AccordionSummary>
       <AccordionDetails>
         <Grid container spacing={1}>

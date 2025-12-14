@@ -23,6 +23,8 @@ migrate((app) => {
 
   settings.backups.cron = "0 * * * *"; // every hour
   settings.backups.cronMaxKeep = 10;
+
+  settings.logs.logAuthId = true;
   
   app.save(settings);
 });

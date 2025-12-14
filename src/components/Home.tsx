@@ -13,7 +13,6 @@ import AccordionSummary from "@mui/material/AccordionSummary";
 
 import { QuestStatus, QuestSummary, QuestsDays } from "../types/types";
 import { formatDate } from "../utils/human-readable-date";
-import { checkIsMobile } from "../utils/responsive";
 import { aggregateQuestsByDate } from "../utils/utils";
 
 const statusBackground: Record<QuestStatus, string> = {
@@ -46,7 +45,6 @@ interface QuestCardProps {
 
 const QuestCard = ({ quest }: QuestCardProps) => {
   const navigate = useNavigate();
-  const isMobile = checkIsMobile();
   const backgroundColor = statusBackground[quest.status];
 
   return (
@@ -54,51 +52,43 @@ const QuestCard = ({ quest }: QuestCardProps) => {
       <Card
         sx={{
           display: "flex",
-          width: isMobile ? "150px" : "250px",
-          height: "150px",
+          width: 250,
+          height: 150,
           backgroundColor,
           color: "white",
           cursor: "pointer",
         }}
-        onClick={() => navigate(`/quest/${quest.id}`)}
+        onClick={() => navigate(`/quest-details/${quest.id}`)}
       >
-        <CardContent
-          sx={{
-            color: "white",
-            width: "100%",
-            padding: "5px",
-          }}
-        >
-          <div
-            style={{
+        <CardContent sx={{ color: "white", width: "100%", p: 1 }}>
+          <Box
+            sx={{
               display: "flex",
               justifyContent: "space-between",
               alignItems: "center",
             }}
           >
-            <div
-              style={{
+            <Box
+              sx={{
                 display: "flex",
-                gap: "5px",
-                textAlign: "center",
-                fontSize: isMobile ? "12px" : "1rem",
+                gap: 1,
                 alignItems: "center",
+                fontSize: "1rem",
               }}
             >
               <QuestStatusIconComponent status={quest.status} />
               {quest.category}
-            </div>
-            <div
-              style={{
+            </Box>
+            <Typography
+              component="span"
+              sx={{
                 display: "flex",
-                textAlign: "center",
-                fontSize: isMobile ? "12px" : "1rem",
                 alignItems: "center",
               }}
             >
               {quest.totalAc}
-            </div>
-          </div>
+            </Typography>
+          </Box>
           <Typography
             variant="body2"
             sx={{
@@ -107,8 +97,8 @@ const QuestCard = ({ quest }: QuestCardProps) => {
               width: "100%",
               alignItems: "center",
               overflowY: "auto",
-              height: "120px",
-              fontSize: isMobile ? "1rem" : "1.5rem",
+              height: 110,
+              fontSize: "1.5rem",
               textAlign: "center",
             }}
           >
@@ -126,7 +116,6 @@ interface DayAccordionProps {
 }
 
 const DayAccordion = ({ questDay, expanded }: DayAccordionProps) => {
-  const isMobile = checkIsMobile();
   const formattedDate = formatDate(questDay.date, {
     weekday: "long",
     month: "long",
@@ -138,40 +127,35 @@ const DayAccordion = ({ questDay, expanded }: DayAccordionProps) => {
   ).length;
 
   return (
-    <Accordion
-      defaultExpanded={expanded}
-      style={{
-        boxShadow: "rgba(0, 0, 0, 0.15) 0px 1px 2px",
-      }}
-    >
-      <AccordionSummary
-        expandIcon={<ExpandMoreIcon />}
-        style={{
-          paddingLeft: isMobile ? "4px" : "10px",
-        }}
-      >
+    <Accordion defaultExpanded={expanded}>
+      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
         <Typography
-          variant={isMobile ? "h6" : "h3"}
-          style={{
+          sx={{
             fontSize: "2rem",
+            display: "flex",
+            alignItems: "center",
+            flexWrap: "wrap",
+            gap: 1,
           }}
         >
           {formattedDate}
-          {Array.from({ length: numberOfCorrectTasks }).map((_, index) => (
-            <StarBorderOutlinedIcon
-              fontSize={isMobile ? "small" : "large"}
-              key={`${questDay.date}-star-${index}`}
-              style={{
-                marginLeft: index === 0 ? "20px" : "0px",
-                fontSize: "2rem",
-              }}
-            />
-          ))}
+          <Box
+            sx={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 0.5,
+              ml: 2,
+            }}
+          >
+            {Array.from({ length: numberOfCorrectTasks }).map((_, index) => (
+              <StarBorderOutlinedIcon key={index} sx={{ fontSize: "2rem" }} />
+            ))}
+          </Box>
         </Typography>
       </AccordionSummary>
       <AccordionDetails
-        style={{
-          padding: isMobile ? "5px" : "10px",
+        sx={{
+          p: 2,
         }}
       >
         <Grid container spacing={3}>
@@ -185,12 +169,10 @@ const DayAccordion = ({ questDay, expanded }: DayAccordionProps) => {
 };
 
 const Home = ({ quests }: { quests: QuestSummary[] }) => {
-  const isMobile = checkIsMobile();
-
   const questsDays = aggregateQuestsByDate(quests);
 
   return (
-    <Box component="main" sx={{ p: isMobile ? 1 : 3 }}>
+    <Box component="main" sx={{ p: 1 }}>
       {questsDays.map((questDay, index) => (
         <DayAccordion
           key={questDay.date}

@@ -19,6 +19,7 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 
 import { useWebsiteSettings } from "../hooks/useWebsiteSettings";
+import { POCKETBASE_URL } from "../utils/env";
 import { getUserInfo, logout } from "../utils/requests";
 
 export default function DrawerAppBar() {
@@ -27,14 +28,25 @@ export default function DrawerAppBar() {
   const { settings } = useWebsiteSettings();
   const userInfo = getUserInfo();
 
-  const navPages = React.useMemo(() => {
-    const pageEntries = [
-      ["HOME", "/home"],
-      ["LEADERBOARD", "/leaderboard"],
-      ["RULES", "/rules"],
+  type NavPage = {
+    name: string;
+    url: string;
+    external?: boolean;
+  };
+
+  const navPages = React.useMemo<NavPage[]>(() => {
+    const pageEntries: NavPage[] = [
+      { name: "HOME", url: "/home" },
+      { name: "LEADERBOARD", url: "/leaderboard" },
+      { name: "RULES", url: "/rules" },
     ];
     if (userInfo?.canValidate) {
-      pageEntries.push(["ADMIN", "/validate"]);
+      pageEntries.push({ name: "ADMIN", url: "/validate" });
+      pageEntries.push({
+        name: "POCKETBASE",
+        url: `${POCKETBASE_URL}/_/#`,
+        external: true,
+      });
     }
     return pageEntries;
   }, [userInfo?.canValidate]);
@@ -131,8 +143,16 @@ export default function DrawerAppBar() {
             </Link>
           </Typography>
           <Box sx={{ display: { xs: "none", sm: "flex" } }}>
-            {navPages.map(([name, url]) => (
-              <Button key={name} sx={{ color: "#fff" }} component={Link} to={url}>
+            {navPages.map(({ name, url, external }) => (
+              <Button
+                key={name}
+                sx={{ color: "#fff" }}
+                component={Link}
+                to={url}
+                target={external ? "_blank" : undefined}
+                rel={external ? "noopener noreferrer" : undefined}
+                reloadDocument={external}
+              >
                 {name}
               </Button>
             ))}
@@ -156,12 +176,18 @@ export default function DrawerAppBar() {
         >
           <Box>
             <List>
-              {navPages.map(([name, url]) => (
+              {navPages.map(({ name, url, external }) => (
                 <ListItem key={name} disablePadding>
                   <ListItemButton
                     sx={{ textAlign: "center" }}
                     onClick={() => {
-                      navigate(url);
+                      if (external) {
+                        if (typeof window !== "undefined") {
+                          window.open(url, "_blank", "noopener,noreferrer");
+                        }
+                      } else {
+                        navigate(url);
+                      }
                       handleDrawerToggle();
                     }}
                   >

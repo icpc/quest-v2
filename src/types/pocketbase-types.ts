@@ -12,6 +12,7 @@ export enum Collections {
 	Otps = "_otps",
 	Superusers = "_superusers",
 	Leaderboard = "leaderboard",
+	Media = "media",
 	Quests = "quests",
 	QuestsWithSubmissionStats = "quests_with_submission_stats",
 	Submissions = "submissions",
@@ -106,6 +107,13 @@ export type LeaderboardRecord = {
 	rank?: number
 	total_solved?: number
 	user?: RecordIdString
+}
+
+export type MediaRecord = {
+	created: IsoAutoDateString
+	id: string
+	media?: FileNameString
+	updated: IsoAutoDateString
 }
 
 export enum QuestsTypeOptions {
@@ -205,6 +213,7 @@ export type MfasResponse<Texpand = unknown> = Required<MfasRecord> & BaseSystemF
 export type OtpsResponse<Texpand = unknown> = Required<OtpsRecord> & BaseSystemFields<Texpand>
 export type SuperusersResponse<Texpand = unknown> = Required<SuperusersRecord> & AuthSystemFields<Texpand>
 export type LeaderboardResponse<Texpand = unknown> = Required<LeaderboardRecord> & BaseSystemFields<Texpand>
+export type MediaResponse<Texpand = unknown> = Required<MediaRecord> & BaseSystemFields<Texpand>
 export type QuestsResponse<Texpand = unknown> = Required<QuestsRecord> & BaseSystemFields<Texpand>
 export type QuestsWithSubmissionStatsResponse<Texpand = unknown> = Required<QuestsWithSubmissionStatsRecord> & BaseSystemFields<Texpand>
 export type SubmissionsResponse<Texpand = unknown> = Required<SubmissionsRecord> & BaseSystemFields<Texpand>
@@ -223,6 +232,7 @@ export type CollectionRecords = {
 	_otps: OtpsRecord
 	_superusers: SuperusersRecord
 	leaderboard: LeaderboardRecord
+	media: MediaRecord
 	quests: QuestsRecord
 	quests_with_submission_stats: QuestsWithSubmissionStatsRecord
 	submissions: SubmissionsRecord
@@ -240,6 +250,7 @@ export type CollectionResponses = {
 	_otps: OtpsResponse
 	_superusers: SuperusersResponse
 	leaderboard: LeaderboardResponse
+	media: MediaResponse
 	quests: QuestsResponse
 	quests_with_submission_stats: QuestsWithSubmissionStatsResponse
 	submissions: SubmissionsResponse

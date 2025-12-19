@@ -1,14 +1,14 @@
 import React from "react";
-import { useParams } from "react-router";
+
+import { useParams } from "@tanstack/react-router";
 
 import Loader, { LoaderComponent } from "@/components/Loader";
 import QuestComponent from "@/features/quests/Quest";
-import { getQuestWithSubmissions } from "@/utils/requests";
 import { QuestWithSubmissions } from "@/types/types";
+import { getQuestWithSubmissions } from "@/utils/requests";
 
 function QuestRouteContent() {
-  const params = useParams();
-  const questId = params.questId;
+  const { questId } = useParams({ from: "/quest-details/$questId" });
   const [isQuestsSubmissionsLoading, setIsQuestsSubmissionsLoading] =
     React.useState(true);
   const [questWithSubmissions, setQuestWithSubmissions] =

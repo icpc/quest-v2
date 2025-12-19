@@ -1,5 +1,4 @@
 import React from "react";
-import { Link, useNavigate } from "react-router";
 
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
@@ -18,6 +17,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import { styled } from "@mui/material/styles";
+import { Link, useNavigate } from "@tanstack/react-router";
 
 import { LeaderboardRow, QuestStatus } from "@/types/types";
 import { getUserInfo } from "@/utils/requests";
@@ -104,7 +104,8 @@ function Row({ row, isCurrentUser }: RowProps) {
                             height: "10px",
                           }}
                           target="_blank"
-                          to={`/quest-details/${quest.id}`}
+                          to="/quest-details/$questId"
+                          params={{ questId: quest.id }}
                           title={quest.name}
                         ></Link>
                       );
@@ -153,7 +154,10 @@ function Row({ row, isCurrentUser }: RowProps) {
                                 {day.date}
                               </TableCell>
                               <TableCell>
-                                <Link to={`/quest-details/${quest.id}`}>
+                                <Link
+                                  to="/quest-details/$questId"
+                                  params={{ questId: quest.id }}
+                                >
                                   {quest.name}
                                 </Link>
                               </TableCell>
@@ -199,7 +203,10 @@ function Leaderboard(props: LeaderboardProps) {
   const navigate = useNavigate();
   const handleChange = React.useCallback(
     (_: React.ChangeEvent<unknown>, value: number) => {
-      navigate(`/leaderboard/${value}`);
+      navigate({
+        to: "/leaderboard/$pageNumber",
+        params: { pageNumber: String(value) },
+      });
     },
     [navigate],
   );

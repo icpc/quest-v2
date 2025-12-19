@@ -1,5 +1,4 @@
 import * as React from "react";
-import { useNavigate } from "react-router";
 
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -8,6 +7,7 @@ import Container from "@mui/material/Container";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import { grey } from "@mui/material/colors";
+import { useNavigate } from "@tanstack/react-router";
 
 import { useWebsiteSettings } from "@/hooks/useWebsiteSettings";
 import { WebsiteSettingsAuthOptions } from "@/types/pocketbase-types";
@@ -28,7 +28,7 @@ export default function SignIn({
 
   React.useEffect(() => {
     if (isAuthenticated) {
-      navigate("/home");
+      navigate({ to: "/home" });
     }
   }, [isAuthenticated, navigate]);
 
@@ -54,7 +54,7 @@ export default function SignIn({
               const user = await login({ email, password });
               setSubmitting(false);
               if (user) {
-                navigate("/home");
+                navigate({ to: "/home" });
               } else {
                 setError("Incorrect email or password");
               }
@@ -111,7 +111,7 @@ export default function SignIn({
                 setSubmitting(true);
                 await loginOIDC();
                 setSubmitting(false);
-                navigate("/home");
+                navigate({ to: "/home" });
               } catch {
                 setError(
                   "Single sign-on is unavailable. Please contact your administrator.",

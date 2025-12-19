@@ -1,5 +1,4 @@
 import * as React from "react";
-import { Link, useNavigate } from "react-router";
 
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import MenuIcon from "@mui/icons-material/Menu";
@@ -17,6 +16,7 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
+import { Link, useNavigate } from "@tanstack/react-router";
 
 import { useWebsiteSettings } from "@/hooks/useWebsiteSettings";
 import { POCKETBASE_URL } from "@/utils/env";
@@ -68,7 +68,7 @@ export default function DrawerAppBar() {
 
   const handleClose = React.useCallback(() => {
     logout();
-    navigate("/login");
+    navigate({ to: "/login" });
   }, [navigate]);
 
   const handleDrawerToggle = () => {
@@ -147,11 +147,11 @@ export default function DrawerAppBar() {
               <Button
                 key={name}
                 sx={{ color: "#fff" }}
-                component={Link}
-                to={url}
+                component={external ? "a" : Link}
+                href={external ? url : undefined}
+                to={external ? undefined : url}
                 target={external ? "_blank" : undefined}
                 rel={external ? "noopener noreferrer" : undefined}
-                reloadDocument={external}
               >
                 {name}
               </Button>
@@ -186,7 +186,7 @@ export default function DrawerAppBar() {
                           window.open(url, "_blank", "noopener,noreferrer");
                         }
                       } else {
-                        navigate(url);
+                        navigate({ to: url });
                       }
                       handleDrawerToggle();
                     }}

@@ -1,6 +1,7 @@
 import React, { ComponentType } from "react";
-import { useNavigate } from "react-router";
 import { ClipLoader } from "react-spinners";
+
+import { useNavigate } from "@tanstack/react-router";
 
 import { UserInfo } from "@/types/types";
 import { checkAuth, getUserInfo } from "@/utils/requests";
@@ -31,7 +32,7 @@ export function Loader({ component: Component }: LoaderProps) {
 
   React.useEffect(() => {
     if (!isAuthenticated) {
-      navigate("/login");
+      navigate({ to: "/login" });
     }
   }, [isAuthenticated, navigate]);
 

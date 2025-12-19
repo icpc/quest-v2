@@ -2,7 +2,10 @@ tabWidth: 2
 importOrder:
   # Packages `react` related packages come first.
   - "^react"
+  # Third-party packages.
   - "^@?\\w"
+  # Alias imports.
+  - "^@/"
   # Relative imports one directory up, excluding styles
   - "^(\\.\\./)(?!.*\\.css).*"
   # Relative imports in the same directory, excluding styles

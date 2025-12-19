@@ -1,15 +1,18 @@
 import React from "react";
-import { useParams } from "react-router";
+
+import { useParams } from "@tanstack/react-router";
 
 import Loader, { LoaderComponent } from "@/components/Loader";
 import LeaderBoard from "@/features/leaderboard/Leaderboard";
+import { LeaderboardRow } from "@/types/types";
 import { formatDate } from "@/utils/human-readable-date";
 import { getLeaderboard } from "@/utils/requests";
-import { LeaderboardRow } from "@/types/types";
 
-function LeaderboardRouteContent() {
-  const params = useParams();
-  const pageNumber = Number(params.pageNumber ?? "1");
+type LeaderboardRouteContentProps = {
+  pageNumber: number;
+};
+
+function LeaderboardRouteContent({ pageNumber }: LeaderboardRouteContentProps) {
   const [totalPages, setTotalPages] = React.useState<number>(0);
   const [isLoadingLeaderboard, setIsLoadingLeaderboard] = React.useState(true);
   const [rows, setRows] = React.useState<LeaderboardRow[]>([]);
@@ -65,14 +68,26 @@ function LeaderboardRouteContent() {
     <LeaderBoard
       rows={rows}
       _columnsNames={columnsNames}
-      pageNumber={Number(pageNumber)}
+      pageNumber={pageNumber}
       totalPages={totalPages}
     />
   );
 }
 
-function LeaderboardRoute() {
-  return <Loader component={LeaderboardRouteContent} />;
+function LeaderboardRoutePage() {
+  const { pageNumber } = useParams({ from: "/leaderboard/$pageNumber" });
+  const page = Number(pageNumber ?? "1");
+
+  return (
+    <Loader component={() => <LeaderboardRouteContent pageNumber={page} />} />
+  );
 }
 
-export default LeaderboardRoute;
+function LeaderboardRouteIndex() {
+  return (
+    <Loader component={() => <LeaderboardRouteContent pageNumber={1} />} />
+  );
+}
+
+export { LeaderboardRouteIndex };
+export default LeaderboardRoutePage;

@@ -1,7 +1,8 @@
 import Papa from "papaparse";
 
-import { downloadCsvFile } from "./csv";
 import { getValidatedSubmissions } from "@/utils/requests";
+
+import { downloadCsvFile } from "./csv";
 
 async function fetchAllSubmissions() {
   const perPage = 200;

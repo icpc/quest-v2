@@ -2,8 +2,8 @@ import React from "react";
 
 import Loader, { LoaderComponent } from "@/components/Loader";
 import Home from "@/features/home/components/Home";
-import { getQuestsWithSubmissionStats } from "@/utils/requests";
 import { QuestSummary } from "@/types/types";
+import { getQuestsWithSubmissionStats } from "@/utils/requests";
 
 function HomeRouteContent() {
   const [quests, setQuests] = React.useState<QuestSummary[]>([]);

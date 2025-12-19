@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Link as RouterLink } from "react-router";
 
 import {
   Box,
   Button,
   CircularProgress,
   Container,
-  Link,
   Paper,
   Stack,
   Table,
@@ -18,16 +16,16 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
+import { Link as RouterLink } from "@tanstack/react-router";
 
-import { ValidatedSubmissionsListResult } from "@/types/types";
+import SubmissionFilters from "@/features/validation/components/SubmissionFilters";
 import { downloadLeaderboardCsv } from "@/features/validation/utils/downloadLeaderboardCsv";
 import { downloadSubmissionsCsv } from "@/features/validation/utils/downloadSubmissionsCsv";
+import { ValidatedSubmissionsListResult } from "@/types/types";
 import {
   getValidatedSubmissions,
   setValidatedSubmissionStatus,
 } from "@/utils/requests";
-
-import SubmissionFilters from "@/features/validation/components/SubmissionFilters";
 
 export type Status = "CORRECT" | "WRONG" | "PENDING";
 
@@ -136,13 +134,13 @@ function ValidateSubmissions() {
                 >
                   <TableCell>{row.userName}</TableCell>
                   <TableCell>
-                    <Link
-                      component={RouterLink}
-                      to={`/quest-details/${row.questId}`}
-                      underline="hover"
+                    <RouterLink
+                      to="/quest-details/$questId"
+                      params={{ questId: row.questId }}
+                      style={{ textDecoration: "underline" }}
                     >
                       {row.questName}
-                    </Link>
+                    </RouterLink>
                   </TableCell>
                   <TableCell>{row.status}</TableCell>
                   <TableCell>

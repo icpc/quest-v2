@@ -7,11 +7,7 @@ import Container from "@mui/material/Container";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import { grey } from "@mui/material/colors";
-import {
-  useNavigate,
-  useRouteContext,
-  useRouter,
-} from "@tanstack/react-router";
+import { useLoaderData, useNavigate, useRouter } from "@tanstack/react-router";
 
 import { WebsiteSettingsAuthOptions } from "@/types/pocketbase-types";
 import { login, loginOIDC } from "@/utils/auth";
@@ -28,7 +24,7 @@ export default function SignIn({
   const [password, setPassword] = React.useState("");
   const [submitting, setSubmitting] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
-  const { website_settings } = useRouteContext({ from: "__root__" });
+  const { website_settings } = useLoaderData({ from: "__root__" });
   const router = useRouter();
   const redirectPath = redirectTo || "/home";
 

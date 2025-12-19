@@ -1,11 +1,10 @@
 import React from "react";
 
 import { Container } from "@mui/material";
-
-import { useRouteContext } from "@tanstack/react-router";
+import { useLoaderData } from "@tanstack/react-router";
 
 const Rules = () => {
-  const { website_settings } = useRouteContext({ from: "__root__" });
+  const { website_settings } = useLoaderData({ from: "__root__" });
   const rulesHtml = website_settings.rules;
 
   return (

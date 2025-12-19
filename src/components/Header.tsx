@@ -16,7 +16,7 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import { Link, useNavigate, useRouteContext } from "@tanstack/react-router";
+import { Link, useLoaderData, useNavigate } from "@tanstack/react-router";
 
 import { getUserInfo, logout } from "@/utils/auth";
 import { POCKETBASE_URL } from "@/utils/env";
@@ -24,7 +24,7 @@ import { POCKETBASE_URL } from "@/utils/env";
 export default function DrawerAppBar() {
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const { website_settings } = useRouteContext({ from: "__root__" });
+  const { website_settings } = useLoaderData({ from: "__root__" });
   const userInfo = getUserInfo();
 
   type NavPage = {

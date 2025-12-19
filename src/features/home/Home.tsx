@@ -59,6 +59,7 @@ function QuestCard({ quest }: QuestCardProps) {
         to="/quest-details/$questId"
         params={{ questId: quest.id }}
         style={{ textDecoration: "none", display: "block" }}
+        preload="viewport"
       >
         <Card
           sx={{

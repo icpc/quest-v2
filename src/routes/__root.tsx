@@ -22,9 +22,10 @@ const RootLayout = () => {
 };
 
 export const Route = createRootRoute({
-  beforeLoad: async () => {
+  loader: async () => {
     const website_settings = await loadWebsiteSettings();
     return { website_settings };
   },
+  staleTime: 60 * 1000, // 1 minute
   component: RootLayout,
 });

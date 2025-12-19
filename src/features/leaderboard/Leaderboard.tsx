@@ -20,7 +20,7 @@ import { styled } from "@mui/material/styles";
 import { Link, useNavigate } from "@tanstack/react-router";
 
 import { LeaderboardRow, QuestStatus } from "@/types/types";
-import { getUserInfo } from "@/utils/requests";
+import { getUserInfo } from "@/utils/auth";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -204,8 +204,8 @@ function Leaderboard(props: LeaderboardProps) {
   const handleChange = React.useCallback(
     (_: React.ChangeEvent<unknown>, value: number) => {
       navigate({
-        to: "/leaderboard/$pageNumber",
-        params: { pageNumber: String(value) },
+        to: "/leaderboard",
+        search: { page: value },
       });
     },
     [navigate],

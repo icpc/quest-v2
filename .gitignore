@@ -33,3 +33,5 @@ pb_public
 
 # debug sql queries
 debug*.*
+
+docs-test

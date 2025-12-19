@@ -9,10 +9,12 @@
     "@mui/icons-material": "^7.1.0",
     "@mui/material": "^7.1.0",
     "@tanstack/react-router": "^1.141.6",
+    "@tanstack/zod-adapter": "^1.141.6",
     "papaparse": "^5.5.3",
     "pocketbase": "^0.26.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
+    "zod": "^3.25.76",
     "react-spinners": "^0.17.0",
     "styled-components": "^6.1.19"
   },

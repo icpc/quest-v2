@@ -3,7 +3,7 @@ import React, { useCallback, useState } from "react";
 import { Box, Button, TextField, Typography } from "@mui/material";
 
 import { Quest, QuestStatus, QuestType } from "@/types/types";
-import { submitTask } from "@/utils/requests";
+import { submitTask } from "@/features/quests/utils/submitTask";
 
 // TODO: Rewrite this completely to use React Hook Form for better form handling
 interface QuestSubmissionFormProps {

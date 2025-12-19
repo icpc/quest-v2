@@ -16,16 +16,15 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Link, useNavigate, useRouteContext } from "@tanstack/react-router";
 
-import { useWebsiteSettings } from "@/hooks/useWebsiteSettings";
+import { getUserInfo, logout } from "@/utils/auth";
 import { POCKETBASE_URL } from "@/utils/env";
-import { getUserInfo, logout } from "@/utils/requests";
 
 export default function DrawerAppBar() {
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const { settings } = useWebsiteSettings();
+  const { website_settings } = useRouteContext({ from: "__root__" });
   const userInfo = getUserInfo();
 
   type NavPage = {
@@ -41,10 +40,14 @@ export default function DrawerAppBar() {
       { name: "RULES", url: "/rules" },
     ];
     if (userInfo?.canValidate) {
+      const pocketbaseOrigin =
+        POCKETBASE_URL === "/" && typeof window !== "undefined"
+          ? window.location.origin
+          : POCKETBASE_URL;
       pageEntries.push({ name: "ADMIN", url: "/validate" });
       pageEntries.push({
         name: "POCKETBASE",
-        url: `${POCKETBASE_URL}/_/#`,
+        url: `${pocketbaseOrigin}/_/#`,
         external: true,
       });
     }
@@ -55,12 +58,12 @@ export default function DrawerAppBar() {
 
   React.useEffect(() => {
     if (typeof document === "undefined") return;
-    document.title = settings.name;
+    document.title = website_settings.name;
     const metaDescription = document.querySelector('meta[name="description"]');
     if (metaDescription) {
-      metaDescription.setAttribute("content", settings.name);
+      metaDescription.setAttribute("content", website_settings.name);
     }
-  }, [settings.name]);
+  }, [website_settings.name]);
 
   const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -137,8 +140,8 @@ export default function DrawerAppBar() {
             align="center"
           >
             <Link to="/home" style={{ display: "flex", width: "100%" }}>
-              {settings.logo ? (
-                <img src={settings.logo} alt="Logo" height="38" />
+              {website_settings.logo ? (
+                <img src={website_settings.logo} alt="Logo" height="38" />
               ) : null}
             </Link>
           </Typography>

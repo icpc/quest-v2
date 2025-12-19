@@ -1,17 +1,16 @@
-import React from "react";
-
 import { CssBaseline, Toolbar } from "@mui/material";
-import { Outlet } from "@tanstack/react-router";
+import { Outlet, createRootRoute } from "@tanstack/react-router";
 import styled from "styled-components";
 
 import DrawerAppBar from "@/components/Header";
 import config from "@/config";
+import { loadWebsiteSettings } from "@/utils/website-settings";
 
 const AppContainer = styled.div`
   background-color: ${config.BACKGROUND_COLOR};
 `;
 
-const App = () => {
+const RootLayout = () => {
   return (
     <AppContainer className="container">
       <CssBaseline />
@@ -22,4 +21,10 @@ const App = () => {
   );
 };
 
-export default App;
+export const Route = createRootRoute({
+  beforeLoad: async () => {
+    const website_settings = await loadWebsiteSettings();
+    return { website_settings };
+  },
+  component: RootLayout,
+});

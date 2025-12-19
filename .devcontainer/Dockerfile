@@ -16,6 +16,7 @@ RUN set -eux \
        ca-certificates \
        sqlite3 \
        libsqlite3-dev \
+       ripgrep \
   && rm -rf /var/lib/apt/lists/*
 
 # --- pnpm via corepack ---

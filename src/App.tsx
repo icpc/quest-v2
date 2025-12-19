@@ -1,7 +1,7 @@
 import React from "react";
 import { HashRouter, Route, Routes } from "react-router";
 
-import { Toolbar } from "@mui/material";
+import { CssBaseline, Toolbar } from "@mui/material";
 import styled from "styled-components";
 
 import DrawerAppBar from "@/components/Header";
@@ -22,6 +22,7 @@ const App = () => {
   return (
     <HashRouter>
       <AppContainer className="container">
+        <CssBaseline />
         <DrawerAppBar />
         <Toolbar />
         <Routes>

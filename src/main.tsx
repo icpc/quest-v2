@@ -11,10 +11,7 @@ import { routeTree } from "./routeTree.gen";
 
 const router = createRouter({
   routeTree,
-  context: {
-    user: null,
-    website_settings: null,
-  },
+  defaultPreload: "intent",
   history: createHashHistory(),
 });
 

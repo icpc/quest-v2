@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import PocketBase from "pocketbase";
 
-import config from "../config";
+import config from "@/config";
 import {
   Collections,
   LeaderboardResponse,
@@ -14,7 +14,7 @@ import {
   ValidatedSubmissionsResponse,
   WebsiteSettingsAuthOptions,
   WebsiteSettingsResponse,
-} from "../types/pocketbase-types";
+} from "@/types/pocketbase-types";
 import {
   LeaderboardRow,
   Quest,
@@ -26,7 +26,7 @@ import {
   QuestWithSubmissions,
   Status,
   ValidatedSubmissionsListResult,
-} from "../types/types";
+} from "@/types/types";
 
 import { POCKETBASE_URL } from "./env";
 import { aggregateQuestsByDate } from "./utils";

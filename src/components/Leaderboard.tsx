@@ -19,8 +19,8 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import { styled } from "@mui/material/styles";
 
-import { LeaderboardRow, QuestStatus } from "../types/types";
-import { getUserInfo } from "../utils/requests";
+import { LeaderboardRow, QuestStatus } from "@/types/types";
+import { getUserInfo } from "@/utils/requests";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {

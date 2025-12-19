@@ -19,13 +19,13 @@ import {
   Typography,
 } from "@mui/material";
 
-import { ValidatedSubmissionsListResult } from "../types/types";
-import { downloadLeaderboardCsv } from "../utils/downloadLeaderboardCsv";
-import { downloadSubmissionsCsv } from "../utils/downloadSubmissionsCsv";
+import { ValidatedSubmissionsListResult } from "@/types/types";
+import { downloadLeaderboardCsv } from "@/utils/downloadLeaderboardCsv";
+import { downloadSubmissionsCsv } from "@/utils/downloadSubmissionsCsv";
 import {
   getValidatedSubmissions,
   setValidatedSubmissionStatus,
-} from "../utils/requests";
+} from "@/utils/requests";
 
 import SubmissionFilters from "./SubmissionFilters";
 

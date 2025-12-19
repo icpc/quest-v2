@@ -6,8 +6,8 @@ import {
   QuestStatus,
   QuestSubmission,
   QuestSubmissionContentType,
-} from "../types/types";
-import { formatDate } from "../utils/human-readable-date";
+} from "@/types/types";
+import { formatDate } from "@/utils/human-readable-date";
 
 interface ImgMediaCardProps {
   submission: QuestSubmission;

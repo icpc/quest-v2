@@ -4,7 +4,7 @@ import { Link } from "react-router";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { Box, Typography } from "@mui/material";
 
-import { Quest, QuestStatus, QuestSubmission } from "../types/types";
+import { Quest, QuestStatus, QuestSubmission } from "@/types/types";
 
 import QuestStatusIcon from "./QuestStatusIcon";
 import QuestSubmissionForm from "./QuestSubmissionForm";

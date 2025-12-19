@@ -9,9 +9,9 @@ import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import { grey } from "@mui/material/colors";
 
-import { useWebsiteSettings } from "../hooks/useWebsiteSettings";
-import { WebsiteSettingsAuthOptions } from "../types/pocketbase-types";
-import { checkAuth, login, loginOIDC } from "../utils/requests";
+import { useWebsiteSettings } from "@/hooks/useWebsiteSettings";
+import { WebsiteSettingsAuthOptions } from "@/types/pocketbase-types";
+import { checkAuth, login, loginOIDC } from "@/utils/requests";
 
 export default function SignIn({
   mode,

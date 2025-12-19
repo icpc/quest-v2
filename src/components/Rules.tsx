@@ -2,7 +2,7 @@ import React from "react";
 
 import { Container } from "@mui/material";
 
-import { useWebsiteSettings } from "../hooks/useWebsiteSettings";
+import { useWebsiteSettings } from "@/hooks/useWebsiteSettings";
 
 const Rules = () => {
   const { settings } = useWebsiteSettings();

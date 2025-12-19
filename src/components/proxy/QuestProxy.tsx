@@ -1,9 +1,9 @@
 import React from "react";
 import { useParams } from "react-router";
 
-import { QuestWithSubmissions } from "../../types/types";
-import { getQuestWithSubmissions } from "../../utils/requests";
-import QuestComponent from "../Quest";
+import { QuestWithSubmissions } from "@/types/types";
+import { getQuestWithSubmissions } from "@/utils/requests";
+import QuestComponent from "@/components/Quest";
 
 import Loader, { LoaderComponent } from "./Loader";
 

@@ -1,10 +1,10 @@
 import React from "react";
 import { useParams } from "react-router";
 
-import { LeaderboardRow } from "../../types/types";
-import { formatDate } from "../../utils/human-readable-date";
-import { getLeaderboard } from "../../utils/requests";
-import LeaderBoard from "../Leaderboard";
+import { LeaderboardRow } from "@/types/types";
+import { formatDate } from "@/utils/human-readable-date";
+import { getLeaderboard } from "@/utils/requests";
+import LeaderBoard from "@/components/Leaderboard";
 
 import Loader, { LoaderComponent } from "./Loader";
 

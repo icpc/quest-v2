@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 
 import { Box, FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 
-import { Status } from "../types/types";
-import { getUsersAndQuestsForFilters } from "../utils/requests";
+import { Status } from "@/types/types";
+import { getUsersAndQuestsForFilters } from "@/utils/requests";
 
 interface Filters {
   userId?: string;

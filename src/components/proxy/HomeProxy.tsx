@@ -1,8 +1,8 @@
 import React from "react";
 
-import { QuestSummary } from "../../types/types";
-import { getQuestsWithSubmissionStats } from "../../utils/requests";
-import Home from "../Home";
+import { QuestSummary } from "@/types/types";
+import { getQuestsWithSubmissionStats } from "@/utils/requests";
+import Home from "@/components/Home";
 
 import Loader, { LoaderComponent } from "./Loader";
 

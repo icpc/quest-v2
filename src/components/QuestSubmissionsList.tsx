@@ -2,7 +2,7 @@ import React from "react";
 
 import { Box } from "@mui/material";
 
-import { QuestSubmission } from "../types/types";
+import { QuestSubmission } from "@/types/types";
 
 import ImgMediaCard from "./ImgMediaCard";
 

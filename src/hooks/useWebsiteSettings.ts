@@ -1,8 +1,8 @@
 import * as React from "react";
 
-import defaultLogo from "../assets/logo.svg";
-import { WebsiteSettingsAuthOptions } from "../types/pocketbase-types";
-import { WebsiteSettingsData, getWebsiteSettings } from "../utils/requests";
+import defaultLogo from "@/assets/logo.svg";
+import { WebsiteSettingsAuthOptions } from "@/types/pocketbase-types";
+import { WebsiteSettingsData, getWebsiteSettings } from "@/utils/requests";
 
 const INITIAL_SETTINGS: WebsiteSettingsData = {
   auth: [],

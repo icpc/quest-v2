@@ -18,9 +18,9 @@ import MenuItem from "@mui/material/MenuItem";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 
-import { useWebsiteSettings } from "../hooks/useWebsiteSettings";
-import { POCKETBASE_URL } from "../utils/env";
-import { getUserInfo, logout } from "../utils/requests";
+import { useWebsiteSettings } from "@/hooks/useWebsiteSettings";
+import { POCKETBASE_URL } from "@/utils/env";
+import { getUserInfo, logout } from "@/utils/requests";
 
 export default function DrawerAppBar() {
   const [mobileOpen, setMobileOpen] = React.useState(false);

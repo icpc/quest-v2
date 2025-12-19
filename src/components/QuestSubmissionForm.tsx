@@ -2,8 +2,8 @@ import React, { useCallback, useState } from "react";
 
 import { Box, Button, TextField, Typography } from "@mui/material";
 
-import { Quest, QuestStatus, QuestType } from "../types/types";
-import { submitTask } from "../utils/requests";
+import { Quest, QuestStatus, QuestType } from "@/types/types";
+import { submitTask } from "@/utils/requests";
 
 // TODO: Rewrite this completely to use React Hook Form for better form handling
 interface QuestSubmissionFormProps {

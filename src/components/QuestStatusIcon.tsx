@@ -4,8 +4,8 @@ import AccessTimeOutlinedIcon from "@mui/icons-material/AccessTimeOutlined";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import HighlightOffOutlinedIcon from "@mui/icons-material/HighlightOffOutlined";
 
-import { QuestStatus } from "../types/types";
-import { checkIsMobile } from "../utils/responsive";
+import { QuestStatus } from "@/types/types";
+import { checkIsMobile } from "@/utils/responsive";
 
 interface QuestStatusIconProps {
   status: QuestStatus;

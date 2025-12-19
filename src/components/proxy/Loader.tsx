@@ -2,8 +2,8 @@ import React, { ComponentType } from "react";
 import { useNavigate } from "react-router";
 import { ClipLoader } from "react-spinners";
 
-import { UserInfo } from "../../types/types";
-import { checkAuth, getUserInfo } from "../../utils/requests";
+import { UserInfo } from "@/types/types";
+import { checkAuth, getUserInfo } from "@/utils/requests";
 
 interface LoaderProps {
   component: ComponentType<{ userInfo: UserInfo }>;

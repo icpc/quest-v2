@@ -18,9 +18,9 @@ import Accordion from "@mui/material/Accordion";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import AccordionSummary from "@mui/material/AccordionSummary";
 
-import { QuestStatus, QuestSummary, QuestsDays } from "../types/types";
-import { formatDate } from "../utils/human-readable-date";
-import { aggregateQuestsByDate } from "../utils/utils";
+import { QuestStatus, QuestSummary, QuestsDays } from "@/types/types";
+import { formatDate } from "@/utils/human-readable-date";
+import { aggregateQuestsByDate } from "@/utils/utils";
 
 const statusBackground: Record<QuestStatus, string> = {
   [QuestStatus.CORRECT]: "rgba(0, 128, 0, 0.7)",

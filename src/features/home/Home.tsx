@@ -1,5 +1,4 @@
 import React from "react";
-import { Link } from "react-router";
 
 import AccessTimeOutlinedIcon from "@mui/icons-material/AccessTimeOutlined";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
@@ -17,6 +16,7 @@ import {
 import Accordion from "@mui/material/Accordion";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import AccordionSummary from "@mui/material/AccordionSummary";
+import { Link } from "@tanstack/react-router";
 
 import { QuestStatus, QuestSummary, QuestsDays } from "@/types/types";
 import { formatDate } from "@/utils/human-readable-date";
@@ -56,8 +56,10 @@ function QuestCard({ quest }: QuestCardProps) {
   return (
     <Grid size="auto">
       <Link
-        to={`/quest-details/${quest.id}`}
+        to="/quest-details/$questId"
+        params={{ questId: quest.id }}
         style={{ textDecoration: "none", display: "block" }}
+        preload="viewport"
       >
         <Card
           sx={{

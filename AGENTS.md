@@ -6,7 +6,7 @@
   - `routes/`: application routes.
   - `features/`: feature modules (can include `components/`, `utils/`, `hooks/`, `api/`, `types/`, `stores/` as needed).
   - `components/`, `hooks/`, `types/`, `utils/`: shared cross-feature modules.
-  - Entry points: `App.tsx`, `index.tsx`.
+  - Entry points: `main.tsx`, `routes/__root.tsx`.
 - `public/`: static assets served by Vite.
 - `pocketbase/`: backend assets (`pb_migrations/`, `pb_data/`, hooks). Treat as generated/stateful.
 - `auth/`: standalone OAuth/OpenID shim used by PocketBase.

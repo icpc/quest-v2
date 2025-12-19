@@ -37,7 +37,7 @@ Most code lives in `src` and follows a feature-first layout:
 - `src/routes/`: application routes.
 - `src/features/`: feature modules (may include `components/`, `utils/`, `hooks/`, `api/`, `types/`, `stores/`).
 - `src/components/`, `src/hooks/`, `src/types/`, `src/utils/`: shared cross-feature modules.
-- Entry points: `src/App.tsx`, `src/index.tsx`.
+- Entry points: `src/main.tsx`, `src/routes/__root.tsx`.
 
 ## Dev Container
 

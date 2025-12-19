@@ -1,10 +1,20 @@
 {
-    "sqltools.connections": [
-        {
-            "previewLimit": 50,
-            "driver": "SQLite",
-            "name": "Pocketbase Data",
-            "database": "pocketbase/pb_data/data.db"
-        }
-    ]
+  "sqltools.connections": [
+    {
+      "previewLimit": 50,
+      "driver": "SQLite",
+      "name": "Pocketbase Data",
+      "database": "pocketbase/pb_data/data.db"
+    }
+  ],
+
+  "files.readonlyInclude": {
+    "**/routeTree.gen.ts": true
+  },
+  "files.watcherExclude": {
+    "**/routeTree.gen.ts": true
+  },
+  "search.exclude": {
+    "**/routeTree.gen.ts": true
+  }
 }

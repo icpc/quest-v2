@@ -1,14 +1,13 @@
 import React from "react";
-import { Link } from "react-router";
 
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { Box, Typography } from "@mui/material";
+import { Link } from "@tanstack/react-router";
 
 import QuestStatusIcon from "@/components/QuestStatusIcon";
-import { Quest, QuestStatus, QuestSubmission } from "@/types/types";
-
 import QuestSubmissionForm from "@/features/quests/components/QuestSubmissionForm";
 import QuestSubmissionsList from "@/features/quests/components/QuestSubmissionsList";
+import { Quest, QuestStatus, QuestSubmission } from "@/types/types";
 
 interface QuestProps {
   quest: Quest;

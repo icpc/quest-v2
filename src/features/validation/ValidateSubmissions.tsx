@@ -1,12 +1,10 @@
-import React, { useEffect, useState } from "react";
-import { Link as RouterLink } from "react-router";
+import React from "react";
 
 import {
   Box,
   Button,
   CircularProgress,
   Container,
-  Link,
   Paper,
   Stack,
   Table,
@@ -18,55 +16,59 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-
-import { ValidatedSubmissionsListResult } from "@/types/types";
-import { downloadLeaderboardCsv } from "@/features/validation/utils/downloadLeaderboardCsv";
-import { downloadSubmissionsCsv } from "@/features/validation/utils/downloadSubmissionsCsv";
-import {
-  getValidatedSubmissions,
-  setValidatedSubmissionStatus,
-} from "@/utils/requests";
+import { Link as RouterLink, useRouter } from "@tanstack/react-router";
 
 import SubmissionFilters from "@/features/validation/components/SubmissionFilters";
+import { downloadLeaderboardCsv } from "@/features/validation/utils/downloadLeaderboardCsv";
+import { downloadSubmissionsCsv } from "@/features/validation/utils/downloadSubmissionsCsv";
+import { Status, ValidatedSubmissionsListResult } from "@/types/types";
+import { setValidatedSubmissionStatus } from "@/features/validation/utils/setValidatedSubmissionStatus";
 
-export type Status = "CORRECT" | "WRONG" | "PENDING";
-
-function ValidateSubmissions() {
-  const [loading, setLoading] = useState(false);
-  const [submissions, setSubmissions] =
-    useState<ValidatedSubmissionsListResult>({ items: [], totalItems: 0 });
-  const [filters, setFilters] = useState<{
+type ValidateSubmissionsProps = {
+  submissions: ValidatedSubmissionsListResult;
+  users: { id: string; name: string }[];
+  quests: { id: string; name: string }[];
+  filters: {
     userId?: string;
     questId?: string;
     status?: Status;
     page: number;
     perPage: number;
-  }>({ page: 1, perPage: 50, status: "PENDING" });
+  };
+  onFiltersChange: (filters: {
+    userId?: string;
+    questId?: string;
+    status?: Status;
+    page: number;
+    perPage: number;
+  }) => void;
+};
 
-  // Fetch submissions
-  useEffect(() => {
-    (async () => {
-      setLoading(true);
-      setSubmissions(await getValidatedSubmissions(filters));
-      setLoading(false);
-    })();
-  }, [filters]);
+function ValidateSubmissions({
+  submissions,
+  users,
+  quests,
+  filters,
+  onFiltersChange,
+}: ValidateSubmissionsProps) {
+  const [loading, setLoading] = React.useState(false);
+  const router = useRouter();
 
   const handlePageChange = (
     _: React.MouseEvent<HTMLButtonElement> | null,
     newPage: number,
   ) => {
-    setFilters((prev) => ({ ...prev, page: newPage + 1 })); // TablePagination is 0-based
+    onFiltersChange({ ...filters, page: newPage + 1 });
   };
 
   const handleRowsPerPageChange = (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
-    setFilters((prev) => ({
-      ...prev,
+    onFiltersChange({
+      ...filters,
       perPage: parseInt(event.target.value, 10),
       page: 1,
-    }));
+    });
   };
 
   const handleDecision = async (
@@ -75,7 +77,7 @@ function ValidateSubmissions() {
   ) => {
     setLoading(true);
     await setValidatedSubmissionStatus(submissionId, success);
-    setFilters((prev) => ({ ...prev })); // trigger refresh
+    await router.invalidate();
     setLoading(false);
   };
 
@@ -99,7 +101,18 @@ function ValidateSubmissions() {
           </Button>
         </Stack>
       </Box>
-      <SubmissionFilters filters={filters} setFilters={setFilters} />
+      <SubmissionFilters
+        filters={filters}
+        users={users}
+        quests={quests}
+        onChange={(name, value) => {
+          onFiltersChange({
+            ...filters,
+            [name]: value || undefined,
+            page: 1,
+          });
+        }}
+      />
       {loading ? (
         <Box
           display="flex"
@@ -136,13 +149,13 @@ function ValidateSubmissions() {
                 >
                   <TableCell>{row.userName}</TableCell>
                   <TableCell>
-                    <Link
-                      component={RouterLink}
-                      to={`/quest-details/${row.questId}`}
-                      underline="hover"
+                    <RouterLink
+                      to="/quest-details/$questId"
+                      params={{ questId: row.questId }}
+                      style={{ textDecoration: "underline" }}
                     >
                       {row.questName}
-                    </Link>
+                    </RouterLink>
                   </TableCell>
                   <TableCell>{row.status}</TableCell>
                   <TableCell>

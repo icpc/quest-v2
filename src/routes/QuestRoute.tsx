@@ -1,13 +1,12 @@
 import React from "react";
 import { useParams } from "react-router";
 
-import { QuestWithSubmissions } from "@/types/types";
+import Loader, { LoaderComponent } from "@/components/Loader";
+import QuestComponent from "@/features/quests/Quest";
 import { getQuestWithSubmissions } from "@/utils/requests";
-import QuestComponent from "@/components/Quest";
+import { QuestWithSubmissions } from "@/types/types";
 
-import Loader, { LoaderComponent } from "./Loader";
-
-function QuestProxyHelper() {
+function QuestRouteContent() {
   const params = useParams();
   const questId = params.questId;
   const [isQuestsSubmissionsLoading, setIsQuestsSubmissionsLoading] =
@@ -45,8 +44,8 @@ function QuestProxyHelper() {
   );
 }
 
-function QuestProxy() {
-  return <Loader component={QuestProxyHelper} />;
+function QuestRoute() {
+  return <Loader component={QuestRouteContent} />;
 }
 
-export default QuestProxy;
+export default QuestRoute;

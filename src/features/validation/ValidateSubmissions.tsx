@@ -20,14 +20,14 @@ import {
 } from "@mui/material";
 
 import { ValidatedSubmissionsListResult } from "@/types/types";
-import { downloadLeaderboardCsv } from "@/utils/downloadLeaderboardCsv";
-import { downloadSubmissionsCsv } from "@/utils/downloadSubmissionsCsv";
+import { downloadLeaderboardCsv } from "@/features/validation/utils/downloadLeaderboardCsv";
+import { downloadSubmissionsCsv } from "@/features/validation/utils/downloadSubmissionsCsv";
 import {
   getValidatedSubmissions,
   setValidatedSubmissionStatus,
 } from "@/utils/requests";
 
-import SubmissionFilters from "./SubmissionFilters";
+import SubmissionFilters from "@/features/validation/components/SubmissionFilters";
 
 export type Status = "CORRECT" | "WRONG" | "PENDING";
 

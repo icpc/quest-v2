@@ -4,15 +4,15 @@ import { HashRouter, Route, Routes } from "react-router";
 import { Toolbar } from "@mui/material";
 import styled from "styled-components";
 
-import DrawerAppBar from "./components/Header";
-import SignIn from "./components/Login";
-import Rules from "./components/Rules";
-import ValidateSubmissions from "./components/ValidateSubmissions";
-import HomeProxy from "./components/proxy/HomeProxy";
-import Leaderboard from "./components/proxy/LeaderboardProxy";
-import QuestProxy from "./components/proxy/QuestProxy";
-import config from "./config";
-import { WebsiteSettingsAuthOptions } from "./types/pocketbase-types";
+import DrawerAppBar from "@/components/Header";
+import config from "@/config";
+import SignIn from "@/features/auth/SignIn";
+import Rules from "@/features/rules/Rules";
+import ValidateSubmissions from "@/features/validation/ValidateSubmissions";
+import HomeRoute from "@/routes/HomeRoute";
+import LeaderboardRoute from "@/routes/LeaderboardRoute";
+import QuestRoute from "@/routes/QuestRoute";
+import { WebsiteSettingsAuthOptions } from "@/types/pocketbase-types";
 
 const AppContainer = styled.div`
   background-color: ${config.BACKGROUND_COLOR};
@@ -35,11 +35,14 @@ const App = () => {
             path="/login/password"
             element={<SignIn mode={WebsiteSettingsAuthOptions.PASSWORD} />}
           />
-          <Route path="/home" element={<HomeProxy />} />
+          <Route path="/home" element={<HomeRoute />} />
           <Route path="/rules" element={<Rules />} />
-          <Route path="/quest-details/:questId" element={<QuestProxy />} />
-          <Route path="/leaderboard" element={<Leaderboard />} />
-          <Route path="/leaderboard/:pageNumber" element={<Leaderboard />} />
+          <Route path="/quest-details/:questId" element={<QuestRoute />} />
+          <Route path="/leaderboard" element={<LeaderboardRoute />} />
+          <Route
+            path="/leaderboard/:pageNumber"
+            element={<LeaderboardRoute />}
+          />
           <Route path="/validate" element={<ValidateSubmissions />} />
           <Route path="*" element={<SignIn />} />
         </Routes>

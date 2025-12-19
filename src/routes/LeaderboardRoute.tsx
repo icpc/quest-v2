@@ -1,14 +1,13 @@
 import React from "react";
 import { useParams } from "react-router";
 
-import { LeaderboardRow } from "@/types/types";
+import Loader, { LoaderComponent } from "@/components/Loader";
+import LeaderBoard from "@/features/leaderboard/Leaderboard";
 import { formatDate } from "@/utils/human-readable-date";
 import { getLeaderboard } from "@/utils/requests";
-import LeaderBoard from "@/components/Leaderboard";
+import { LeaderboardRow } from "@/types/types";
 
-import Loader, { LoaderComponent } from "./Loader";
-
-function LeaderboardProxyHelper() {
+function LeaderboardRouteContent() {
   const params = useParams();
   const pageNumber = Number(params.pageNumber ?? "1");
   const [totalPages, setTotalPages] = React.useState<number>(0);
@@ -72,8 +71,8 @@ function LeaderboardProxyHelper() {
   );
 }
 
-function LeaderboardProxy() {
-  return <Loader component={LeaderboardProxyHelper} />;
+function LeaderboardRoute() {
+  return <Loader component={LeaderboardRouteContent} />;
 }
 
-export default LeaderboardProxy;
+export default LeaderboardRoute;

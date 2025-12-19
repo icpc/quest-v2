@@ -1,7 +1,7 @@
 import Papa from "papaparse";
 
 import { downloadCsvFile } from "./csv";
-import { getLeaderboard } from "./requests";
+import { getLeaderboard } from "@/utils/requests";
 
 async function fetchAllLeaderboardRows() {
   const first = await getLeaderboard(1);

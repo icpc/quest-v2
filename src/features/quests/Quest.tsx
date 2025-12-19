@@ -4,11 +4,11 @@ import { Link } from "react-router";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { Box, Typography } from "@mui/material";
 
+import QuestStatusIcon from "@/components/QuestStatusIcon";
 import { Quest, QuestStatus, QuestSubmission } from "@/types/types";
 
-import QuestStatusIcon from "./QuestStatusIcon";
-import QuestSubmissionForm from "./QuestSubmissionForm";
-import QuestSubmissionsList from "./QuestSubmissionsList";
+import QuestSubmissionForm from "@/features/quests/components/QuestSubmissionForm";
+import QuestSubmissionsList from "@/features/quests/components/QuestSubmissionsList";
 
 interface QuestProps {
   quest: Quest;

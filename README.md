@@ -5,6 +5,7 @@ This repository contains the frontend for the ICPC Quest project along with scri
 ## Table of Contents
 
 - [Installation](#installation)
+- [Project Structure](#project-structure)
 - [Dev Container](#dev-container)
 - [Running the Frontend Locally](#running-the-frontend-locally)
 - [Building the Frontend](#building-the-frontend)
@@ -28,6 +29,15 @@ This repository contains the frontend for the ICPC Quest project along with scri
    - Download the latest release from the [Pocketbase website](https://pocketbase.io/).
    - Unpack the downloaded archive.
    - Make sure it's invokable as `pocketbase`.
+
+## Project Structure
+
+Most code lives in `src` and follows a feature-first layout:
+
+- `src/routes/`: application routes.
+- `src/features/`: feature modules (may include `components/`, `utils/`, `hooks/`, `api/`, `types/`, `stores/`).
+- `src/components/`, `src/hooks/`, `src/types/`, `src/utils/`: shared cross-feature modules.
+- Entry points: `src/App.tsx`, `src/index.tsx`.
 
 ## Dev Container
 

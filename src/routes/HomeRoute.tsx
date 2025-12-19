@@ -1,12 +1,11 @@
 import React from "react";
 
-import { QuestSummary } from "@/types/types";
+import Loader, { LoaderComponent } from "@/components/Loader";
+import Home from "@/features/home/components/Home";
 import { getQuestsWithSubmissionStats } from "@/utils/requests";
-import Home from "@/components/Home";
+import { QuestSummary } from "@/types/types";
 
-import Loader, { LoaderComponent } from "./Loader";
-
-function HomeProxyHelper() {
+function HomeRouteContent() {
   const [quests, setQuests] = React.useState<QuestSummary[]>([]);
   const [isQuestsLoading, setIsQuestsLoading] = React.useState(true);
 
@@ -47,8 +46,8 @@ function HomeProxyHelper() {
   return <Home quests={quests} />;
 }
 
-function HomeProxy() {
-  return <Loader component={HomeProxyHelper} />;
+function HomeRoute() {
+  return <Loader component={HomeRouteContent} />;
 }
 
-export default HomeProxy;
+export default HomeRoute;

@@ -2,8 +2,8 @@
 
 cronAdd("sqlite_optimize", "0 * * * *", () => {
   try {
-    $app.db().newQuery("PRAGMA optimize").execute();
-    console.log("[sqlite_optimize] done");
+    $app.db().newQuery("PRAGMA optimize=0x10002").execute();
+    console.log("[sqlite_optimize] with 0x10002 done");
   } catch (e) {
     console.log("[sqlite_optimize] error:", String(e));
   }

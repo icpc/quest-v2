@@ -1,5 +1,4 @@
 import { Collections } from "@/types/pocketbase-types";
-
 import pb from "@/utils/pocketbase";
 
 export const setValidatedSubmissionStatus = async (

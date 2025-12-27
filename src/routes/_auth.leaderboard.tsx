@@ -3,10 +3,8 @@ import { zodValidator } from "@tanstack/zod-adapter";
 import { z } from "zod";
 
 import RoutePending from "@/components/RoutePending";
-import LeaderBoard from "@/features/leaderboard/Leaderboard";
-import { formatDate } from "@/utils/human-readable-date";
-import { aggregateQuestsByDate } from "@/utils/utils";
 import config from "@/config";
+import LeaderBoard from "@/features/leaderboard/Leaderboard";
 import {
   Collections,
   LeaderboardResponse,
@@ -15,7 +13,9 @@ import {
 } from "@/types/pocketbase-types";
 import { LeaderboardRow, QuestStatus, Status } from "@/types/types";
 import { getCurrentUserId } from "@/utils/auth";
+import { formatDate } from "@/utils/human-readable-date";
 import pb from "@/utils/pocketbase";
+import { aggregateQuestsByDate } from "@/utils/utils";
 
 const leaderboardSearchSchema = z.object({
   page: z.coerce.number().default(1),
@@ -82,7 +82,9 @@ export const Route = createFileRoute("/_auth/leaderboard")({
       };
     };
 
-    const createLeaderboardRow = (user: LeaderboardResponse): LeaderboardRow => {
+    const createLeaderboardRow = (
+      user: LeaderboardResponse,
+    ): LeaderboardRow => {
       return {
         rank: user.rank,
         userId: user.id,
@@ -117,7 +119,12 @@ export const Route = createFileRoute("/_auth/leaderboard")({
           ]
         : [];
 
-    return { rows, totalPages: leaderboard.totalPages, columnsNames, pageNumber };
+    return {
+      rows,
+      totalPages: leaderboard.totalPages,
+      columnsNames,
+      pageNumber,
+    };
   },
   pendingComponent: RoutePending,
   component: LeaderboardRouteContent,

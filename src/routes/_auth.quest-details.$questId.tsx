@@ -20,6 +20,7 @@ import {
 } from "@/types/types";
 import { getCurrentUserId } from "@/utils/auth";
 import pb from "@/utils/pocketbase";
+
 function submissionStatus(status: Status | undefined | null) {
   if (!status) return QuestStatus.NOTATTEMPTED;
   return status as QuestStatus;
@@ -62,39 +63,41 @@ export const Route = createFileRoute("/_auth/quest-details/$questId")({
     };
 
     const fileToken = await pb.files.getToken();
-    const submissions = validated_submissions.flatMap((validated_submission) => {
-      const submission = validated_submission.expand?.submission;
-      if (!submission) return [];
+    const submissions = validated_submissions.flatMap(
+      (validated_submission) => {
+        const submission = validated_submission.expand?.submission;
+        if (!submission) return [];
 
-      function getAttachmentUrl() {
-        return pb.files.getURL(submission, submission.attachment!, {
-          token: fileToken,
-        });
-      }
+        function getAttachmentUrl() {
+          return pb.files.getURL(submission, submission.attachment!, {
+            token: fileToken,
+          });
+        }
 
-      const content: QuestSubmissionContent =
-        quest.type === QuestType.TEXT
-          ? {
-              type: QuestSubmissionContentType.TEXT,
-              text: submission.text!,
-            }
-          : quest.type === QuestType.IMAGE
+        const content: QuestSubmissionContent =
+          quest.type === QuestType.TEXT
             ? {
-                type: QuestSubmissionContentType.IMAGE,
-                url: getAttachmentUrl(),
+                type: QuestSubmissionContentType.TEXT,
+                text: submission.text!,
               }
-            : {
-                type: QuestSubmissionContentType.VIDEO,
-                url: getAttachmentUrl(),
-              };
+            : quest.type === QuestType.IMAGE
+              ? {
+                  type: QuestSubmissionContentType.IMAGE,
+                  url: getAttachmentUrl(),
+                }
+              : {
+                  type: QuestSubmissionContentType.VIDEO,
+                  url: getAttachmentUrl(),
+                };
 
-      return {
-        id: submission.id,
-        uploadTime: submission.created!,
-        status: submissionStatus(validated_submission.status),
-        content,
-      };
-    });
+        return {
+          id: submission.id,
+          uploadTime: submission.created!,
+          status: submissionStatus(validated_submission.status),
+          content,
+        };
+      },
+    );
 
     return { quest, submissions };
   },

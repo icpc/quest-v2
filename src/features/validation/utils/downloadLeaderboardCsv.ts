@@ -50,7 +50,9 @@ async function getLeaderboardPage(pageNumber: number): Promise<{
     pb
       .collection(Collections.ValidatedQuests)
       .getFullList<ValidatedQuestsResponse<Status>>({
-        filter: leaderboard.items.map((item) => `submitter="${item.id}"`).join("||"),
+        filter: leaderboard.items
+          .map((item) => `submitter="${item.id}"`)
+          .join("||"),
       }),
     pb.collection(Collections.Quests).getFullList<QuestsRecord>(),
   ]);

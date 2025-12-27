@@ -21,8 +21,8 @@ import { Link as RouterLink, useRouter } from "@tanstack/react-router";
 import SubmissionFilters from "@/features/validation/components/SubmissionFilters";
 import { downloadLeaderboardCsv } from "@/features/validation/utils/downloadLeaderboardCsv";
 import { downloadSubmissionsCsv } from "@/features/validation/utils/downloadSubmissionsCsv";
-import { Status, ValidatedSubmissionsListResult } from "@/types/types";
 import { setValidatedSubmissionStatus } from "@/features/validation/utils/setValidatedSubmissionStatus";
+import { Status, ValidatedSubmissionsListResult } from "@/types/types";
 
 type ValidateSubmissionsProps = {
   submissions: ValidatedSubmissionsListResult;

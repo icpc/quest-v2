@@ -45,23 +45,21 @@ export const Route = createFileRoute("/_auth/validate")({
     const filter = filterArr.join(" && ");
 
     const [result, users, quests] = await Promise.all([
-      pb
-        .collection(Collections.ValidatedSubmissions)
-        .getList<
-          ValidatedSubmissionsResponse<
-            Status,
-            {
-              submission: SubmissionsRecord;
-              quest: QuestsRecord;
-              submitter: UsersRecord;
-            }
-          >
-        >(currentFilters.page, currentFilters.perPage, {
-          filter: filter || undefined,
-          expand: "submission,submitter,quest",
-          fields:
-            "*,expand.submission.*,expand.submitter.*,expand.quest.id,expand.quest.name,",
-        }),
+      pb.collection(Collections.ValidatedSubmissions).getList<
+        ValidatedSubmissionsResponse<
+          Status,
+          {
+            submission: SubmissionsRecord;
+            quest: QuestsRecord;
+            submitter: UsersRecord;
+          }
+        >
+      >(currentFilters.page, currentFilters.perPage, {
+        filter: filter || undefined,
+        expand: "submission,submitter,quest",
+        fields:
+          "*,expand.submission.*,expand.submitter.*,expand.quest.id,expand.quest.name,",
+      }),
       pb
         .collection(Collections.Users)
         .getFullList<UsersRecord>({ fields: "id,name" }),
@@ -112,9 +110,8 @@ export const Route = createFileRoute("/_auth/validate")({
 function ValidateRoute() {
   const router = useRouter();
   const { submissions, users, quests } = Route.useLoaderData();
-  const [filters, setFilters] = React.useState<ValidationFilters>(
-    currentFilters,
-  );
+  const [filters, setFilters] =
+    React.useState<ValidationFilters>(currentFilters);
 
   React.useEffect(() => {
     return () => {

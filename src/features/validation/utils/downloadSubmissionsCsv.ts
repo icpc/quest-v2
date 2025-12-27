@@ -13,22 +13,20 @@ import pb from "@/utils/pocketbase";
 import { downloadCsvFile } from "./csv";
 
 async function getValidatedSubmissionsPage(page: number, perPage: number) {
-  const result = await pb
-    .collection(Collections.ValidatedSubmissions)
-    .getList<
-      ValidatedSubmissionsResponse<
-        Status,
-        {
-          submission: SubmissionsRecord;
-          quest: QuestsRecord;
-          submitter: UsersRecord;
-        }
-      >
-    >(page, perPage, {
-      expand: "submission,submitter,quest",
-      fields:
-        "*,expand.submission.*,expand.submitter.*,expand.quest.id,expand.quest.name,",
-    });
+  const result = await pb.collection(Collections.ValidatedSubmissions).getList<
+    ValidatedSubmissionsResponse<
+      Status,
+      {
+        submission: SubmissionsRecord;
+        quest: QuestsRecord;
+        submitter: UsersRecord;
+      }
+    >
+  >(page, perPage, {
+    expand: "submission,submitter,quest",
+    fields:
+      "*,expand.submission.*,expand.submitter.*,expand.quest.id,expand.quest.name,",
+  });
 
   const fileToken = await pb.files.getToken();
   const items = result.items.map((row) => {

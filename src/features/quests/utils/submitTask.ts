@@ -1,5 +1,4 @@
 import { Collections } from "@/types/pocketbase-types";
-
 import { getCurrentUserId } from "@/utils/auth";
 import pb from "@/utils/pocketbase";
 

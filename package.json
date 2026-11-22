@@ -14,7 +14,7 @@
     "pocketbase": "^0.26.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
-    "zod": "^3.25.76",
+    "zod": "^4.6.6",
     "react-spinners": "^0.17.0",
     "styled-components": "^6.1.19"
   },
@@ -64,6 +64,6 @@
     "prettier": "^3.5.3",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.32.1",
-    "vite": "^6.4.1"
+    "vite": "^6.4.5"
   }
 }
